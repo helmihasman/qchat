@@ -1,0 +1,80 @@
+doctype html
+html(lang='en')
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    // Meta, title, CSS, favicons, etc.
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title 中信大厦 | 登入
+    // Bootstrap
+    link(href='../gentelella/vendors/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
+    // Font Awesome
+    link(href='../gentelella/vendors/font-awesome/css/font-awesome.min.css', rel='stylesheet')
+    // Custom Theme Style
+    link(href='gentelella/custom.css', rel='stylesheet')
+    style(type='text/css').
+      .auto-style1 {
+      font-family: Arial;
+      }
+      .auto-style2 {
+      display: block;
+      width: 100%;
+      height: 34px;
+      font-size: 14px;
+      line-height: 1.42857143;
+      color: #555;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+      -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+      -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+      border: 1px solid #ccc;
+      margin-left: 186px;
+      padding: 6px 12px;
+      border-radius: 0;
+      background-color: #fff;
+      background-image: none;
+      box-shadow: 0 1px 1px rgba(0,0,0,.075) inset;
+      }
+      .auto-style3 {
+      font-size: small;
+      font-family: Arial;
+      }
+      .auto-style4 {
+      font-size: small;
+      color: #C0C0C0;
+      font-family: Arial, Helvetica, sans-serif;
+      }
+      .auto-style5 {
+      margin-top: 10px;
+      color: #C0C0C0;
+      }
+      .auto-style7 {
+      font-size: small;
+      }
+  body(style="background-repeat:no-repeat; background-size:cover;  background-image:url('images/web.png');background-attachment: fixed;")
+    div
+      a#toregister.hiddenanchor
+      a#tologin.hiddenanchor
+      #wrapper
+        #login.form(style='left: 10px; top: -5px; height: 245px;')
+          section.login_content
+            form(action='/login', method='post',style='background-color:white; width: 250px;left: 45px;')
+              p.text-center
+                img(alt='', height='70px', src='images/Esurfing1.png', width='80px')
+                input.auto-style2(type='text', placeholder='请输入手机号码/电邮', required='', style='width: 67%; margin-left:40px' ,name='username',id='username')
+                input.form-control(type='password', placeholder='请输入密码', required='', style='width: 67%; margin-left:40px',name='password',id='password')
+              .text-left
+                span.auto-style1
+                  button.btn.btn-default(type='submit', style='width: 170px; margin-left:37px; background-color:#0f5fa8; color: #FFFFFF;') 登入
+                p
+                - if(messages.message)
+                   | !{messages.message}
+              h1
+                input(name='Checkbox1', style='margin-top:10px; height: 15px;', type='checkbox', value='REMEMBER ME')
+                span.auto-style4
+                  label#Label1(style='height: 13px')
+                    | 记住用户        
+                a.auto-style5(href='#', style='width: 154px')
+                  span.auto-style3 我忘了?
+              .clearfix
+        

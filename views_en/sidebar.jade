@@ -1,0 +1,111 @@
+//.col-md-3.left_col(style="background:#808080")
+//  .left_col.scroll-view
+//    .navbar.nav_title(style='border: 0;')
+//      //a.site_title(href='/')
+//        i.fa.fa-paw
+//        span China Telecom
+//    //.clearfix
+//    // menu profile quick info
+//    .profile
+//      .profile_pic
+//        img.img-circle.profile_img(src='gentelella/production/images/img.jpg', alt='...')
+//      .profile_info
+//        span Welcome
+//        h2 Chen Yi
+//    // /menu profile quick info
+//    br
+//    // sidebar menu
+//    #sidebar-menu.main_menu_side.hidden-print.main_menu
+//      .menu_section
+//        h3 Strive for Excellence
+//        ul.nav.side-menu
+//          li
+//            a
+//              i.fa.fa-home
+//              |  Map 
+//              span.fa.fa-chevron-down
+//            ul.nav.child_menu
+//              li
+//                a(href='/tracking') Tracking
+//              li
+//                a(href='/path_playback') Path Playback
+//              
+//          li
+//            a
+//              i.fa.fa-edit
+//              |  Report 
+//              span.fa.fa-chevron-down
+//            ul.nav.child_menu
+//              li
+//                a(href='/attendance') Attendance
+//              li
+//                a(href='/documents') Documents
+//              li
+//                a(href='/alert') Alert
+//              
+//          li
+//            a
+//              i.fa.fa-desktop
+//              |  System Admin 
+//              span.fa.fa-chevron-down
+//            ul.nav.child_menu
+//              li
+//                a(href='/employee_management') Employee Management
+//              li
+//                a(href='/route_management') Route Management
+//              li
+//                a(href='/map_management') Map Management
+
+
+.col-md-3.left_col
+  .left_col.scroll-view
+    .clearfix
+    // menu profile quick info
+    .profile
+      .profile_pic
+        img.img-circle.profile_img(src='https://qchat.mybluemix.net/#{session.passport.user.employee_image}', alt='...')
+      .profile_info
+        span Welcome,
+        h2 #{session.passport.user.employee_name}
+    // /menu profile quick info
+    br
+    // sidebar menu
+    #sidebar-menu.main_menu_side.hidden-print.main_menu
+      .menu_section
+        h3  
+        h3 #{session.passport.user.employee_motto}
+        ul.nav.side-menu
+          li
+            a
+              i.fa.fa-map
+              | Map 
+              span.fa.fa-chevron-down
+            ul.nav.child_menu
+              li
+                a(href='/tracking') Tracking 
+              li
+                 a(href='/path_playback') Path Playback
+          li
+            a
+              i.fa.fa-folder-open
+              |  Report
+              span.fa.fa-chevron-down
+            ul.nav.child_menu
+              li
+                a(href='/attendance') Attendance
+              li
+                a(href='/documents') Documents
+              li
+                a(href='/alert') Alert
+          li
+            a
+              i.fa.fa-user
+              |  System Admin 
+              span.fa.fa-chevron-down
+            ul.nav.child_menu
+              li
+                a(href='/employee_management') Employee Management
+              li
+                a(href='/route_management') Route Management
+              li
+                a(href='/map_management') Map Management

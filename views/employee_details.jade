@@ -1,0 +1,63 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                h3
+                  | 雇员资料
+                  a.navbar-right.fa.fa-long-arrow-left(href='/employee_management')
+              .col-md-12
+                h4
+                  table
+                    for row, index in data
+                      tr
+                        td 
+                          img(src='https://qchat.mybluemix.net/#{row.employee_image}',height='150px',width='150px')
+                        td 
+                          |&nbsp;&nbsp;&nbsp; 姓名 : #{row.employee_name}
+                          br
+                          br
+                          |&nbsp;&nbsp;&nbsp; 手机号码 : #{row.employee_phone_no}
+                          br
+                          br
+                          |&nbsp;&nbsp;&nbsp; 电邮: #{row.employee_email}
+                          br
+                          br
+                          |&nbsp;&nbsp;&nbsp; 住址 : #{row.employee_address}
+              .col-md-12
+               for row, index in data
+                h4
+                  | 当前位置 : #{row.beacon_location+", "+row.beacon_level}
+                  br
+                  br
+              .col-md-12
+                h4
+                  u 路径列表
+                  br
+                  br
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                        th No
+                        th Route
+                        th Date
+                        th Time
+                        
+                    tbody
+                      for row, index in route
+                       tr
+                         td #{index+1}
+                         td #{row.route_name}
+                         td #{row.days+"/"+row.months+"/"+row.years}
+                         td #{row.hours+":"+row.minutes+":"+row.seconds}
+                        
+                      
+            .clearfix
+    // /page content
+

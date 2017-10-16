@@ -1,0 +1,67 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                h2
+                 img(src='images/system_admin.png',height='35px',width='30px')
+                 a(href='/route_management') &nbsp;Route Table |
+                 a(href='/set_route') &nbsp;Set Route |
+              .col-md-12
+                form.form-horizontal.form-label-left(role='form',method='post' action='/set_route/add')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Day &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='date', name='day',id='day')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Time  &nbsp; : &nbsp;
+                        .col-md-3
+                          select.form-control(id="time",name="time")
+                            option 00:00
+                            option 01:00
+                            option 02:00
+                            option 03:00
+                            option 04:00
+                            option 05:00
+                            option 06:00
+                            option 07:00
+                            option 08:00
+                            option 09:00
+                            option 10:00
+                            option 11:00
+                            option 12:00
+                            option 13:00
+                            option 14:00
+                            option 15:00
+                            option 16:00
+                            option 17:00
+                            option 18:00
+                            option 19:00
+                            option 20:00
+                            option 21:00
+                            option 22:00
+                            option 23:00
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Employee Selected &nbsp; : &nbsp;
+                        .col-md-3
+                          select.select2_multiple.form-control(multiple='multiple',id="employee_id",name="employee_id",required)
+                            for row, index in data
+                                option(value='#{row.employee_id}') #{row.employee_name+" ("+row.employee_phone_no+")"}
+                                
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Set checkpoint &nbsp; : &nbsp;
+                        .col-md-3
+                          select.select2_multiple.form-control(multiple='multiple',id="checkpoint",name="checkpoint",required)
+                            for row, index in checkpoint
+                                option(value='#{row.location_code}') #{row.location_code}
+                    .form-group
+                        .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
+                          button.btn.btn-primary(type='submit',id="confirm_btn") Confirm
+                          button.btn.btn-success(type='button',onclick='goBack();') Cancel
+    // /page content
+

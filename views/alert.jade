@@ -1,0 +1,135 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-6
+                h3
+                  img(src='images/alert.png',height='35px',width='30px')
+                  | &nbsp;警报
+                  br
+                  br
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                       th No
+                       th 文件
+                       th 备注
+                       th 雇员编号
+                       th 时间
+                       th 传输位置
+                    tbody
+                      for row, index in data
+                        tr
+                          td #{index+1}
+                          td
+                            if row.document_type === 'Note'
+                               a(href='/alert/#{row.document_id}', data-toggle='modal', data-target='.bs-note-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                            else if row.document_type === 'Photo'
+                               a(href='/alert/#{row.document_id}', data-toggle='modal', data-target='.bs-photo-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                            else if row.document_type === 'Audio'
+                               a(href='/alert/#{row.document_id}', data-toggle='modal', data-target='.bs-audio-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                          td #{row.document_remark}
+                          td #{row.employee_phone_no}
+                          td #{row.document_time.toLocaleString()}
+                          td #{row.beacon_location+', '+row.beacon_level}
+            .clearfix
+      
+    for row, index in data
+        if row.document_type === 'Note'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-note-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title 笔记
+                    .modal-body
+                      p
+                       textarea(rows='4', cols='50',width='auto')
+                        | #{row.document_text}
+                      p
+                        | 雇员编号 : #{row.employee_phone_no}
+                      p
+                        | 时间 : #{row.document_time.toLocaleString()}
+                      p
+                        | 传输地点 : #{row.beacon_location+', '+row.beacon_level}
+                      p
+                        | 备注 : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') 关闭
+
+        if row.document_type === 'Audio'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-audio-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title 录音
+                    .modal-body
+                      p
+                        audio(controls='')
+                            source(src='https://qchat.mybluemix.net/#{row.document_audio}', type='audio/mpeg')
+                            | 抱歉，您的网路浏览器不支持录音播放。
+                      p
+                        | 雇员编号 : #{row.employee_phone_no}
+                      p
+                        | 时间 : #{row.document_time.toLocaleString()}
+                      p
+                        | 传输地点 : #{row.beacon_location+', '+row.beacon_level}
+                      p
+                        | 备注  : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
+        if row.document_type === 'Photo'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-photo-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title 照片
+                    .modal-body
+                      p
+                       img(src='https://qchat.mybluemix.net/#{row.document_image}',height='200px',width='auto')
+                      p
+                        | 雇员编号 : #{row.employee_phone_no}
+                      p
+                        | 时间 : #{row.document_time.toLocaleString()}
+                      p
+                        | 传输地点 : #{row.beacon_location+', '+row.beacon_level}
+                      p
+                        | 备注  : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') 关闭
+                      
+
+    .modal.fade.bs-alert-modal-lg(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog.modal-sm
+          .modal-content
+            .modal-header
+              button.close(type='button', data-dismiss='modal')
+                span(aria-hidden='true') ×
+              h4#myModalLabel.modal-title 照片
+            .modal-body
+              p
+               img(src='images/broken_door_knob.jpg',height='200px',width='auto')
+              p
+                | 备注 : 门锁坏了
+              p
+                | 雇员编号 : 0018
+              p
+                | 时间 : 01/01/2017 00:12:10
+              p
+                | 传输位置 : 中信大厦, 1楼
+              
+            .modal-footer
+              button.btn.btn-default(type='button', data-dismiss='modal') 关闭
+    // /page content
+

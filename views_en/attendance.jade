@@ -1,0 +1,267 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                h3
+                  img(src='images/attendance.png',height='40px',width='30px')
+                  | &nbsp;Attendence
+                  br
+                  br
+              .col-md-3 
+                h5.control-label.col-md-3 &nbsp; Month:
+                .col-md-3
+                  input(type="text", value="#{JSON.stringify(attendance)}",id="attendance",hidden='true')
+                  input(type="text", value="#{JSON.stringify(days)}",id="days",hidden='true')
+                  select.form-control(id="month_attendance",name="month_attendance",onchange="select_month(this)")
+                   option 01
+                   option 02
+                   option 03
+                   option 04
+                   option 05
+                   option 06
+                   option 07
+                   option 08
+                   option 09
+                   option 10
+                   option 11
+                   option 12
+                  br
+              .col-lg-12.col-md-12.col-sm-12.col-xs-12
+                table#attendance_tbl.table.table-striped.table-bordered(width='100%')
+                    thead
+                      tr
+                        th ID / Date
+                        -for(var i=1;i<=days;i++){ 
+                        th #{i}
+                        -}
+                         
+                    tbody
+                      for row, index in attendance
+                        tr
+                          th #{row.employee_id}
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 1 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 1 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+  
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 2 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 2 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 3 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 3 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 4 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 4 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                          
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 5 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 5 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 6 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 6 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+  
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 7 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 7 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 8 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 8 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 9 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 9 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                          
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 10 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 10 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                          
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 11 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 11 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+  
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 12 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 12 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 13 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 13 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 14 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 14 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                          
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 15 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 15 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 16 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 16 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+  
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 17 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 17 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 18 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 18 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 19 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 19 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                          
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 20 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 20 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                            
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 21 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 21 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+  
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 22 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 22 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 23 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 23 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 24 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 24 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                          
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 25 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 25 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 26 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 26 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+  
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 27 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 27 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 28 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 28 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 29 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 29 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                          
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 30 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 30 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+                                 
+                          td
+                            for row2, index in row.emp_attendance
+                                if(row2.day === 31 && (row2.total_attend < row2.attendance)) 
+                                 label(style='color:red') #{row2.total_attend+"/"+row2.attendance}
+                                else if(row2.day === 31 && (row2.total_attend === row2.attendance)) 
+                                 | #{row2.total_attend+"/"+row2.attendance}
+
+            .clearfix
+    // /page content
+

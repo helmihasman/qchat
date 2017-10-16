@@ -1,0 +1,46 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                h3
+                 img(src='images/system_admin.png',height='35px',width='30px')
+                 a(href='/route_management') &nbsp;Route Table |
+                 a(href='/set_route') &nbsp;Set Route |
+                 a(href='/location') &nbsp;Location |
+                 a(href='/location_add') &nbsp;Set Location |
+                  br
+                  br
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                        th ID
+                        th Beacon Id
+                        th Location
+                        th Level
+                        th Code
+                        th Action
+                    tbody
+                      for row, index in data
+                        tr
+                          td #{index+1}
+                          td #{row.beacon_id}
+                          td #{row.beacon_location}
+                          td #{row.beacon_level}
+                          td #{row.location_code}
+                          td
+                            div(style='display:inline-block')
+                                a(href='/location/edit/#{row.location_id}').btn.btn-sm.btn-primary
+                                        i.fa.fa-edit
+                             div(style='display:inline-block')
+                                a(href='/location/delete/#{row.location_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                        i.fa.fa-remove
+            .clearfix
+    // /page content
+

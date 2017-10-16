@@ -1,0 +1,43 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-6
+                h3
+                  img(src='images/system_admin.png',height='35px',width='30px')
+                  | &nbsp;雇员管理 
+                  br
+                  br
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                        th 雇员编号
+                        th 姓名
+                        th 手机号码
+                        th 电邮
+                        th 在线
+                        th 地点
+                    tbody
+                      for row, index in data
+                        tr
+                          td 
+                            a(href='/employee_details/#{row.employee_id}',style='color:blue') #{row.employee_id}
+                          td #{row.employee_name}
+                          td #{row.employee_phone_no}
+                          td #{row.employee_email}
+                          td 
+                            if row.employee_status === 'online'
+                              | Yes
+                            else
+                              | No
+                          td #{row.beacon_location+", "+row.beacon_level}
+                      
+            .clearfix
+    // /page content
+

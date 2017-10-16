@@ -1,0 +1,245 @@
+// jQuery
+script(src='../../gentelella/vendors/jquery/dist/jquery.min.js')
+// Bootstrap
+script(src='../../gentelella/vendors/bootstrap/dist/js/bootstrap.min.js')
+// FastClick
+script(src='../../gentelella/vendors/fastclick/lib/fastclick.js')
+// NProgress
+script(src='../../gentelella/vendors/nprogress/nprogress.js')
+// Chart.js
+script(src='../../gentelella/vendors/Chart.js/dist/Chart.min.js')
+// gauge.js
+script(src='../../gentelella/vendors/bernii/gauge.js/dist/gauge.min.js')
+// bootstrap-progressbar
+script(src='../../gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js')
+// iCheck
+script(src='../../gentelella/vendors/iCheck/icheck.min.js')
+// Skycons
+script(src='../../gentelella/vendors/skycons/skycons.js')
+// Flot
+script(src='../../gentelella/vendors/Flot/jquery.flot.js')
+script(src='../../gentelella/vendors/Flot/jquery.flot.pie.js')
+script(src='../../gentelella/vendors/Flot/jquery.flot.time.js')
+script(src='../../gentelella/vendors/Flot/jquery.flot.stack.js')
+script(src='../../gentelella/vendors/Flot/jquery.flot.resize.js')
+// Flot plugins
+script(src='../../gentelella/js/flot/jquery.flot.orderBars.js')
+script(src='../../gentelella/js/flot/date.js')
+script(src='../../gentelella/js/flot/jquery.flot.spline.js')
+script(src='../../gentelella/js/flot/curvedLines.js')
+// jVectorMap
+script(src='../../gentelella/js/maps/jquery-jvectormap-2.0.3.min.js')
+// bootstrap-daterangepicker
+script(src='../../gentelella/js/moment/moment.min.js')
+script(src='../../gentelella/js/datepicker/daterangepicker.js')
+// Custom Theme Scripts
+script(src='../../gentelella/build/js/custom.min.js')
+// Datatables
+script(src='../../gentelella/vendors/datatables.net/js/jquery.dataTables.min.js')
+script(src='../../gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js')
+script(src='../../gentelella/vendors/datatables.net-buttons/js/dataTables.buttons.min.js')
+script(src='../../gentelella/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js')
+script(src='../../gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js')
+script(src='../../gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js')
+script(src='../../gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js')
+script(src='../../gentelella/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js')
+script(src='../../gentelella/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js')
+script(src='../../gentelella/vendors/datatables.net-responsive/js/dataTables.responsive.min.js')
+script(src='../../gentelella/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js')
+script(src='../../gentelella/vendors/datatables.net-scroller/js/datatables.scroller.min.js')
+script(src='../../gentelella/vendors/jszip/dist/jszip.min.js')
+script(src='../../gentelella/vendors/pdfmake/build/pdfmake.min.js')
+script(src='../../gentelella/vendors/pdfmake/build/vfs_fonts.js')
+
+script(src='gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js')
+
+script(type='text/javascript').
+  function goBack() {
+    window.history.back();
+    }
+    
+script(type='text/javascript').
+  function goHome() {
+    window.location.href = '/';
+    }
+    
+script(type='text/javascript').
+  function select_month(selectObject) {
+    $("#att_btn").click();
+    }
+  
+
+script.
+ $(document).ready(function() {
+     $('#datatable').DataTable();
+    } );
+ $(document).ready(function() {
+     $('#datatable2').DataTable();
+    } );
+ 
+script.
+ function simcard_bind(){
+    document.getElementById("sim_card").readOnly = false;
+    document.getElementById("simcard_bind").style.display = "none";
+ }
+script.
+ function email_bind(){
+    document.getElementById("email").readOnly = false;
+    document.getElementById("email_bind").style.display = "none";
+ }
+    
+// Ion.RangeSlider
+script.
+  $(document).ready(function() {
+    
+    $("#range_31").ionRangeSlider({
+        type: "double",
+        min: 0,
+        max: 100,
+        from: 30,
+        to: 70,
+        from_fixed: true
+    });
+
+  });
+// /Ion.RangeSlider
+// Bootstrap Colorpicker
+ 
+script.
+  function myMap() {
+    var mapProp= {
+        center:new google.maps.LatLng(51.508742,-0.120850),
+        zoom:5
+        };
+        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+    }
+    
+script(src='https://maps.google.cn/maps/api/js?key=AIzaSyDdtF6BnY-mKqQmaOIyLVy-rrCI_jJGkDs&sensor=false&libraries=drawing')
+
+
+script.
+    var showMaps = function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+
+            map = new google.maps.Map(document.getElementById('googleMapArea'), {
+                center: {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                },
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
+            });
+           
+            
+            bindDataLayerListeners(map.data);
+            
+            loadPolygons(map);  //load saved data
+            
+            function bindDataLayerListeners(dataLayer) {
+                dataLayer.addListener('addfeature', savePolygon);
+                dataLayer.addListener('removefeature', savePolygon);
+                //dataLayer.addListener('setgeometry', savePolygon);
+            }
+
+            
+
+        });
+        function loadPolygons(map) {
+                var data = JSON.parse(localStorage.getItem('geoData'));
+                //alert("in load poly");
+
+                map.data.forEach(function (f) {
+                    map.data.remove(f);
+                });
+                map.data.addGeoJson(data);
+            }
+
+            function savePolygon() {
+                 
+                map.data.toGeoJson(function (json) {
+                    localStorage.setItem('geoData', JSON.stringify(json));
+                    //initControls(json);
+                });
+            }
+
+    }
+    };
+
+
+
+script.
+    var runMaps = function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+
+            map = new google.maps.Map(document.getElementById('googleMap'), {
+                center: {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                },
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
+            });
+            
+            
+            map.data.setControls(['Polygon']);
+            
+            bindDataLayerListeners(map.data);
+            
+            loadPolygons(map);  //load saved data
+            
+            function bindDataLayerListeners(dataLayer) {
+                dataLayer.addListener('addfeature', savePolygon);
+                dataLayer.addListener('removefeature', savePolygon);
+                //dataLayer.addListener('setgeometry', savePolygon);
+            }
+
+            
+
+        });
+        function loadPolygons(map) {
+                var data = JSON.parse(localStorage.getItem('geoData'));
+                map.data.forEach(function (f) {
+                    map.data.remove(f);
+                });
+                map.data.addGeoJson(data);
+            }
+
+            function savePolygon() {
+                 
+                map.data.toGeoJson(function (json) {
+                    localStorage.setItem('geoData', JSON.stringify(json));
+                    initControls(json);
+                });
+            }
+            
+            function initControls(data)
+            {
+                var sel = document.getElementById('polyList');
+                sel.options.length = 0;
+
+                for (var i = 0; i < data.features.length; i++) {
+                    var opt = document.createElement('option');
+                    opt.innerHTML = data.features[i].geometry.type;
+                    opt.value = i;
+                    sel.appendChild(opt);
+                }
+
+                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
+                document.getElementById("btnDelete").onclick = function(){
+                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
+                    data.features.splice(parseInt(selIdx), 1);   
+
+                    //reload 
+                    localStorage.setItem('geoData', JSON.stringify(data));
+                    initControls(data);  
+                    loadPolygons(map);   
+                };
+            }
+            
+    
+    }
+    };

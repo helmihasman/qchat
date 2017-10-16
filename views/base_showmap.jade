@@ -1,0 +1,22 @@
+doctype html
+html
+    head
+        include header.jade
+     //body.nav-md(onload='runMaps()')
+    body.nav-md(onload='showMaps()')
+     div.container.body
+      div.main_container
+        if session.language === 'en'
+          include navigation_en.jade
+        else
+          include navigation.jade
+        if session.language === 'en'
+          include sidebar_en.jade
+        else
+          include sidebar.jade
+        block content
+        if session.language === 'en'
+          include footer_en.jade
+        else
+          include footer.jade
+        include js.jade

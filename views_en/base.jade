@@ -1,0 +1,13 @@
+doctype html
+html
+    head
+        include header.jade
+     //body.nav-md(onload='runMaps()')
+    body.nav-md(onload='runMaps()')
+     div.container.body
+      div.main_container
+        include navigation.jade
+        include sidebar.jade
+        block content
+        include footer.jade
+        include js.jade

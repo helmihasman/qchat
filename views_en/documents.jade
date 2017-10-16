@@ -1,0 +1,120 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-6
+                h3
+                  img(src='images/documents.png',height='40px',width='30px')
+                  | &nbsp;Documents
+                  br
+                  br
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                        th No
+                        th Document
+                        th Type
+                        th ID
+                        th Date
+                        th Location
+                        th Remark
+                    tbody
+                      for row, index in data
+                        tr
+                          td #{index+1}
+                          td
+                            if row.document_type === 'Note'
+                               a(href='', data-toggle='modal', data-target='.bs-note-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                            else if row.document_type === 'Photo'
+                               a(href='', data-toggle='modal', data-target='.bs-photo-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                            else if row.document_type === 'Audio'
+                               a(href='', data-toggle='modal', data-target='.bs-audio-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                          td #{row.document_type}
+                          td #{row.employee_phone_no}
+                          td #{row.document_time.toLocaleString()}
+                          td #{row.beacon_location+', '+row.beacon_level}
+                          td #{row.document_remark}
+            .clearfix
+      
+    for row, index in data
+        if row.document_type === 'Note'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-note-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title Note
+                    .modal-body
+                      p
+                       textarea(rows='4', cols='50',width='auto')
+                        | #{row.document_text}
+                      p
+                        | Type : #{row.document_type}
+                      p
+                        | Employee ID : #{row.employee_phone_no}
+                      p
+                        | Time : #{row.document_time.toLocaleString()}
+                      p
+                        | Location : #{row.beacon_location+', '+row.beacon_level}
+                      p
+                        | Remark : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
+
+        if row.document_type === 'Audio'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-audio-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title Audio
+                    .modal-body
+                      p
+                        audio(controls='')
+                            source(src='https://qchat.mybluemix.net/#{row.document_audio}', type='audio/mpeg')
+                            | Your browser does not support the audio element.
+                      p
+                        | Type : #{row.document_type}
+                      p
+                        | Employee ID : #{row.employee_phone_no}
+                      p
+                        | Time : #{row.document_time.toLocaleString()}
+                      p
+                        | Location : #{row.beacon_location+', '+row.beacon_level}
+                      p
+                        | Remark : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
+        if row.document_type === 'Photo'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-photo-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title Photo
+                    .modal-body
+                      p
+                       img(src='https://qchat.mybluemix.net/#{row.document_image}',height='200px',width='auto')
+                      p
+                        | Type : #{row.document_type}
+                      p
+                        | Employee ID : #{row.employee_phone_no}
+                      p
+                        | Time : #{row.document_time.toLocaleString()}
+                      p
+                        | Location : #{row.beacon_location+', '+row.beacon_level}
+                      p
+                        | Remark : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
+    // /page content
+
