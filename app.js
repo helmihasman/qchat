@@ -37,6 +37,31 @@ app.use(function(req, res, next){
   next();
 });
 
+
+// Variable deployPath is set in web.config and must match
+// the path of app.js in virtual directory.
+// If app.js is run from command line:
+//   "C:/tssapp-deploy/tsappsvr/TestExpress/0.0.0> node app.js"
+// deployPath is set to empty string.
+var deployPath = process.env.deployPath || "";
+
+console.log("deployPath==="+deployPath);
+
+// Static content server
+app.use(deployPath + "/pages", express.static(__dirname + '/public'));
+
+// REST API handler (placeholder)
+app.all(deployPath + "/api", function(req, res) {
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.end("<h2>REST API Handler found.</h2>");
+});
+
+// Default handler
+//app.get(deployPath + "/", function(req, res) {
+//  res.writeHead(200, {'Content-Type': 'text/html'});
+//  res.end("<h2>Default Handler found.</h2>");
+//});
+
 //http.listen(80);
 //var port = app.settings.port;
 //var port2 = app.get('port');
@@ -125,12 +150,12 @@ var con = mysql.createConnection({
 });
 
 
-app.post("/login", passport.authenticate('local_qchat', {
+app.post(deployPath +"/login", passport.authenticate('local_qchat', {
     
 
-    successRedirect: '/',
+    successRedirect: deployPath +'/',
 
-    failureRedirect: '/login',
+    failureRedirect: deployPath +'/login',
 
     failureFlash: true
 
@@ -144,7 +169,7 @@ app.post("/login", passport.authenticate('local_qchat', {
 //    
 //    console.log("inpost login dummy");
 //});
-app.get('/language/:lan',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/language/:lan',isAuthenticated,function(req,res,next){
      var language = req.params.lan;
      req.session.language = language;
      res.redirect('/');
@@ -153,7 +178,7 @@ app.get('/language/:lan',isAuthenticated,function(req,res,next){
 });
 
 var audio=0,note=0,photo=0,alert_bil=0,sum=0;
-app.get('/',isAuthenticated, function(req, res, next) {
+app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
     var employee,alert,notification;
 //    var audio=0,note=0,photo=0,alert_bil=0,sum=0;
     
@@ -307,7 +332,7 @@ app.get('/',isAuthenticated, function(req, res, next) {
 
 //----------------------------DOCUMENTS----------------------------
 
-app.get('/documents',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/documents',isAuthenticated,function(req,res,next){
     
     con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'read'",function(error,rows,fields){
        if(!!error){
@@ -333,7 +358,7 @@ app.get('/documents',isAuthenticated,function(req,res,next){
 
 
 //----------------------------ALERT----------------------------
-app.get('/alert',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/alert',isAuthenticated,function(req,res,next){
     con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'unread'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
@@ -352,7 +377,7 @@ app.get('/alert',isAuthenticated,function(req,res,next){
    }); 
 });
 
-app.get('/alert/:id',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/alert/:id',isAuthenticated,function(req,res,next){
     var doc_id = req.params.id;
     console.log("doc_id--"+doc_id);
     
@@ -373,7 +398,7 @@ app.get('/alert/:id',isAuthenticated,function(req,res,next){
 
 
 //----------------------------EMPLOYEE MANAGEMENT----------------------------
-app.get('/employee_management',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/employee_management',isAuthenticated,function(req,res,next){
     con.query("SELECT * FROM employee left join location on employee.employee_location = location.location_code where employee_level != '1'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
@@ -399,7 +424,7 @@ app.get('/employee_management',isAuthenticated,function(req,res,next){
 
 //----------------------------EMPLOYEE DETAILS----------------------------
 
-app.get('/employee_details/:id',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/employee_details/:id',isAuthenticated,function(req,res,next){
      var emp_id = req.params.id;
 //    var route = [];
     var route;
@@ -434,7 +459,7 @@ app.get('/employee_details/:id',isAuthenticated,function(req,res,next){
 
 //----------------------------EMPLOYEE DETAILS----------------------------
 
-app.get('/route_management',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/route_management',isAuthenticated,function(req,res,next){
     
     var route;
     
@@ -479,7 +504,7 @@ app.get('/route_management',isAuthenticated,function(req,res,next){
 
 //----------------------------SET ROUTE----------------------------
 
-app.get('/set_route',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/set_route',isAuthenticated,function(req,res,next){
     
    var checkpoint;
    
@@ -512,7 +537,7 @@ app.get('/set_route',isAuthenticated,function(req,res,next){
     //res.render('set_route',{title:"Set Route"});
 });
 
-app.post('/set_route/add',isAuthenticated,function(req,res,next){
+app.post(deployPath +'/set_route/add',isAuthenticated,function(req,res,next){
     
     v_day = req.sanitize( 'day' ).escape(); 
     v_time = req.sanitize( 'time' ).escape();
@@ -538,10 +563,10 @@ app.post('/set_route/add',isAuthenticated,function(req,res,next){
         }
     }
     if(req.session.language === 'en'){
-        res.redirect('/route_management_en');
+        res.redirect(deployPath +'/route_management_en');
     }
     else{
-        res.redirect('/route_management');
+        res.redirect(deployPath +'/route_management');
     }
 //    res.redirect('/route_management');
     
@@ -569,7 +594,7 @@ app.post('/set_route/add',isAuthenticated,function(req,res,next){
 //----------------------------SET ROUTE----------------------------
 
 //----------------------------LOCATION----------------------------
-app.get('/location',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/location',isAuthenticated,function(req,res,next){
     con.query("SELECT * FROM location",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
@@ -578,7 +603,7 @@ app.get('/location',isAuthenticated,function(req,res,next){
            //console.log('Successful query\n');
            //console.log(rows);
             if(req.session.language === 'en'){
-                res.render('location_en',{title:"Location",data:rows});
+                res.render(deployPath +'location_en',{title:"Location",data:rows});
             }
             else{
                 res.render('location',{title:"Location",data:rows});
@@ -589,7 +614,7 @@ app.get('/location',isAuthenticated,function(req,res,next){
     //res.render('employee_management',{title:"Employee Management"});
 });
 
-app.get('/location_add',function(req,res,next){
+app.get(deployPath +'/location_add',function(req,res,next){
     if(req.session.language === 'en'){
     res.render('location_add_en',{title:"Set Location"});
     }
@@ -598,7 +623,7 @@ app.get('/location_add',function(req,res,next){
     }
 });
 
-app.post('/location/add',isAuthenticated,function(req,res,next){
+app.post(deployPath +'/location/add',isAuthenticated,function(req,res,next){
     
     v_beacon_id = req.sanitize( 'beacon_id' ).escape(); 
     v_beacon_location = req.sanitize( 'beacon_location' ).escape();
@@ -617,15 +642,15 @@ app.post('/location/add',isAuthenticated,function(req,res,next){
                 }
             });
     if(req.session.language === 'en'){
-        res.redirect('/location_en');
+        res.redirect(deployPath +'/location_en');
     }
     else{
-        res.redirect('/location');
+        res.redirect(deployPath +'/location');
     }
 
 });
 
-app.get('/location/delete/:id',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/location/delete/:id',isAuthenticated,function(req,res,next){
     
      var location_id = req.params.id;
    
@@ -640,15 +665,15 @@ app.get('/location/delete/:id',isAuthenticated,function(req,res,next){
                 }
             });
     if(req.session.language === 'en'){
-        res.redirect('/location_en');
+        res.redirect(deployPath +'/location_en');
     }
     else{
-        res.redirect('/location');
+        res.redirect(deployPath +'/location');
     }
 
 });
 
-app.get('/location/edit/:id',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/location/edit/:id',isAuthenticated,function(req,res,next){
     var location_id = req.params.id;
     con.query("SELECT * FROM location where location_id='"+location_id+"'",function(error,rows,fields){
        if(!!error){
@@ -669,7 +694,7 @@ app.get('/location/edit/:id',isAuthenticated,function(req,res,next){
     //res.render('employee_management',{title:"Employee Management"});
 });
 
-app.post('/location/edit/:id',isAuthenticated,function(req,res,next){
+app.post(deployPath +'/location/edit/:id',isAuthenticated,function(req,res,next){
     var location_id = req.params.id;
     v_beacon_id = req.sanitize( 'beacon_id' ).escape(); 
     v_beacon_location = req.sanitize( 'beacon_location' ).escape();
@@ -684,10 +709,10 @@ app.post('/location/edit/:id',isAuthenticated,function(req,res,next){
            //console.log('Successful query\n');
            //console.log(rows);
             if(req.session.language === 'en'){
-                 res.redirect('/location_en');
+                 res.redirect(deployPath +'/location_en');
             }
             else{
-                 res.redirect('/location');
+                 res.redirect(deployPath +'/location');
             }
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
@@ -699,7 +724,7 @@ app.post('/location/edit/:id',isAuthenticated,function(req,res,next){
 //----------------------------LOCATION----------------------------
 
 
-app.get('/attendance',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     var route;
     var days = 31;
     var attendance;
@@ -789,7 +814,7 @@ app.get('/attendance',isAuthenticated,function(req,res,next){
     //res.render('attendance',{title:"Attendance"});
 });
 
-app.post('/attendance',isAuthenticated,function(req,res,next){
+app.post(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     
     months = req.sanitize( 'month_attendance' ).escape(); 
     //var months = req.params.month;
@@ -965,7 +990,7 @@ app.post('/attendance',isAuthenticated,function(req,res,next){
 });
 
 
-app.get('/login',function(req,res,next){
+app.get(deployPath +'/login',function(req,res,next){
     res.render('login',{title:"Login"});
 });
 
@@ -974,7 +999,7 @@ app.get('/login',function(req,res,next){
 //    res.render('profile',{title:"Profile"});
 //});
 
-app.get('/profile/:users_id',isAuthenticated,function(req,res){
+app.get(deployPath +'/profile/:users_id',isAuthenticated,function(req,res){
     var users_id = req.params.users_id;
    con.query("SELECT * FROM employee WHERE employee_id = ?",[users_id],function(error,rows,fields){
        if(!!error){
@@ -994,7 +1019,7 @@ app.get('/profile/:users_id',isAuthenticated,function(req,res){
    }); 
 });
 
-app.post('/profile/update',isAuthenticated,function(req,res){
+app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
 //        var users_id = req.params.users_id;
         v_emp_id = req.sanitize( 'emp_id' ).escape().trim();
         v_name = req.sanitize( 'name' ).escape().trim(); 
@@ -1015,7 +1040,7 @@ app.post('/profile/update',isAuthenticated,function(req,res){
                 {
                     var errors_detail  = ("Error Insert : %s ",error );   
                     //req.flash('msg_error', errors_detail); 
-                    res.render('/profile', 
+                    res.render(deployPath +'/profile', 
                     { 
                         name: req.param('name'), 
                         motto: req.param('motto'),
@@ -1025,12 +1050,12 @@ app.post('/profile/update',isAuthenticated,function(req,res){
                     });
                 }else{
                     //req.flash('msg_info', 'Update profile success'); 
-                    res.redirect('/profile/'+v_emp_id);
+                    res.redirect(deployPath +'/profile/'+v_emp_id);
                 }     
    }); 
 });
 
-app.post('/profile/pic',isAuthenticated,function(req,res){
+app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
     
     upload(req,res,function(err) {
         v_emp_id = req.sanitize('emp_id').escape().trim();
@@ -1048,10 +1073,10 @@ app.post('/profile/pic',isAuthenticated,function(req,res){
                     var errors_detail  = ("Error Insert : %s ",error );
                     console.log(errors_detail);
                     //req.flash('msg_error', errors_detail); 
-                    res.redirect('/profile/'+v_emp_id);
+                    res.redirect(deployPath +'/profile/'+v_emp_id);
                 }else{
                     //req.flash('msg_info', 'Add gateway success'); 
-                    res.redirect('/profile/'+v_emp_id);
+                    res.redirect(deployPath +'/profile/'+v_emp_id);
                 }     
       }); 
     });      
@@ -1059,7 +1084,7 @@ app.post('/profile/pic',isAuthenticated,function(req,res){
 
 //----------------------------PROFILE----------------------------
 
-app.get('/tracking',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
     con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
@@ -1079,7 +1104,7 @@ app.get('/tracking',isAuthenticated,function(req,res,next){
     
 });
 
-app.get('/path_playback',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
@@ -1147,7 +1172,7 @@ app.get('/path_playback',isAuthenticated,function(req,res,next){
 
 });
 
-app.get('/map_management',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/map_management',isAuthenticated,function(req,res,next){
     if(req.session.language === 'en'){
         res.render('map_management_en',{title:"Map Management"});
     }
@@ -1157,7 +1182,7 @@ app.get('/map_management',isAuthenticated,function(req,res,next){
     
 });
 
-app.get('/geofencing',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/geofencing',isAuthenticated,function(req,res,next){
     if(req.session.language === 'en'){
         res.render('geofencing_en',{title:"Geofencing"});
     }
@@ -1167,7 +1192,7 @@ app.get('/geofencing',isAuthenticated,function(req,res,next){
     
 });
 
-app.get('/test_mobile',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/test_mobile',isAuthenticated,function(req,res,next){
     
     var requestData = {get_route_data:{emp_id:"1"}};
 
@@ -1211,7 +1236,7 @@ app.get('/test_mobile',isAuthenticated,function(req,res,next){
        }, 2000);
 });
 
-app.get('/test_time',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/test_time',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
@@ -1314,7 +1339,7 @@ app.get('/test_time',isAuthenticated,function(req,res,next){
  
  //----------------------------REST API-------------------------------------
 
-app.post('/api/v1/send_login',function(req,res){
+app.post(deployPath +'/api/v1/send_login',function(req,res){
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -1376,7 +1401,7 @@ app.post('/api/v1/send_login',function(req,res){
 
 });
 
-app.post('/api/v1/send_logout',function(req,res){
+app.post(deployPath +'/api/v1/send_logout',function(req,res){
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -1425,7 +1450,7 @@ app.post('/api/v1/send_logout',function(req,res){
 
 });
 
-app.get('/api/v1/get_text',function(req,res){
+app.get(deployPath +'/api/v1/get_text',function(req,res){
     
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -1450,7 +1475,7 @@ app.get('/api/v1/get_text',function(req,res){
     });
 });
 
-app.post('/api/v1/send_text',function(req,res){
+app.post(deployPath +'/api/v1/send_text',function(req,res){
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -1545,7 +1570,7 @@ app.post('/api/v1/send_text',function(req,res){
 
 });
 
-app.get('/api/v1/get_image',function(req,res){
+app.get(deployPath +'/api/v1/get_image',function(req,res){
     
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -1570,7 +1595,7 @@ app.get('/api/v1/get_image',function(req,res){
     });
 });
 
-app.post('/api/v1/send_image', function(req, res) {
+app.post(deployPath +'/api/v1/send_image', function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
@@ -1664,7 +1689,7 @@ app.post('/api/v1/send_image', function(req, res) {
  //res.send(req.body.send_image_data.data); 
 });
 
-app.get('/api/v1/get_audio',function(req,res){
+app.get(deployPath +'/api/v1/get_audio',function(req,res){
     
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -1689,7 +1714,7 @@ app.get('/api/v1/get_audio',function(req,res){
     });
 });
 
-app.post('/api/v1/send_audio', function(req, res) {
+app.post(deployPath +'/api/v1/send_audio', function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
@@ -1782,7 +1807,7 @@ app.post('/api/v1/send_audio', function(req, res) {
 
 });
 
-app.get('/api/v1/get_location',function(req,res){
+app.get(deployPath +'/api/v1/get_location',function(req,res){
     
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -1807,7 +1832,7 @@ app.get('/api/v1/get_location',function(req,res){
     });
 });
 
-app.get('/api/v1/get_route',function(req,res){
+app.get(deployPath +'/api/v1/get_route',function(req,res){
     
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -1832,7 +1857,7 @@ app.get('/api/v1/get_route',function(req,res){
     });
 });
 
-app.post('/api/v1/send_route', function(req, res) {
+app.post(deployPath +'/api/v1/send_route', function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
@@ -1903,7 +1928,7 @@ app.post('/api/v1/send_route', function(req, res) {
 
 });
 
-app.post('/api/v1/send_location', function(req, res) {
+app.post(deployPath +'/api/v1/send_location', function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
@@ -2065,7 +2090,7 @@ app.post('/api/v1/send_location', function(req, res) {
 
 });
 
-app.post('/api/v1/save_map/:map_string', function(req, res) {
+app.post(deployPath +'/api/v1/save_map/:map_string', function(req, res) {
     
      var map_string = req.params.map_string;
      
@@ -2080,7 +2105,7 @@ app.post('/api/v1/save_map/:map_string', function(req, res) {
    }); 
 });
 
-app.post('/api/v1/clean_map/', function(req, res) {
+app.post(deployPath +'/api/v1/clean_map/', function(req, res) {
     con.query("TRUNCATE map",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
