@@ -15,23 +15,15 @@ block content
                  a(href='/floor_plan_list') &nbsp;Floor Plan |
                  a(href='/floor_plan') &nbsp;Add Floor Plan |
               .col-md-12
-                form.form-horizontal.form-label-left(role='form',method='post' action='/location/add')
+                form.form-horizontal.form-label-left(enctype="multipart/form-data",role='form',method='post' action='/floor_plan/add')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Beacon ID &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Floor Plan Image &nbsp; : &nbsp;
                         .col-md-6
-                          input(type='text', name='beacon_id',id='beacon_id')
+                          input(type="file",id="floorplan_img",name="floorplan_img",required)
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Location &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Floor Name &nbsp; : &nbsp;
                         .col-md-6
-                          input(type='text', name='beacon_location',id='beacon_location')
-                    .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Level &nbsp; : &nbsp;
-                        .col-md-6
-                          input(type='text', name='beacon_level',id='beacon_level')
-                    .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Code &nbsp; : &nbsp;
-                        .col-md-6
-                          input(type='text', name='location_code',id='location_code')
+                          input(type='text', name='floor_name',id='floor_name')
                     .form-group
                         .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
                           button.btn.btn-primary(type='submit',id="confirm_btn") Confirm

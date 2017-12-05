@@ -21,25 +21,23 @@ block content
                     thead
                       tr
                         th ID
-                        th Beacon Id
-                        th Location
-                        th Level
-                        th Code
+                        th Floor name
+                        th Floor Plan
                         th Action
                     tbody
                       for row, index in data
                         tr
                           td #{index+1}
-                          td #{row.beacon_id}
-                          td #{row.beacon_location}
-                          td #{row.beacon_level}
-                          td #{row.location_code}
+                          td #{row.floor_name}
+                          td 
+                            img(src='#{row.floorplan_img}',height='100px',width='auto')
                           td
                             div(style='display:inline-block')
-                                a(href='/location/edit/#{row.location_id}').btn.btn-sm.btn-primary
-                                        i.fa.fa-edit
+                                a(href='/floor_plan_detail/#{row.floorplan_id}').btn.btn-sm.btn-primary
+                                        i.fa.fa-plus
+                            
                              div(style='display:inline-block')
-                                a(href='/location/delete/#{row.location_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                a(href='/floor_plan/delete/#{row.floorplan_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
                                         i.fa.fa-remove
             .clearfix
     // /page content

@@ -10,10 +10,10 @@ block content
               .col-md-12
                 h2
                  img(src='../../images/system_admin.png',height='35px',width='30px')
-                 a(href='/route_management') &nbsp;Route Table |
-                 a(href='/set_route') &nbsp;Set Route |
                  a(href='/location') &nbsp;Location |
-                 a(href='/location_add') &nbsp;Set Location |
+                 a(href='/location_add') &nbsp;Add Location |
+                 a(href='/floor_plan_list') &nbsp;Floor Plan |
+                 a(href='/floor_plan') &nbsp;Add Floor Plan |
               .col-md-12
                for row, index in data
                 form.form-horizontal.form-label-left(role='form',method='post' action='/location/edit/#{row.location_id}')

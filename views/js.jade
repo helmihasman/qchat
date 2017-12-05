@@ -119,13 +119,15 @@ script(src='https://maps.google.cn/maps/api/js?key=AIzaSyDdtF6BnY-mKqQmaOIyLVy-r
 
 script.
     var showMaps = function() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
+    //if (navigator.geolocation) {
+        //navigator.geolocation.getCurrentPosition(function(position) {
 
             map = new google.maps.Map(document.getElementById('googleMapArea'), {
                 center: {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
+                    //lat: position.coords.latitude,
+                    //lng: position.coords.longitude
+                    lat: 3.0684336,
+                    lng: 101.6099827
                 },
                 zoom: 16,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -145,7 +147,7 @@ script.
 
             
 
-        });
+        //});
         function loadPolygons(map) {
                 var data = JSON.parse(localStorage.getItem('geoData'));
                 //alert("in load poly");
@@ -153,6 +155,12 @@ script.
                 map.data.forEach(function (f) {
                     map.data.remove(f);
                 });
+                console.log("savepolygon-- "+JSON.stringify(data));
+                console.log("savepolygon-- "+JSON.stringify(data.features[0].geometry.coordinates));
+                //data.features[0].geometry.polyname = "testname";
+                //console.log("savepolygon-- "+JSON.stringify(data));
+                //document.getElementById("map_string").value = JSON.stringify(data);
+                //$("#confirm_btn").click();
                 map.data.addGeoJson(data);
             }
 
@@ -164,20 +172,23 @@ script.
                 });
             }
 
-    }
+    //}
     };
 
 
 
 script.
     var runMaps = function() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
+       
+    //if (navigator.geolocation) {
+        //navigator.geolocation.getCurrentPosition(function(position) {
 
             map = new google.maps.Map(document.getElementById('googleMap'), {
                 center: {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
+                    //lat: position.coords.latitude,
+                    //lng: position.coords.longitude
+                    lat: 3.0684336,
+                    lng: 101.6099827
                 },
                 zoom: 16,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -199,20 +210,39 @@ script.
 
             
 
-        });
+        //});
         function loadPolygons(map) {
                 var data = JSON.parse(localStorage.getItem('geoData'));
                 map.data.forEach(function (f) {
                     map.data.remove(f);
                 });
+                  
                 map.data.addGeoJson(data);
             }
 
             function savePolygon() {
-                 
+                //console.log("mapp11-- "+map.data);
+                
+                //var polyname = prompt("Enter polygon name:", "");
+                 var coord;
+                 var features = [];
+                 //map.bindPopup("<div>This is a polygon</div>" + polygonPopUpButtons);
                 map.data.toGeoJson(function (json) {
-                    localStorage.setItem('geoData', JSON.stringify(json));
-                    initControls(json);
+                    //alert("save name here");
+                    //json.features[0].geometry.polyname = "testname";
+                    //localStorage.setItem('geoData', JSON.stringify(json));
+                    for (var i = 0; i < json.features.length; i++) {
+                        console.log(json.features[i].geometry.coordinates);
+                        coord = json.features[i].geometry.coordinates;
+                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":"Area "+(i+1)},"properties":{}});
+                    }
+                    
+                    var jsonstring = {"type":"FeatureCollection","features":features};
+                    console.log("jsonstring-- "+JSON.stringify(jsonstring));
+                    localStorage.setItem('geoData', JSON.stringify(jsonstring));
+                    document.getElementById("map_string").value = JSON.stringify(jsonstring);
+                    $("#confirm_btn").click();
+                    initControls(jsonstring);
                 });
             }
             
@@ -220,10 +250,11 @@ script.
             {
                 var sel = document.getElementById('polyList');
                 sel.options.length = 0;
+                console.log("savepolygon22-- "+JSON.stringify(data));
 
                 for (var i = 0; i < data.features.length; i++) {
                     var opt = document.createElement('option');
-                    opt.innerHTML = data.features[i].geometry.type;
+                    opt.innerHTML = data.features[i].geometry.polyname;
                     opt.value = i;
                     sel.appendChild(opt);
                 }
@@ -241,5 +272,5 @@ script.
             }
             
     
-    }
-    };
+    //}
+    };    

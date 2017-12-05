@@ -27,6 +27,8 @@ var mysql = require("mysql");
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var inside = require('point-in-geopolygon');
+
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -55,6 +57,7 @@ app.all(deployPath + "/api", function(req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.end("<h2>REST API Handler found.</h2>");
 });
+
 
 // Default handler
 //app.get(deployPath + "/", function(req, res) {
@@ -119,12 +122,12 @@ var storage_image =   multer.diskStorage({
   }
 });
 
-var upload = multer({ storage : storage}).single('emp_image');
+var upload = multer({ storage : storage}).single('floorplan_img');
 
 var upload_image = multer({ storage : storage_image}).single('file');
 
 app.use(methodOverride(function(req, res){
- if (req.body && typeof req.body == 'object' && '_method' in req.body) 
+ if (req.body && typeof req.body === 'object' && '_method' in req.body) 
    { 
       var method = req.body._method;
       delete req.body._method;
@@ -149,7 +152,7 @@ var con = mysql.createConnection({
     database: "ibmx_5615f24298630b0"
 });
 
-
+ 
 app.post(deployPath +"/login", passport.authenticate('local_qchat', {
     
 
@@ -173,6 +176,19 @@ app.get(deployPath +'/language/:lan',isAuthenticated,function(req,res,next){
      var language = req.params.lan;
      req.session.language = language;
      res.redirect('/');
+    
+   
+});
+
+app.get(deployPath +'/language/:lan',isAuthenticated,function(req,res,next){
+     var language = req.params.lan;
+     req.session.language = language;
+     res.redirect('/');
+    
+   
+});
+app.get(deployPath +'/map_test',function(req,res,next){
+     res.render('map_test',{title:"Home"});
     
    
 });
@@ -352,10 +368,7 @@ app.get(deployPath +'/documents',isAuthenticated,function(req,res,next){
    
 });
 
-
-
 //----------------------------DOCUMENTS----------------------------
-
 
 //----------------------------ALERT----------------------------
 app.get(deployPath +'/alert',isAuthenticated,function(req,res,next){
@@ -737,6 +750,7 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
 //    d.setMinutes(d.getMinutes()+480);
     d.setMinutes(d.getMinutes()-480);
     var dmonth = d.getMonth()+1;
+    //var dmonth = 9;
     
     if(dmonth < 10){
         dmonth = "0"+dmonth;
@@ -754,30 +768,38 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
        }
    });
     
-    con.query("SELECT count(route_attendance) as attendance, sum(route_attendance) as total_attend,day(route_datetime) as day, employee_id from route where month(route_datetime) = '"+dmonth+"'group by day(route_datetime),employee_id",function(error,rows,fields){
+    con.query("SELECT count(route_attendance) as attendance, sum(route_attendance) as total_attend,day(route_datetime) as day, employee_id from route where month(route_datetime) = '"+dmonth+"' group by day(route_datetime),employee_id",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
        else{
            attendance = rows;
-           
-           for(var i=0;i<employee.length;i++){
-                for(var k=0;k<attendance.length;k++){
-                    //console.log("emp="+employee[i].employee_id+" att_emp="+attendance[k].employee_id);
-                    var emp = employee[i].employee_id.toString();
-                    var att = attendance[k].employee_id.toString();
-                    if(emp === att){
-                        attendance_list.push(attendance[k]);
-                        console.log("attendace ="+JSON.stringify(attendance[k]));
+
+                for(var i=0;i<employee.length;i++){
+                    if(attendance.length!==0){
+                     for(var k=0;k<attendance.length;k++){
+                         //console.log("emp="+employee[i].employee_id+" att_emp="+attendance[k].employee_id);
+                         var emp = employee[i].employee_id.toString();
+                         var att = attendance[k].employee_id.toString();
+                         if(emp === att){
+                             attendance_list.push(attendance[k]);
+                             console.log("attendace ="+JSON.stringify(attendance[k]));
+                         }
+                         //console.log("attendace_list ="+JSON.stringify(attendance_list));
+                         employee_list = { employee_id:employee[i].employee_id.toString(),emp_attendance:attendance_list};
+
+                         //employee_list.push(attendance_list);
+                       }
                     }
-                    //console.log("attendace_list ="+JSON.stringify(attendance_list));
-                    employee_list = { employee_id:employee[i].employee_id.toString(),emp_attendance:attendance_list};
-                    
-                    //employee_list.push(attendance_list);
-                }
-                attendance_list = [];
-                attendance_table.push(employee_list);
-            }
+                    else{
+                        
+                         employee_list = { employee_id:employee[i].employee_id.toString(),emp_attendance:0};
+
+                        
+                    }
+                     attendance_list = [];
+                     attendance_table.push(employee_list);
+                 }
             //console.log("tavble=="+JSON.stringify(attendance_table));
             
        }
@@ -803,9 +825,11 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
 //           console.log(rows);
         console.log("monnth--"+dmonth);
         if(req.session.language === 'en'){
+            console.log("attendance_table== "+attendance_table);
             res.render('attendance_en',{title:"Attendance",data:rows,route:route,days:days,attendance:attendance_table,month:dmonth});
         }
         else{
+            console.log("attendance_table== "+attendance_table);
             res.render('attendance',{title:"Attendance",data:rows,route:route,days:days,attendance:attendance_table,month:dmonth});
         }
            
@@ -1173,7 +1197,25 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
 });
 
 app.get(deployPath +'/map_management',isAuthenticated,function(req,res,next){
+    
+    con.query("SELECT * from map",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+           
+       }
+       else{
+           if(rows.length !== 0){
+            
+            var map= JSON.parse(rows[0].map_string);
+            console.log("------------in or out-----------");
+            console.log([inside.feature(map,[101.6110998,3.0692049] ),inside.feature(map,[101.6101003,3.0688367])]);
+        }
+       }
+   });
+         
+        
     if(req.session.language === 'en'){
+ 
         res.render('map_management_en',{title:"Map Management"});
     }
     else{
@@ -1335,6 +1377,195 @@ app.get(deployPath +'/test_time',isAuthenticated,function(req,res,next){
     res.status(200).send(datasend);
     
     
+});
+
+app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
+    
+    var d = createDateAsUTC(new Date());
+//    d.setMinutes(d.getMinutes()+480);
+    d.setMinutes(d.getMinutes()-480);
+    var ddate = d.getDate();
+    var dmonth = d.getMonth()+1;
+    var dyear = d.getFullYear();
+    var dhour = d.getHours();
+    var dminutes = d.getMinutes();
+    var dseconds = d.getSeconds();
+    var d_date = d.getDate();
+    var d_month = d.getMonth()+1;;
+
+    if(ddate < 10){
+        ddate = "0"+ddate;
+    }
+    if(dmonth < 10){
+        dmonth = "0"+dmonth;
+    }
+
+    if(dhour < 10){
+        dhour = "0"+dhour;
+    }
+    if(dminutes < 10){
+        dminutes = "0"+dminutes;
+    }
+    if(dseconds < 10){
+        dseconds = "0"+dseconds;
+    }
+    
+    var newdate;
+    newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+    
+    var employee,floor_plan;
+    
+    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+//           console.log('Successful query\n');
+//           console.log(rows);
+           employee = rows;
+       }
+   });
+   
+   //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
+   
+   con.query("SELECT * FROM floor_plan",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query'+error);
+       }
+       else{
+           floor_plan = rows;
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   });
+   
+    con.query("SELECT * from path",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+//           console.log('Successful query\n');
+//           console.log(rows);
+            if(req.session.language === 'en'){
+                res.render('mapmap',{title:"Path Playback",data:rows,employee:employee,floor_plan:floor_plan});
+            }
+            else{
+                res.render('mapmap',{title:"Path Playback",data:rows,employee:employee,floor_plan:floor_plan});
+            }
+           
+       }
+   });
+
+});
+
+//----------------------------FLOOR PLAN----------------------------
+
+app.get(deployPath +'/floor_plan_list',isAuthenticated,function(req,res,next){
+    
+    con.query("SELECT * FROM floor_plan",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            if(req.session.language === 'en'){
+                res.render(deployPath +'floor_plan_list_en',{title:"Floor Plan List",data:rows});
+            }
+            else{
+                res.render(deployPath +'floor_plan_list',{title:"Floor Plan List",data:rows});
+            }
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   }); 
+    
+    
+});
+
+app.get(deployPath +'/floor_plan',isAuthenticated,function(req,res,next){
+    if(req.session.language === 'en'){
+        res.render('floor_plan_en',{title:"Geofencing"});
+    }
+    else{
+        res.render('floor_plan',{title:"Geofencing"});
+    }
+    
+});
+
+app.post(deployPath +'/floor_plan/add',isAuthenticated,function(req,res,next){
+    upload(req,res,function(err) {
+        //console.log("get select from body ="+req.body.dept_code);
+        v_floor_name = req.sanitize( 'floor_name' ).escape(); 
+       
+        //console.log("v_floor_name-- "+v_floor_name);
+        if(err) {
+            return res.end("Error uploading file."+err);
+        }
+//        res.end("File is uploaded."+req.file.path);
+        filepath = req.file.path;
+        //console.log("filepath-- "+filepath);
+        //console.log("INSERT INTO floor_plan(floorplan_img,floor_name) VALUES ('"+filepath+"','"+v_floor_name+"')");
+        
+        con.query("INSERT INTO floor_plan(floorplan_img,floor_name) VALUES ('"+filepath+"','"+v_floor_name+"')",function(error,rows,fields){
+            if(error)
+                {
+                    var errors_detail  = ("Error Insert : %s ",error ); 
+                    console.log("Error Insert : %s ",errors_detail );
+                    //req.flash('msg_error', errors_detail); 
+                    res.redirect('/floor_plan');
+                }else{
+                    //req.flash('msg_info', 'Add floor plan success'); 
+                    res.redirect('/floor_plan');
+                }     
+      }); 
+    }); 
+    
+});
+
+app.get(deployPath +'/floor_plan_detail/:id',isAuthenticated,function(req,res,next){
+    
+    var floorplan_id = req.params.id;
+    
+    con.query("SELECT * FROM floor_plan where floorplan_id='"+floorplan_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            if(req.session.language === 'en'){
+                res.render(deployPath +'floor_plan_detail_en',{title:"Floor Plan Detail",data:rows});
+            }
+            else{
+                res.render(deployPath +'floor_plan_detail',{title:"Floor Plan Detail",data:rows});
+            }
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   }); 
+    
+    
+});
+
+app.get(deployPath +'/floor_plan/delete/:id',isAuthenticated,function(req,res,next){
+    
+     var floorplan_id = req.params.id;
+   
+    con.query("DELETE from floor_plan where floorplan_id = '"+floorplan_id+"'",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query='+error);
+                }
+                else{
+//                    console.log('Successful query\n');
+//                    console.log(rows);
+                    //res.redirect('/route_management');
+                }
+            });
+    if(req.session.language === 'en'){
+        res.redirect(deployPath +'/floor_plan_list_en');
+    }
+    else{
+        res.redirect(deployPath +'/floor_plan_list');
+    }
+
 });
  
  //----------------------------REST API-------------------------------------
@@ -2105,6 +2336,35 @@ app.post(deployPath +'/api/v1/save_map/:map_string', function(req, res) {
    }); 
 });
 
+app.post(deployPath +'/api/v1/save_map', function(req, res,next) {
+    
+     //var map_string = req.params.map_string;
+     map_string = req.sanitize( 'map_string' );
+     //console.log("map_string== "+map_string);
+     
+     con.query("TRUNCATE map",function(error,rows,fields){
+         if(!!error){
+           console.log('Error in the query '+error);
+           //res.send(error);
+       }
+       else{
+           con.query("INSERT INTO map(map_string) values ('"+map_string+"')",function(error,rows,fields){
+            if(!!error){
+                console.log('Error in the query '+error);
+                //res.send(error);
+            }
+            else{
+                res.status(204).send();
+               //res.send('good');
+            }
+        });
+       }
+       
+   }); 
+     
+     
+});
+
 app.post(deployPath +'/api/v1/clean_map/', function(req, res) {
     con.query("TRUNCATE map",function(error,rows,fields){
        if(!!error){
@@ -2115,6 +2375,26 @@ app.post(deployPath +'/api/v1/clean_map/', function(req, res) {
           res.send('good');
        }
    }); 
+});
+
+app.post(deployPath +'/api/v1/save_markers', function(req, res,next) {
+    
+     //var map_string = req.params.map_string;
+     markers = req.sanitize( 'markers' );
+     floorplan_id = req.sanitize( 'floorplan_id' );
+     //console.log("map_string== "+map_string);
+    
+    con.query("UPDATE floor_plan set markers='"+markers+"' where floorplan_id='"+floorplan_id+"'",function(error,rows,fields){
+     if(!!error){
+         console.log('Error in the query '+error);
+         //res.send(error);
+     }
+     else{
+         res.status(204).send();
+        //res.send('good');
+     }
+    });
+  
 });
  //----------------------------REST API-------------------------------------
 
