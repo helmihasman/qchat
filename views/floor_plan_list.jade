@@ -9,11 +9,11 @@ block content
             .row.x_title
               .col-md-12
                 h2
-                 img(src='images/system_admin.png',height='35px',width='30px')
-                 a(href='/location') &nbsp;Location |
-                 a(href='/location_add') &nbsp;Add Location |
-                 a(href='/floor_plan_list') &nbsp;Floor Plan |
-                 a(href='/floor_plan') &nbsp;Add Floor Plan |
+                 img(src='/images/system_admin.png',height='35px',width='30px')
+                 a(href='/location') &nbsp;地点 |
+                 a(href='/location_add') &nbsp;增添地点 |
+                 a(href='/floor_plan_list') &nbsp;平面图 |
+                 a(href='/floor_plan') &nbsp;增添平面图 |
                   br
                   br
               .col-md-12
@@ -21,16 +21,16 @@ block content
                     thead
                       tr
                         th ID
-                        th Floor name
-                        th Floor Plan
-                        th Action
+                        th 楼层
+                        th 平面图
+                        th 行动
                     tbody
                       for row, index in data
                         tr
                           td #{index+1}
                           td #{row.floor_name}
                           td 
-                            img(src='#{row.floorplan_img}',height='200px',width='auto')
+                            img(src='/#{row.floorplan_img}',height='200px',width='auto')
                           
                           td
                             div(style='display:inline-block')

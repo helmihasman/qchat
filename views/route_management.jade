@@ -13,7 +13,7 @@ block content
                       .x_panel
                         .x_title
                           h2
-                            img(src='images/system_admin.png',height='35px',width='30px')
+                            img(src='/images/system_admin.png',height='35px',width='30px')
                             a(href='/route_management') &nbsp;路径管理 |
                             a(href='/set_route') &nbsp;指定路线 |
                           .clearfix
@@ -23,12 +23,12 @@ block content
                                     table#datatable.table.table-striped.table-bordered
                                         thead
                                           tr
-                                            th No
-                                            th Employee
-                                            th Phone No
-                                            th Route
-                                            th Date
-                                            th Time
+                                            th 编号
+                                            th 雇员
+                                            th 手机号
+                                            th 路径
+                                            th 日期
+                                            th 时间
                                             
                                         tbody
                                          for row, index in data

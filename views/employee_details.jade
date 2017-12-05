@@ -17,7 +17,7 @@ block content
                     for row, index in data
                       tr
                         td 
-                          img(src='https://qchat.mybluemix.net/#{row.employee_image}',height='150px',width='150px')
+                          img(src='/#{row.employee_image}',height='150px',width='150px')
                         td 
                           |&nbsp;&nbsp;&nbsp; 姓名 : #{row.employee_name}
                           br
@@ -44,10 +44,10 @@ block content
                 table#datatable.table.table-striped.table-bordered
                     thead
                       tr
-                        th No
-                        th Route
-                        th Date
-                        th Time
+                        th 编号
+                        th 路径
+                        th 日期
+                        th 时间
                         
                     tbody
                       for row, index in route

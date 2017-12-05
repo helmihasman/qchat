@@ -9,7 +9,7 @@ block content
             .row.x_title
               .col-md-6
                 h3
-                  img(src='images/system_admin.png',height='35px',width='30px')
+                  img(src='/images/system_admin.png',height='35px',width='30px')
                   | &nbsp;雇员管理 
                   br
                   br
@@ -33,9 +33,9 @@ block content
                           td #{row.employee_email}
                           td 
                             if row.employee_status === 'online'
-                              | Yes
+                              | 是
                             else
-                              | No
+                              | 否
                           td #{row.beacon_location+", "+row.beacon_level}
                       
             .clearfix

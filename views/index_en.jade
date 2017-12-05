@@ -14,13 +14,13 @@ block content
                 for row, index in employee
                     article.media.event
                       a.pull-left
-                        img.img-rectangle.profile_img(src='https://qchat.mybluemix.net/#{row.employee_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                        img.img-rectangle.profile_img(src='/#{row.employee_image}', alt='...', style='margin-left:10px', height='50', width='47')
                       .media-body
                         a.nav.navbar-right
                           if row.employee_status === 'online'
-                            img(alt='', src='images/green_circle.png', height='15', width='15', style='margin-right:10px')
+                            img(alt='', src='/images/green_circle.png', height='15', width='15', style='margin-right:10px')
                           else
-                            img(alt='', src='images/red_circle.png', height='15', width='15', style='margin-right:10px')
+                            img(alt='', src='/images/red_circle.png', height='15', width='15', style='margin-right:10px')
                         a.title(href='') #{row.employee_name+" ("+row.employee_phone_no+")"}
                         p #{row.employee_motto}
 
@@ -38,7 +38,7 @@ block content
                     article.media.event
                       a.pull-left
                         if row.document_type === "Photo"
-                         img.img-rectangle.profile_img(src='https://qchat.mybluemix.net/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                         img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Audio"
                          img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Note"
@@ -61,7 +61,7 @@ block content
                     article.media.event
                       a.pull-left
                         if row.document_type === "Photo"
-                         img.img-rectangle.profile_img(src='https://qchat.mybluemix.net/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                         img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Audio"
                          img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Note"

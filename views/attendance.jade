@@ -9,14 +9,14 @@ block content
             .row.x_title
               .col-md-12
                 h3
-                  img(src='images/attendance.png',height='40px',width='30px')
+                  img(src='/images/attendance.png',height='40px',width='30px')
                   | &nbsp;签到
                   input(type="text", value="#{JSON.stringify(attendance)}",id="attendance",hidden='true')
                   input(type="text", value="#{JSON.stringify(days)}",id="days",hidden='true')
                   br
                   br
               .col-md-3 
-                h5.control-label.col-md-3 &nbsp; Month:
+                h5.control-label.col-md-3 &nbsp; 月份:
                 .col-md-3
                   form.form-horizontal.form-label-left(role='form',method='post' action='/attendance') 
                     select.form-control(id="month_attendance",name="month_attendance",onchange='select_month(this)')

@@ -9,7 +9,7 @@ block content
             .row.x_title
               .col-md-6
                 h3
-                  img(src='images/alert.png',height='35px',width='30px')
+                  img(src='/images/alert.png',height='35px',width='30px')
                   | &nbsp;Alert 
                   br
                   br
@@ -75,7 +75,7 @@ block content
                     .modal-body
                       p
                         audio(controls='')
-                            source(src='https://qchat.mybluemix.net/#{row.document_audio}', type='audio/mpeg')
+                            source(src='/#{row.document_audio}', type='audio/mpeg')
                             | Your browser does not support the audio element.
                       p
                         | Employee ID : #{row.employee_phone_no}
@@ -97,7 +97,7 @@ block content
                       h4#myModalLabel.modal-title Photo
                     .modal-body
                       p
-                       img(src='https://qchat.mybluemix.net/#{row.document_image}',height='200px',width='auto')
+                       img(src='/#{row.document_image}',height='200px',width='auto')
                       p
                         | Employee ID : #{row.employee_phone_no}
                       p
@@ -119,7 +119,7 @@ block content
               h4#myModalLabel.modal-title Alert
             .modal-body
               p
-               img(src='images/broken_door_knob.jpg',height='200px',width='auto')
+               img(src='/images/broken_door_knob.jpg',height='200px',width='auto')
               p
                 | Remark : Broken door knob
               p

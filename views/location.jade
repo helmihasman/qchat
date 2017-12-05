@@ -9,11 +9,11 @@ block content
             .row.x_title
               .col-md-12
                 h2
-                 img(src='images/system_admin.png',height='35px',width='30px')
-                 a(href='/location') &nbsp;Location |
-                 a(href='/location_add') &nbsp;Add Location |
-                 a(href='/floor_plan_list') &nbsp;Floor Plan |
-                 a(href='/floor_plan') &nbsp;Add Floor Plan |
+                 img(src='/images/system_admin.png',height='35px',width='30px')
+                 a(href='/location') &nbsp;地点 |
+                 a(href='/location_add') &nbsp;增添地点 |
+                 a(href='/floor_plan_list') &nbsp;平面图 |
+                 a(href='/floor_plan') &nbsp;增添平面图 |
                   br
                   br
               .col-md-12
@@ -21,11 +21,11 @@ block content
                     thead
                       tr
                         th ID
-                        th Beacon Id
-                        th Location
-                        th Level
-                        th Code
-                        th Action
+                        th 信标 Id
+                        th 地点
+                        th 楼层
+                        th 地点编号
+                        th 行动
                     tbody
                       for row, index in data
                         tr
@@ -39,7 +39,7 @@ block content
                                 a(href='/location/edit/#{row.location_id}').btn.btn-sm.btn-primary
                                         i.fa.fa-edit
                              div(style='display:inline-block')
-                                a(href='/location/delete/#{row.location_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                a(href='/location/delete/#{row.location_id}',onclick="return confirm('确定删除?');").btn.btn-sm.btn-danger
                                         i.fa.fa-remove
             .clearfix
     // /page content

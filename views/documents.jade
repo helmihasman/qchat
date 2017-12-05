@@ -9,7 +9,7 @@ block content
             .row.x_title
               .col-md-6
                 h3
-                  img(src='images/documents.png',height='40px',width='30px')
+                  img(src='/images/documents.png',height='40px',width='30px')
                   | &nbsp;文件
                   br
                   br
@@ -17,7 +17,7 @@ block content
                 table#datatable.table.table-striped.table-bordered
                     thead
                       tr
-                        th No
+                        th 编号
                         th 文件
                         th 类型
                         th 雇员编号
@@ -79,7 +79,7 @@ block content
                     .modal-body
                       p
                         audio(controls='')
-                            source(src='https://qchat.mybluemix.net/#{row.document_audio}', type='audio/mpeg')
+                            source(src='/#{row.document_audio}', type='audio/mpeg')
                             | 抱歉，您的网路浏览器不支持录音播放。
                       p
                         | 类型  : #{row.document_type}
@@ -103,7 +103,7 @@ block content
                       h4#myModalLabel.modal-title 照片
                     .modal-body
                       p
-                       img(src='https://qchat.mybluemix.net/#{row.document_image}',height='200px',width='auto')
+                       img(src='/#{row.document_image}',height='200px',width='auto')
                       p
                         | 类型 : #{row.document_type}
                       p

@@ -13,7 +13,7 @@ block content
                       .x_panel
                         .x_title
                           h2
-                            img(src='images/system_admin.png',height='35px',width='30px')
+                            img(src='/images/system_admin.png',height='35px',width='30px')
                             a(href='/map_management') &nbsp;限制区域 |
                             a(href='/geofencing') &nbsp;地理围栏 |
                           .clearfix
@@ -23,9 +23,9 @@ block content
                                 button.btn(type='submit',id="confirm_btn",hidden)
                             #panel-content
                                 #controls
-                                  | Select polygon 
+                                  | 点选 
                                   select#polyList
-                                  button#btnDelete Delete
+                                  button#btnDelete 删除
                             #googleMap(style='width:100%;height:400px;')
 
     // /page content

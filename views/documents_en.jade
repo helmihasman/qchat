@@ -9,7 +9,7 @@ block content
             .row.x_title
               .col-md-6
                 h3
-                  img(src='images/documents.png',height='40px',width='30px')
+                  img(src='/images/documents.png',height='40px',width='30px')
                   | &nbsp;Documents
                   br
                   br
@@ -79,7 +79,7 @@ block content
                     .modal-body
                       p
                         audio(controls='')
-                            source(src='https://qchat.mybluemix.net/#{row.document_audio}', type='audio/mpeg')
+                            source(src='/#{row.document_audio}', type='audio/mpeg')
                             | Your browser does not support the audio element.
                       p
                         | Type : #{row.document_type}
@@ -103,7 +103,7 @@ block content
                       h4#myModalLabel.modal-title Photo
                     .modal-body
                       p
-                       img(src='https://qchat.mybluemix.net/#{row.document_image}',height='200px',width='auto')
+                       img(src='/#{row.document_image}',height='200px',width='auto')
                       p
                         | Type : #{row.document_type}
                       p

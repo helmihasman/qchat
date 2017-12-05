@@ -6,7 +6,7 @@ block content
                 .f_panel
                   .f_title
                      h3
-                       img(src='images/tracking.png',height='35px',width='30px')
+                       img(src='/images/tracking.png',height='35px',width='30px')
                        | &nbsp;轨迹回放
                     .clearfix
                   .f_content
@@ -34,7 +34,7 @@ block content
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 Level Map
+                                  h2 楼层地图
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -43,14 +43,14 @@ block content
                                     // Nav tabs
                                     ul.nav.nav-tabs.tabs-left
                                       li.active
-                                        a(href='#home', data-toggle='tab') Level 1
+                                        a(href='#home', data-toggle='tab') 1 楼
                                       li
-                                        a(href='#profile', data-toggle='tab') Level 2
+                                        a(href='#profile', data-toggle='tab') 2 楼
                                       
                             .col-md-9.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 Maps
+                                  h2 地图
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -261,7 +261,7 @@ block content
                                             var addedOne = false,
                                               checkpoint1 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal">',
+                                                html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -270,7 +270,7 @@ block content
                                               var table = false,
                                               checkpoint2 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal2">',
+                                                html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal2">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -279,7 +279,7 @@ block content
                                               var table = false,
                                               checkpoint3 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal3">',
+                                                html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal3">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -287,7 +287,7 @@ block content
                                               var table = false,
                                               human1 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
+                                                html: '<img src="/images/man.png">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -295,7 +295,7 @@ block content
                                               var table = false,
                                               human2 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
+                                                html: '<img src="/images/man.png">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -303,7 +303,7 @@ block content
                                               var table = false,
                                               human3 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
+                                                html: '<img src="/images/man.png">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -481,7 +481,7 @@ block content
                                             var addedOne = false,
                                               checkpoint1 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal">',
+                                                html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -490,7 +490,7 @@ block content
                                               var table = false,
                                               checkpoint2 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal2">',
+                                                html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal2">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -499,7 +499,7 @@ block content
                                               var table = false,
                                               checkpoint3 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal3">',
+                                                html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal3">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -507,7 +507,7 @@ block content
                                               var table = false,
                                               human1 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
+                                                html: '<img src="/images/man.png">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -515,7 +515,7 @@ block content
                                               var table = false,
                                               human2 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
+                                                html: '<img src="/images/man.png">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -523,7 +523,7 @@ block content
                                               var table = false,
                                               human3 = L.divIcon({
                                                 className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
+                                                html: '<img src="/images/man.png">',
                                                 iconSize: [20, 20],
                                                 iconAnchor: [18, 30]
                                               });
@@ -548,7 +548,7 @@ block content
                                 // form date pickers
                                 .x_panel
                                   .x_title
-                                    h2 Timeline
+                                    h2 时间轴
                                     ul.nav.navbar-right.panel_toolbox
                                     .clearfix
                                   .x_content

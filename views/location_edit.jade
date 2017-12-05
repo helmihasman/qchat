@@ -10,32 +10,32 @@ block content
               .col-md-12
                 h2
                  img(src='../../images/system_admin.png',height='35px',width='30px')
-                 a(href='/location') &nbsp;Location |
-                 a(href='/location_add') &nbsp;Add Location |
-                 a(href='/floor_plan_list') &nbsp;Floor Plan |
-                 a(href='/floor_plan') &nbsp;Add Floor Plan |
+                 a(href='/location') &nbsp;地点 |
+                 a(href='/location_add') &nbsp;增添地点 |
+                 a(href='/floor_plan_list') &nbsp;平面图 |
+                 a(href='/floor_plan') &nbsp;增添平面图 |
               .col-md-12
                for row, index in data
                 form.form-horizontal.form-label-left(role='form',method='post' action='/location/edit/#{row.location_id}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Beacon ID &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 信标 ID &nbsp; : &nbsp;
                         .col-md-6
                           input(type='text', name='beacon_id',id='beacon_id',value='#{row.beacon_id}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Location &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 地点 &nbsp; : &nbsp;
                         .col-md-6
                           input(type='text', name='beacon_location',id='beacon_location',value='#{row.beacon_location}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Level &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 楼层 &nbsp; : &nbsp;
                         .col-md-6
                           input(type='text', name='beacon_level',id='beacon_level',value='#{row.beacon_level}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Code &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 地点编号 &nbsp; : &nbsp;
                         .col-md-6
                           input(type='text', name='location_code',id='location_code',value='#{row.location_code}')
                     .form-group
                         .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
-                          button.btn.btn-primary(type='submit',id="confirm_btn") Confirm
-                          button.btn.btn-success(type='button',onclick='goBack();') Cancel
+                          button.btn.btn-primary(type='submit',id="confirm_btn") 确认
+                          button.btn.btn-success(type='button',onclick='goBack();') 取消
     // /page content
 

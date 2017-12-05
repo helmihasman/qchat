@@ -9,24 +9,24 @@ block content
             .row.x_title
               .col-md-12
                 h2
-                 img(src='images/system_admin.png',height='35px',width='30px')
-                 a(href='/location') &nbsp;Location |
-                 a(href='/location_add') &nbsp;Add Location |
-                 a(href='/floor_plan_list') &nbsp;Floor Plan |
-                 a(href='/floor_plan') &nbsp;Add Floor Plan |
+                 img(src='/images/system_admin.png',height='35px',width='30px')
+                 a(href='/location') &nbsp;地点 |
+                 a(href='/location_add') &nbsp;增添地点 |
+                 a(href='/floor_plan_list') &nbsp;平面图 |
+                 a(href='/floor_plan') &nbsp;增添平面图 |
               .col-md-12
                 form.form-horizontal.form-label-left(enctype="multipart/form-data",role='form',method='post' action='/floor_plan/add')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Floor Plan Image &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 平面图 &nbsp; : &nbsp;
                         .col-md-6
                           input(type="file",id="floorplan_img",name="floorplan_img",required)
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Floor Name &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 楼层 &nbsp; : &nbsp;
                         .col-md-6
                           input(type='text', name='floor_name',id='floor_name')
                     .form-group
                         .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
-                          button.btn.btn-primary(type='submit',id="confirm_btn") Confirm
-                          button.btn.btn-success(type='button',onclick='goBack();') Cancel
+                          button.btn.btn-primary(type='submit',id="confirm_btn") 确定
+                          button.btn.btn-success(type='button',onclick='goBack();') 取消
     // /page content
 
