@@ -1128,7 +1128,7 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
     
 });
 
-app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/path_playback_2',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
@@ -1198,20 +1198,20 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
 
 app.get(deployPath +'/map_management',isAuthenticated,function(req,res,next){
     
-    con.query("SELECT * from map",function(error,rows,fields){
-       if(!!error){
-           console.log('Error in the query '+error);
-           
-       }
-       else{
-           if(rows.length !== 0){
-            
-            var map= JSON.parse(rows[0].map_string);
-            console.log("------------in or out-----------");
-            console.log([inside.feature(map,[101.6110998,3.0692049] ),inside.feature(map,[101.6101003,3.0688367])]);
-        }
-       }
-   });
+//    con.query("SELECT * from map",function(error,rows,fields){
+//       if(!!error){
+//           console.log('Error in the query '+error);
+//           
+//       }
+//       else{
+//           if(rows.length !== 0){
+//            
+//            var map= JSON.parse(rows[0].map_string);
+//            console.log("------------in or out-----------");
+//            console.log([inside.feature(map,[101.6110998,3.0692049] ),inside.feature(map,[101.6101003,3.0688367])]);
+//        }
+//       }
+//   });
          
         
     if(req.session.language === 'en'){
@@ -1450,6 +1450,84 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
             }
             else{
                 res.render('mapmap',{title:"Path Playback",data:rows,employee:employee,floor_plan:floor_plan});
+            }
+           
+       }
+   });
+
+});
+
+app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
+    
+    var d = createDateAsUTC(new Date());
+//    d.setMinutes(d.getMinutes()+480);
+    d.setMinutes(d.getMinutes()-480);
+    var ddate = d.getDate();
+    var dmonth = d.getMonth()+1;
+    var dyear = d.getFullYear();
+    var dhour = d.getHours();
+    var dminutes = d.getMinutes();
+    var dseconds = d.getSeconds();
+    var d_date = d.getDate();
+    var d_month = d.getMonth()+1;;
+
+    if(ddate < 10){
+        ddate = "0"+ddate;
+    }
+    if(dmonth < 10){
+        dmonth = "0"+dmonth;
+    }
+
+    if(dhour < 10){
+        dhour = "0"+dhour;
+    }
+    if(dminutes < 10){
+        dminutes = "0"+dminutes;
+    }
+    if(dseconds < 10){
+        dseconds = "0"+dseconds;
+    }
+    
+    var newdate;
+    newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+    
+    var employee,floor_plan;
+    
+    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+//           console.log('Successful query\n');
+//           console.log(rows);
+           employee = rows;
+       }
+   });
+   
+   //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
+   
+   con.query("SELECT * FROM floor_plan",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query'+error);
+       }
+       else{
+           floor_plan = rows;
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   });
+   
+    con.query("SELECT * from path",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+//           console.log('Successful query\n');
+//           console.log(rows);
+            if(req.session.language === 'en'){
+                res.render('mapmap2_en',{title:"Path Playback",data:JSON.stringify(rows),employee:employee,floor_plan:floor_plan});
+            }
+            else{
+                res.render('mapmap2',{title:"Path Playback",data:JSON.stringify(rows),employee:employee,floor_plan:floor_plan});
             }
            
        }

@@ -63,7 +63,7 @@
     // menu profile quick info
     .profile
       .profile_pic
-        img.img-circle.profile_img(src='https://qchat.mybluemix.net/#{session.passport.user.employee_image}', alt='...')
+        img.img-circle.profile_img(src='/#{session.passport.user.employee_image}', alt='...')
       .profile_info
         span 欢迎,
         h2 #{session.passport.user.employee_name}

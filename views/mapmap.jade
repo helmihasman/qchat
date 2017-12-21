@@ -29,7 +29,7 @@ block content
                                         .panel-body
                                           for row, index in employee
                                             ul
-                                              input(name='checkbox1',id='#{row.employee_id}', type='checkbox',onchange="doalert(this)")
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}', type='checkbox',onchange="doalert(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
@@ -56,9 +56,11 @@ block content
                                   .clearfix
                                 .x_content
                                   .tab-content
+                                       script(type='text/javascript').
+                                          var floorplan_list = [];
+                                          var map;
                                    for row, index in floor_plan
                                     
-                                    if index === 0
                                      div.tab-pane.active(id='home#{row.floorplan_id}')
                                         input(type="text", value="#{JSON.stringify(data)}",id="data",hidden='true')
                                         //input(type='text', name='markers_in',id='markers_in',value='#{row.markers}',hidden='true')
@@ -74,175 +76,11 @@ block content
                                             var data = document.getElementById("data").value;
                                             var floorplan_img = "#{row.floorplan_img}";
                                             var map_string = 'image-map-dashboard'+floorplan_id;
-                                            //alert(floorplan_img);
+                                            //alert(map_string);
                                             var dd,man;
                                             
-                                            if(data!=='undefined'){
-                                            dd = JSON.parse(data);
-                                            //alert(dd.length+" record(s) found");
-                                            }
-                                             
-                                             var markers = new L.FeatureGroup();
-                                            //var humanMark1,humanMark2,humanMark3;
-                                            function doalert(checkboxElem) {
-                                              
-                                              if (checkboxElem.checked) {
-                                                  
-                                                  var emp_id = checkboxElem.id;
-                                                  alert("form 1-- "+emp_id);
-                                                  var html='';
-                                                  var pointlist = [];
-                                                  for(var i=0;i<dd.length;i++){
-                                                      var num = dd[i].employee_id.toString();
-                                                      alert("form 1-- "+emp_id);
-                                                        var d = new Date(dd[i].path_datetime);
-                                                        //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
-                                                        var ddate = d.getDate();
-                                                        var dmonth = d.getMonth()+1;
-                                                        var dyear = d.getFullYear();
-                                                        var dhour = d.getHours();
-                                                        var dminutes = d.getMinutes();
-                                                        var dseconds = d.getSeconds();
-
-                                                        if(ddate < 10){
-                                                            ddate = "0"+ddate;
-                                                        }
-                                                        if(dmonth < 10){
-                                                            dmonth = "0"+dmonth;
-                                                        }
-
-                                                        if(dhour < 10){
-                                                            dhour = "0"+dhour;
-                                                        }
-                                                        if(dminutes < 10){
-                                                            dminutes = "0"+dminutes;
-                                                        }
-                                                        if(dseconds < 10){
-                                                            dseconds = "0"+dseconds;
-                                                        }
-
-                                                        mhuman = JSON.parse(floorplan);
-                                                        for (k in mhuman) {
-                                                        var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
-                                                        //console.log("num--- "+num);
-                                                        //console.log("emp_id--- "+emp_id);
-                                                        //console.log("dd["+i+"].location_id--- "+dd[i].location_id);
-                                                        //console.log("mhuman["+k+"].popup--- "+mhuman[k].popup);
-                                                      if(num === emp_id){
-                                                          
-                                                            man = {
-                                                                x: mhuman[k].latlngs.lat,
-                                                                y: mhuman[k].latlngs.lng
-                                                              };
-                                                              
-                                                            human1 = L.divIcon({
-                                                                className: 'checkpoint-pin',
-                                                                html: '<img src="/images/man.png">',
-                                                                iconSize: [15, 15],
-                                                                iconAnchor: [10, 10]
-                                                              });
-                                                          
-                                                          //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                          if(dd[i].location_id === mhuman[k].popup){
-                                                              var random = Math.floor(Math.random() * 10) + 1; 
-                                                              //console.log("random--"+random);
-                                                              //alert("in 1 i="+i+" k="+k);
-                                                                var marker = L.marker([man.x, man.y], {
-                                                                  icon: human1
-                                                                });
-                                                                
-                                                                markers.addLayer(marker);
-                                                                pointlist.push([man.x, man.y]);
-                                                                //console.log("pointlist11--"+pointlist);
-                                                                //drawPolyline();
-                                                                
-                                                                html += '<li><a href="#step-1"><span class="step_no">'+dd[i].location_id+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
-
-                                                          }
-
-                                                      }
-                                                        }
-                                                  }
-                                                    //console.log("pointlist22--"+JSON.stringify(pointlist));
-                                                  map.addLayer(markers);
-                                                  document.getElementById("wizard_steps").innerHTML = html;
-                                                  var firstpolyline = L.polyline(pointlist, {
-                                                      color: 'red',
-                                                      weight: 3,
-                                                      opacity: 0.5,
-                                                      smoothFactor: 1
-                                                  }).addTo(map);
-                                                  //console.log("firstpolyline--"+JSON.stringify(firstpolyline));
-                                                  //firstpolyline.addTo(map);
-                                                    //var polyline = L.polyline(pointlist).addTo(map);
-                                                  
-
-                                              } else {
-                                                  
-                                                  var emp_id = checkboxElem.id;
-                                                  
-                                                  for(var i=0;i<dd.length;i++){
-                                                      var num = dd[i].employee_id.toString();
-                                                      document.getElementById("wizard_steps").innerHTML = '';
-                                                      if(num === emp_id){
-                                                          //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                          if(dd[i].location_id === "A"){
-                                                              //map.removeLayer(humanMark1);
-                                                              
-                                                              clearMap();
-                                                              pointlist = [];
-                                                              markers.clearLayers();
-                                                              
-                                                          }
-                                                          else if(dd[i].location_id === "B"){
-                                                              //map.removeLayer(humanMark2);
-                                                              clearMap();
-                                                              pointlist = [];
-                                                              markers.clearLayers();
-                                                              
-                                                          }
-                                                          else if(dd[i].location_id === "C"){
-                                                             //map.removeLayer(humanMark3);
-                                                              clearMap();
-                                                              pointlist = [];
-                                                              markers.clearLayers();
-                                                             
-                                                          }
-
-                                                      }
-                                                  }
-
-                                              }
-                                            }
-                                            
-                                            function clearMap() {
-                                                for(i in map._layers) {
-                                                    if(map._layers[i]._path !== undefined) {
-                                                        try {
-                                                            map.removeLayer(map._layers[i]);
-                                                        }
-                                                        catch(e) {
-                                                            console.log("problem with " + e + map._layers[i]);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            //source => http://codepen.io/zachdunn/pen/VvRXdP
-                                                // Using leaflet.js to pan and zoom a big image.
-                                            // See also: http://kempe.net/blog/2014/06/14/leaflet-pan-zoom-image.html
-                                            // Marker Pin: http://codepen.io/zachdunn/pen/wapEam
-                                            // create the slippy map
-                                            //var map = L.map('image-map-dashboard', {
-                                             // minZoom: 1,
-                                             // maxZoom: 4,
-                                             // center: [0, 0],
-                                              //zoom: 1,
-                                              //crs: L.CRS.Simple,
-                                              //attributionControl: false
-                                            //});
-                                            
                                             //alert("on 1-- "+map_string);
-                                            var map = L.map(map_string, {
+                                            map = L.map(map_string, {
                                               minZoom: 0,
                                               maxZoom: 4,
                                               zoom: 0,
@@ -250,7 +88,7 @@ block content
                                               crs: L.CRS.Simple,
                                               attributionControl: false
                                             });
-                                            
+                                             
                                             map.invalidateSize();
 
                                             //alert("on 2");
@@ -289,6 +127,171 @@ block content
                                             
                                             //marker = JSON.parse(localStorage.getItem("marker"));
                                             
+                                            
+                                            var ff = JSON.parse(floorplan);
+                                            for(var j=0;j<ff.length;j++){
+                                                floorplan_list.push(ff[j]);
+                                            }
+                                            //alert("floorplan_list--"+JSON.stringify(floorplan_list));
+                                            if(data!=='undefined'){
+                                            dd = JSON.parse(data);
+                                            //alert(dd.length+" record(s) found");
+                                            }
+                                             
+                                             var markers = new L.FeatureGroup();
+                                            //var humanMark1,humanMark2,humanMark3;
+
+                                            
+                                            //source => http://codepen.io/zachdunn/pen/VvRXdP
+                                                // Using leaflet.js to pan and zoom a big image.
+                                            // See also: http://kempe.net/blog/2014/06/14/leaflet-pan-zoom-image.html
+                                            // Marker Pin: http://codepen.io/zachdunn/pen/wapEam
+                                            // create the slippy map
+                                            //var map = L.map('image-map-dashboard', {
+                                             // minZoom: 1,
+                                             // maxZoom: 4,
+                                             // center: [0, 0],
+                                              //zoom: 1,
+                                              //crs: L.CRS.Simple,
+                                              //attributionControl: false
+                                            //});
+                                            
+                                            
+                                            function doalert(checkboxElem) {
+                                              
+                                                if (checkboxElem.checked) {
+
+                                                    var emp_id = checkboxElem.value;
+                                                    //alert("form 1-- "+emp_id);
+                                                    var html='';
+                                                    var pointlist = [];
+                                                    for(var i=0;i<dd.length;i++){
+                                                        var num = dd[i].employee_id.toString();
+                                                        //alert("form 1-- "+emp_id);
+                                                          var d = new Date(dd[i].path_datetime);
+                                                          //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
+                                                          var ddate = d.getDate();
+                                                          var dmonth = d.getMonth()+1;
+                                                          var dyear = d.getFullYear();
+                                                          var dhour = d.getHours();
+                                                          var dminutes = d.getMinutes();
+                                                          var dseconds = d.getSeconds();
+
+                                                          if(ddate < 10){
+                                                              ddate = "0"+ddate;
+                                                          }
+                                                          if(dmonth < 10){
+                                                              dmonth = "0"+dmonth;
+                                                          }
+
+                                                          if(dhour < 10){
+                                                              dhour = "0"+dhour;
+                                                          }
+                                                          if(dminutes < 10){
+                                                              dminutes = "0"+dminutes;
+                                                          }
+                                                          if(dseconds < 10){
+                                                              dseconds = "0"+dseconds;
+                                                          }
+
+                                                          mhuman = floorplan_list;
+                                                          for (k in mhuman) {
+                                                          var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
+                                                          //console.log("num--- "+num);
+                                                          //console.log("emp_id--- "+emp_id);
+                                                          //console.log("dd["+i+"].location_id--- "+dd[i].location_id);
+                                                          //console.log("mhuman["+k+"].popup--- "+mhuman[k].popup);
+                                                        if(num === emp_id){
+
+                                                              man = {
+                                                                  x: mhuman[k].latlngs.lat,
+                                                                  y: mhuman[k].latlngs.lng
+                                                                };
+
+                                                              human1 = L.divIcon({
+                                                                  className: 'checkpoint-pin',
+                                                                  html: '<img src="/images/man.png">',
+                                                                  iconSize: [15, 15],
+                                                                  iconAnchor: [10, 10]
+                                                                });
+
+                                                            //alert(emp_id+"---"+dd[i].employee_id+"---"+mhuman[k].popup+"---"+dd[i].location_id);
+                                                            if(dd[i].location_id === mhuman[k].popup){
+                                                                var random = Math.floor(Math.random() * 10) + 1; 
+                                                                //console.log("random--"+random);
+                                                                //alert("in 1 i="+i+" k="+k);
+                                                                  var marker = L.marker([man.x, man.y], {
+                                                                    icon: human1
+                                                                  });
+
+                                                                  markers.addLayer(marker);
+                                                                  pointlist.push([man.x, man.y]);
+                                                                  //console.log("pointlist11--"+pointlist);
+                                                                  //drawPolyline();
+
+                                                                  html += '<li><a href="#step-1"><span class="step_no">'+dd[i].location_id+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
+                                                                  map.addLayer(markers);
+                                                            }
+
+                                                        }
+
+                                                          }
+                                                    }
+                                                      //console.log("pointlist22--"+JSON.stringify(pointlist));
+                                                    //map.addLayer(markers);
+                                                    document.getElementById("wizard_steps").innerHTML = html;
+                                                    var firstpolyline = L.polyline(pointlist, {
+                                                        color: 'red',
+                                                        weight: 3,
+                                                        opacity: 0.5,
+                                                        smoothFactor: 1
+                                                    }).addTo(map);
+                                                    //console.log("firstpolyline--"+JSON.stringify(firstpolyline));
+                                                    //firstpolyline.addTo(map);
+                                                      //var polyline = L.polyline(pointlist).addTo(map);
+
+
+                                                } else {
+
+                                                    var emp_id = checkboxElem.id;
+
+                                                    for(var i=0;i<dd.length;i++){
+                                                        var num = dd[i].employee_id.toString();
+                                                        document.getElementById("wizard_steps").innerHTML = '';
+                                                        clearMap();
+                                                        pointlist = [];
+                                                        markers.clearLayers();
+                                                        /*if(num === emp_id){
+                                                            //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
+                                                            if(dd[i].location_id === "A"){
+                                                                //map.removeLayer(humanMark1);
+
+                                                                clearMap();
+                                                                pointlist = [];
+                                                                markers.clearLayers();
+
+                                                            }
+                                                            else if(dd[i].location_id === "B"){
+                                                                //map.removeLayer(humanMark2);
+                                                                clearMap();
+                                                                pointlist = [];
+                                                                markers.clearLayers();
+
+                                                            }
+                                                            else if(dd[i].location_id === "C"){
+                                                               //map.removeLayer(humanMark3);
+                                                                clearMap();
+                                                                pointlist = [];
+                                                                markers.clearLayers();
+
+                                                            }
+
+                                                        }*/
+                                                    }
+
+                                                }
+                                              }
+                                            
                                             marker = JSON.parse(floorplan);
                                             //console.log("marker-- "+JSON.stringify(marker));
                                             if (marker !== null && marker.length !== 0) {
@@ -310,344 +313,6 @@ block content
                                             marker = [];
                                             }
 
-                                              //Add marker
-
-                                            //map.on('click', addMarker);
-
-                                              
-                                              
-                                              
-                                            // Lookup neighbors https://github.com/mapbox/leaflet-knn
-                                                /*var chekpointMark = L.marker(map.unproject([m.x, m.y], map.getMaxZoom()), {
-                                                  icon: checkpoint1
-                                                }).addTo(map);
-
-                                                var chekpointMark2 = L.marker(map.unproject([n.x, n.y], map.getMaxZoom()), {
-                                                  icon: checkpoint2
-                                                }).addTo(map);
-
-                                                var chekpointMark3 = L.marker(map.unproject([k.x, k.y], map.getMaxZoom()), {
-                                                  icon: checkpoint3
-                                                }).addTo(map);*/
-                                                
-                                                
-                                                
-                                                //var polyline = L.polyline([[800,410],[5000,250],[2000,1300],[800,410],[2000,1300],[5000,250],[2000,1300],[5000,250],[2000,1300]]).addTo(map);
-                                                //console.log(JSON.stringify(polyline));
-                                                //console.log("pointlist--"+JSON.stringify(pointlist));
-                                                /*var polyline = L.polyline([
-                                                map.unproject([700,400], map.getMaxZoom()),
-                                                map.unproject([5000, 250], map.getMaxZoom()),
-                                                map.unproject([2000, 1300], map.getMaxZoom())]
-                                                ).addTo(map);*/
-                                                /*var pointA = new L.LatLng(5000, 250);
-                                                        var pointB = new L.LatLng(2000, 1300);
-                                                        var pointList = [pointA, pointB];
-                                                //console.log("pointlist--"+pointList);
-                                                //var paths = L.layerGroup().addTo(map);
-                                                var firstpolyline = L.polyline(pointlist, {
-                                                      color: 'red',
-                                                      weight: 3,
-                                                      opacity: 0.5,
-                                                      smoothFactor: 1
-                                                  });
-                                                  //console.log("firstpolyline--"+JSON.stringify(firstpolyline));
-                                                  firstpolyline.addTo(map);*/
-                                    else
-                                        div.tab-pane(id='home#{row.floorplan_id}')
-                                            input(type="text", value="#{JSON.stringify(data)}",id="data",hidden='true')
-                                            //input(type='text', name='markers_in',id='markers_in',value='#{row.markers}',hidden='true')
-                                            //input(type='text', name='floorplan_id',id='floorplan_id',value='#{row.floorplan_id}',hidden='true')
-                                            //input(type='text', name='floorplan_img',id='floorplan_img',value='#{row.floorplan_img}',hidden='true')
-                                            //img(alt='', height='400', src='images/mapStacks2.png', width='800')
-                                            div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
-                                            script(type='text/javascript').
-
-                                                var floorplan_id = "#{row.floorplan_id}";
-                                                var floorplan = "#{row.markers}".replace(/&quot;/g, '"');
-                                                //alert(floorplan);
-                                                var data = document.getElementById("data").value;
-                                                var floorplan_img = "#{row.floorplan_img}";
-                                                var map_string = 'image-map-dashboard'+floorplan_id;
-                                                //alert(floorplan_img);
-                                                var dd,man;
-
-                                                if(data!=='undefined'){
-                                                dd = JSON.parse(data);
-                                                //alert(dd.length+" record(s) found");
-                                                }
-
-                                                 var markers = new L.FeatureGroup();
-                                                //var humanMark1,humanMark2,humanMark3;
-                                                function doalert(checkboxElem) {
-
-                                                  if (checkboxElem.checked) {
-
-                                                      var emp_id = checkboxElem.id;
-                                                      alert("form 2-- "+emp_id);
-                                                      var html='';
-                                                      var pointlist = [];
-                                                      for(var i=0;i<dd.length;i++){
-                                                          var num = dd[i].employee_id.toString();
-
-                                                            var d = new Date(dd[i].path_datetime);
-                                                            //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
-                                                            var ddate = d.getDate();
-                                                            var dmonth = d.getMonth()+1;
-                                                            var dyear = d.getFullYear();
-                                                            var dhour = d.getHours();
-                                                            var dminutes = d.getMinutes();
-                                                            var dseconds = d.getSeconds();
-
-                                                            if(ddate < 10){
-                                                                ddate = "0"+ddate;
-                                                            }
-                                                            if(dmonth < 10){
-                                                                dmonth = "0"+dmonth;
-                                                            }
-
-                                                            if(dhour < 10){
-                                                                dhour = "0"+dhour;
-                                                            }
-                                                            if(dminutes < 10){
-                                                                dminutes = "0"+dminutes;
-                                                            }
-                                                            if(dseconds < 10){
-                                                                dseconds = "0"+dseconds;
-                                                            }
-
-                                                            mhuman = JSON.parse(floorplan);
-                                                            for (k in mhuman) {
-                                                            var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
-                                                            //console.log("num--- "+num);
-                                                            //console.log("emp_id--- "+emp_id);
-                                                            //console.log("dd["+i+"].location_id--- "+dd[i].location_id);
-                                                            //console.log("mhuman["+k+"].popup--- "+mhuman[k].popup);
-                                                          if(num === emp_id){
-
-                                                                man = {
-                                                                    x: mhuman[k].latlngs.lat,
-                                                                    y: mhuman[k].latlngs.lng
-                                                                  };
-
-                                                                human1 = L.divIcon({
-                                                                    className: 'checkpoint-pin',
-                                                                    html: '<img src="/images/man.png">',
-                                                                    iconSize: [15, 15],
-                                                                    iconAnchor: [10, 10]
-                                                                  });
-
-                                                              //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                              if(dd[i].location_id === mhuman[k].popup){
-                                                                  var random = Math.floor(Math.random() * 10) + 1; 
-                                                                  //console.log("random--"+random);
-                                                                  //alert("in 1 i="+i+" k="+k);
-                                                                    var marker = L.marker([man.x, man.y], {
-                                                                      icon: human1
-                                                                    });
-
-                                                                    markers.addLayer(marker);
-                                                                    pointlist.push([man.x, man.y]);
-                                                                    //console.log("pointlist11--"+pointlist);
-                                                                    //drawPolyline();
-
-                                                                    html += '<li><a href="#step-1"><span class="step_no">'+dd[i].location_id+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
-
-                                                              }
-
-                                                          }
-                                                            }
-                                                      }
-                                                        //console.log("pointlist22--"+JSON.stringify(pointlist));
-                                                      map.addLayer(markers);
-                                                      document.getElementById("wizard_steps").innerHTML = html;
-                                                      var firstpolyline = L.polyline(pointlist, {
-                                                          color: 'red',
-                                                          weight: 3,
-                                                          opacity: 0.5,
-                                                          smoothFactor: 1
-                                                      }).addTo(map);
-                                                      //console.log("firstpolyline--"+JSON.stringify(firstpolyline));
-                                                      //firstpolyline.addTo(map);
-                                                        //var polyline = L.polyline(pointlist).addTo(map);
-
-
-                                                  } else {
-
-                                                      var emp_id = checkboxElem.id;
-                                                      //alert(emp_id);
-                                                      for(var i=0;i<dd.length;i++){
-                                                          var num = dd[i].employee_id.toString();
-                                                          document.getElementById("wizard_steps").innerHTML = '';
-                                                          if(num === emp_id){
-                                                              //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                              if(dd[i].location_id === "A"){
-                                                                  //map.removeLayer(humanMark1);
-
-                                                                  clearMap();
-                                                                  pointlist = [];
-                                                                  markers.clearLayers();
-
-                                                              }
-                                                              else if(dd[i].location_id === "B"){
-                                                                  //map.removeLayer(humanMark2);
-                                                                  clearMap();
-                                                                  pointlist = [];
-                                                                  markers.clearLayers();
-
-                                                              }
-                                                              else if(dd[i].location_id === "C"){
-                                                                 //map.removeLayer(humanMark3);
-                                                                  clearMap();
-                                                                  pointlist = [];
-                                                                  markers.clearLayers();
-
-                                                              }
-
-                                                          }
-                                                      }
-
-                                                  }
-                                                }
-
-                                                function clearMap() {
-                                                    for(i in map._layers) {
-                                                        if(map._layers[i]._path !== undefined) {
-                                                            try {
-                                                                map.removeLayer(map._layers[i]);
-                                                            }
-                                                            catch(e) {
-                                                                console.log("problem with " + e + map._layers[i]);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                //source => http://codepen.io/zachdunn/pen/VvRXdP
-                                                    // Using leaflet.js to pan and zoom a big image.
-                                                // See also: http://kempe.net/blog/2014/06/14/leaflet-pan-zoom-image.html
-                                                // Marker Pin: http://codepen.io/zachdunn/pen/wapEam
-                                                // create the slippy map
-                                                //var map = L.map('image-map-dashboard', {
-                                                 // minZoom: 1,
-                                                 // maxZoom: 4,
-                                                 // center: [0, 0],
-                                                  //zoom: 1,
-                                                  //crs: L.CRS.Simple,
-                                                  //attributionControl: false
-                                                //});
-
-                                                //alert("on 1-- "+map_string);
-                                                var map = L.map(map_string, {
-                                                  minZoom: 0,
-                                                  maxZoom: 4,
-                                                  zoom: 0,
-                                                  center: [0, 0],
-                                                  crs: L.CRS.Simple,
-                                                  attributionControl: false
-                                                });
-
-                                                map.invalidateSize();
-
-                                                //alert("on 2");
-                                                L.control.attribution({
-                                                  prefix: false
-                                                }).addAttribution('').addTo(map);
-                                                // House: http://i.imgur.com/cenqiCf.jpg
-                                                // Palace SVG (1280 x 806): https://dl.dropbox.com/s/yhrpnftsuis15z6/Topkapi_Palace_plan.svg
-                                                // dimensions of the image
-                                                //var w = 1500 * 2,
-                                                //h = 800 * 2,
-                                                var w = 4500* 1.4,
-                                                h = 2843* 1.1,
-                                                //url = '/images/floor_plan.jpg';
-                                                url = '/'+floorplan_img;
-                                                //alert("on k1");
-                                                // calculate the edges of the image, in coordinate space
-                                                var southWest = map.unproject([0, h], map.getMaxZoom() - 1);
-                                                var northEast = map.unproject([w, 0], map.getMaxZoom() - 1);
-                                                var bounds = new L.LatLngBounds(southWest, northEast);
-
-                                                // add the image overlay, 
-                                                // so that it covers the entire map
-                                                L.imageOverlay(url, bounds).addTo(map);
-
-                                                // tell leaflet that the map is exactly as big as the image
-                                                map.setMaxBounds(bounds);
-                                                /*map.touchZoom.disable();
-                                                map.doubleClickZoom.disable();
-                                                map.scrollWheelZoom.disable();
-                                                map.dragging.disable();
-                                                map.boxZoom.disable();
-                                                map.keyboard.disable();
-                                                map.removeControl(map.zoomControl);
-                                                map.zoomControl.remove();*/
-
-                                                //marker = JSON.parse(localStorage.getItem("marker"));
-
-                                                marker = JSON.parse(floorplan);
-                                                //console.log("marker-- "+JSON.stringify(marker));
-                                                if (marker !== null && marker.length !== 0) {
-                                                for (i in marker) {
-                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindPopup("<div><b>" + marker[i].popup + "</b></div>").on('popupopen', "");
-
-                                                map.addLayer(marks);
-                                                //console.log("end layer");
-                                                //alert("on k2");
-                                                //console.log("marker[i].latlngs.lat--- "+marker[i].latlngs.lat);
-                                                //console.log("marker[i].latlngs.lat--- "+marker[i].latlngs.lng);
-                                                /*man = {
-                                                    x: marker[i].latlngs.lat,
-                                                    y: marker[i].latlngs.lng
-                                                  };*/
-
-                                                }
-                                                } else {
-                                                marker = [];
-                                                }
-
-                                                  //Add marker
-
-                                                //map.on('click', addMarker);
-
-
-
-
-                                                // Lookup neighbors https://github.com/mapbox/leaflet-knn
-                                                    /*var chekpointMark = L.marker(map.unproject([m.x, m.y], map.getMaxZoom()), {
-                                                      icon: checkpoint1
-                                                    }).addTo(map);
-
-                                                    var chekpointMark2 = L.marker(map.unproject([n.x, n.y], map.getMaxZoom()), {
-                                                      icon: checkpoint2
-                                                    }).addTo(map);
-
-                                                    var chekpointMark3 = L.marker(map.unproject([k.x, k.y], map.getMaxZoom()), {
-                                                      icon: checkpoint3
-                                                    }).addTo(map);*/
-
-
-
-                                                    //var polyline = L.polyline([[800,410],[5000,250],[2000,1300],[800,410],[2000,1300],[5000,250],[2000,1300],[5000,250],[2000,1300]]).addTo(map);
-                                                    //console.log(JSON.stringify(polyline));
-                                                    //console.log("pointlist--"+JSON.stringify(pointlist));
-                                                    /*var polyline = L.polyline([
-                                                    map.unproject([700,400], map.getMaxZoom()),
-                                                    map.unproject([5000, 250], map.getMaxZoom()),
-                                                    map.unproject([2000, 1300], map.getMaxZoom())]
-                                                    ).addTo(map);*/
-                                                    /*var pointA = new L.LatLng(5000, 250);
-                                                            var pointB = new L.LatLng(2000, 1300);
-                                                            var pointList = [pointA, pointB];
-                                                    //console.log("pointlist--"+pointList);
-                                                    //var paths = L.layerGroup().addTo(map);
-                                                    var firstpolyline = L.polyline(pointlist, {
-                                                          color: 'red',
-                                                          weight: 3,
-                                                          opacity: 0.5,
-                                                          smoothFactor: 1
-                                                      });
-                                                      //console.log("firstpolyline--"+JSON.stringify(firstpolyline));
-                                                      firstpolyline.addTo(map);*/
                                     
                           .row
                               .col-md-12
