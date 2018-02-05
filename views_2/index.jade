@@ -1,0 +1,77 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main', style='background-color:#49A8FF')
+        #layer1.auto-style1-dash(style='position: absolute; width: 113px; height: 24px; z-index: 1; left: 709px; top: 100px') Dashboard
+        .row(style='margin-top:150px')
+          .col-md-4
+            .a_panel
+              .a_title
+                h2 正值班的雇员
+                ul.nav.navbar-right.panel_toolbox
+                .clearfix
+              .x_content
+                for row, index in employee
+                    article.media.event
+                      a.pull-left
+                        img.img-rectangle.profile_img(src='/#{row.employee_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                      .media-body
+                        a.nav.navbar-right
+                          if row.employee_status === 'online'
+                            img(alt='', src='/images/green_circle.png', height='15', width='15', style='margin-right:10px')
+                          else
+                            img(alt='', src='/images/red_circle.png', height='15', width='15', style='margin-right:10px')
+                        a.title(href='') #{row.employee_name+" ("+row.employee_phone_no+")"}
+                        p #{row.employee_motto}
+
+                article.media.event
+                  #layer2.auto-style3-dash
+                    a(href='/employee_management',style='color:white') More
+          .col-md-4
+            .b_panel
+              .b_title
+                h2 警报
+                ul.nav.navbar-right.panel_toolbox
+                .clearfix
+              .x_content
+                for row, index in alert
+                    article.media.event
+                      a.pull-left
+                        if row.document_type === "Photo"
+                         img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "Audio"
+                         img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "Note"
+                         img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
+                      .media-body
+                        a.title(href='#') #{row.document_remark}
+                        p #{row.beacon_location+" ("+row.beacon_level+")"}
+                
+                article.media.event
+                  #layer3.auto-style3-dash
+                    a(href='/alert',style='color:white') More
+          .col-md-4(style='left: 0px; top: 0px')
+            .c_panel
+              .c_title
+                h2 通知
+                ul.nav.navbar-right.panel_toolbox
+                .clearfix
+              .x_content
+                for row, index in notification
+                    article.media.event
+                      a.pull-left
+                        if row.document_type === "Photo"
+                         img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "Audio"
+                         img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "Note"
+                         img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
+                      .media-body
+                        a.title(href='#') #{row.document_remark}
+                        p #{row.beacon_location+" ("+row.beacon_level+")"}
+                
+                article.media.event
+                  article.media.event
+                  #layer4.auto-style3-dash
+                    a(href='/documents',style='color:white') More
+    // /page content

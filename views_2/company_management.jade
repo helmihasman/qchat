@@ -1,0 +1,38 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-6
+                h3
+                  img(src='/images/system_admin.png',height='35px',width='30px')
+                  | &nbsp;Company Management
+                  a.btn.btn-primary.btn-xs.btn-flata(href='/company_add')
+                      i.fa.fa-plus
+                  br
+                  br
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                        th No
+                        th Registration Number
+                        th Company Name
+                        th Phone no
+                        th Email
+                    tbody
+                      for row, index in data
+                        tr
+                          td #{index+1}
+                          td #{row.company_reg_no}
+                          td #{row.company_name}
+                          td #{row.company_phone_no}
+                          td #{row.company_email}
+                            
+            .clearfix
+    // /page content
+

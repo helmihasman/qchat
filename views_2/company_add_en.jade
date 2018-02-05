@@ -1,0 +1,46 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                h2
+                 img(src='/images/system_admin.png',height='35px',width='30px')
+                 | &nbsp;Company Management&nbsp;&nbsp; 
+                 
+              .col-md-12
+                form.form-horizontal.form-label-left(role='form',method='post' action='/company/add')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Company Name &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='text', name='company_name',id='company_name',style='width:400px')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Registration No &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='text', name='company_reg_no',id='company_reg_no',style='width:400px')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Company Address &nbsp; : &nbsp;
+                        .col-md-3
+                          textarea(rows='4', cols='50',name='company_address',id='company_address',style='width:400px')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Website &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='text', name='company_website',id='company_website',style='width:400px')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Phone Number &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='text', name='company_phone_no',id='company_phone_no',style='width:400px')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Email &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='text', name='company_email',id='company_email',style='width:400px')
+                    .form-group
+                        .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
+                          button.btn.btn-primary(type='submit',id="confirm_btn") Confirm
+                          button.btn.btn-success(type='button',onclick='goBack();') Cancel
+    // /page content
+

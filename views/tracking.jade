@@ -6,18 +6,11 @@ block content
                 .f_panel
                   .f_title
                      h3
-                       img(src='/images/tracking.png',height='35px',width='30px')
-                       | &nbsp;定位追踪
+                       img(src='images/tracking.png',height='35px',width='30px')
+                       | &nbsp;追踪
                     .clearfix
                   .f_content
                     div(role='tabpanel', data-example-id='togglable-tabs')
-                      ul#myTab.nav.nav-tabs.bar_tabs(role='tablist', style='text-align: center')
-                        li.active(role='presentation')
-                          a#home-tab(href='#tab_content1', role='tab', data-toggle='tab', aria-expanded='true') 雇员列表
-                        //li(role='presentation')
-                          a#profile-tab(href='#tab_content2', role='tab', data-toggle='tab', aria-expanded='false') Mission List
-                      #myTabContent.tab-content
-                        #tab_content1.tab-pane.fade.active.in(role='tabpanel', aria-labelledby='Employee_List-tab')
                           .row
                             // form input mask
                             .col-md-3.col-sm-12.col-xs-12
@@ -33,15 +26,14 @@ block content
                                         h4.panel-title 中国电信
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
-                                          for row, index in data
+                                          for row, index in employee
                                             ul
-                                              input(name='checkbox1',id='#{row.employee_id}', type='checkbox',onchange="doalert(this)")
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                          
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2  楼层地图
+                                  h2 楼层地图
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -49,461 +41,174 @@ block content
                                     // required for floating
                                     // Nav tabs
                                     ul.nav.nav-tabs.tabs-left
-                                      li.active
-                                        a(href='#home', data-toggle='tab') 1 楼
-                                      li
-                                        a(href='#profile', data-toggle='tab') 1 楼
+                                      for row, index in floor_plan
+                                        li
+                                          a(href='#home#{row.floorplan_id}', data-toggle='tab') #{row.floor_name}
+                                        
+                                        
                                       
                             .col-md-9.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 Maps
+                                  h2 地图
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
                                   .tab-content
-                                    #home.tab-pane.active
-                                        input(type="text", value="#{JSON.stringify(data)}",id="data",hidden='true')
-                                        //img(alt='', height='400', src='images/mapStacks2.png', width='800')
-                                        div(id="image-map-dashboard")
-                                        script(type='text/javascript', src='https://unpkg.com/leaflet@1.0.2/dist/leaflet.js')
-                                        script(type='text/javascript').
-                                            var data = document.getElementById("data").value;
-                                            var dd;
-                                            //alert(data);
-                                            if(data!=='undefined'){
-                                            dd = JSON.parse(data);
-                                            //alert(dd.length+" record(s) found");
-                                            }
+                                    script(type='text/javascript').
+                                     var maps = [];
+                                     var floorplan_list = [];
+                                     var markers = new L.FeatureGroup();
+                                          
+                                    for row, index in floor_plan
+                                        if index === 0
+                                         div.tab-pane.active(id='home#{row.floorplan_id}')
+                                            div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
+                                            script(type='text/javascript').
 
-                                            var humanMark1,humanMark2,humanMark3;
-                                            function doalert(checkboxElem) {
-
-                                              if (checkboxElem.checked) {
-                                                  var emp_id = checkboxElem.id;
-                                                  //alert(emp_id);
-                                                  for(var i=0;i<dd.length;i++){
-                                                      var num = dd[i].employee_id.toString();
-                                                      if(num === emp_id){
-                                                          //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                          if(dd[i].employee_location === "A"){
-                                                              //alert("in 1");
-                                                                humanMark1 = L.marker(map.unproject([man1.x, man1.y], map.getMaxZoom()), {
-                                                                  icon: human1
-                                                                }).addTo(map);
-                                                          }
-                                                          else if(dd[i].employee_location === "B"){
-                                                              //alert("in 2");
-                                                                humanMark2 = L.marker(map.unproject([man2.x, man2.y], map.getMaxZoom()), {
-                                                                  icon: human2
-                                                                }).addTo(map);
-                                                          }
-                                                          else if(dd[i].employee_location === "C"){
-                                                              //alert("in 3");
-                                                              humanMark3 = L.marker(map.unproject([man3.x, man3.y], map.getMaxZoom()), {
-                                                                icon: human3
-                                                              }).addTo(map);
-                                                          }
-
-                                                      }
-                                                  }
-
-                                              } else {
-                                                  var emp_id = checkboxElem.id;
-                                                  //alert(emp_id);
-                                                  for(var i=0;i<dd.length;i++){
-                                                      var num = dd[i].employee_id.toString();
-                                                      if(num === emp_id){
-                                                          //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                          if(dd[i].employee_location === "A"){
-                                                              map.removeLayer(humanMark1);
-                                                          }
-                                                          else if(dd[i].employee_location === "B"){
-                                                              map.removeLayer(humanMark2);
-                                                          }
-                                                          else if(dd[i].employee_location === "C"){
-                                                             map.removeLayer(humanMark3);
-                                                          }
-
-                                                      }
-                                                  }
-
-                                              }
-                                            }
-
-                                            //source => http://codepen.io/zachdunn/pen/VvRXdP
-                                                // Using leaflet.js to pan and zoom a big image.
-                                            // See also: http://kempe.net/blog/2014/06/14/leaflet-pan-zoom-image.html
-                                            // Marker Pin: http://codepen.io/zachdunn/pen/wapEam
-                                            // create the slippy map
-                                            //var map = L.map('image-map-dashboard', {
-                                             // minZoom: 1,
-                                             // maxZoom: 4,
-                                             // center: [0, 0],
-                                              //zoom: 1,
-                                              //crs: L.CRS.Simple,
-                                              //attributionControl: false
-                                            //});
-
-                                            var map = L.map('image-map-dashboard', {
-                                              minZoom: 1,
-                                              maxZoom: 4,
-                                              zoom: 1,
-                                              center: [0, 0],
-                                              crs: L.CRS.Simple,
-                                              attributionControl: false
-                                            });
-
-
-                                            L.control.attribution({
-                                              prefix: false
-                                            }).addAttribution('').addTo(map);
-                                            // House: http://i.imgur.com/cenqiCf.jpg
-                                            // Palace SVG (1280 x 806): https://dl.dropbox.com/s/yhrpnftsuis15z6/Topkapi_Palace_plan.svg
-                                            // dimensions of the image
-                                            var w = 1500 * 2,
-                                            h = 800 * 2,
-                                            //url = '/adminlte/dist/img/hospital_floor_plan.jpg';
-                                            url = 'images/mapStacks2.png';
-
-                                            // calculate the edges of the image, in coordinate space
-                                            var southWest = map.unproject([0, h], map.getMaxZoom() - 1);
-                                            var northEast = map.unproject([w, 0], map.getMaxZoom() - 1);
-                                            var bounds = new L.LatLngBounds(southWest, northEast);
-
-                                            // add the image overlay, 
-                                            // so that it covers the entire map
-                                            L.imageOverlay(url, bounds).addTo(map);
-
-                                            // tell leaflet that the map is exactly as big as the image
-                                            map.setMaxBounds(bounds);
-                                            map.touchZoom.disable();
-                                            map.doubleClickZoom.disable();
-                                            map.scrollWheelZoom.disable();
-                                            map.dragging.disable();
-                                            map.boxZoom.disable();
-                                            map.keyboard.disable();
-                                            map.removeControl(map.zoomControl);
-                                            map.zoomControl.remove();
-
-                                            // pixel coords
-                                            var m = {
-                                                x: 700,
-                                                y: 400
-                                              };
-
-                                              var man1 = {
-                                                x: 800,
-                                                y: 410
-                                              };
-
-                                              var n = {
-                                                x: 5000,
-                                                y: 250
-                                              };
-
-                                              var man2 = {
-                                                x: 5000,
-                                                y: 250
-                                              };
-
-                                              var k = {
-                                                x: 2000,
-                                                y: 1300
-                                              };
-
-                                              var man3 = {
-                                                x: 2000,
-                                                y: 1300
-                                              };
-
-                                              //Add marker
-
-                                            //map.on('click', addMarker);
-                                            var addedOne = false,
-                                              checkpoint1 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
-
-
-                                              var table = false,
-                                              checkpoint2 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal2">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
-
-
-                                              var table = false,
-                                              checkpoint3 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal3">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
-
-                                              var table = false,
-                                              human1 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
-
-                                              var table = false,
-                                              human2 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
-
-                                              var table = false,
-                                              human3 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
-
-                                            // Lookup neighbors https://github.com/mapbox/leaflet-knn
-                                                var chekpointMark = L.marker(map.unproject([m.x, m.y], map.getMaxZoom()), {
-                                                  icon: checkpoint1
-                                                }).addTo(map);
-
-                                                var chekpointMark2 = L.marker(map.unproject([n.x, n.y], map.getMaxZoom()), {
-                                                  icon: checkpoint2
-                                                }).addTo(map);
-
-                                                var chekpointMark3 = L.marker(map.unproject([k.x, k.y], map.getMaxZoom()), {
-                                                  icon: checkpoint3
-                                                }).addTo(map);
+                                                var floorplan_id = "#{row.floorplan_id}";
+                                                var floorplan = "#{row.markers}".replace(/&quot;/g, '"');
+                                                var data = "#{data}".replace(/&quot;/g, '"');
+                                                var floorplan_img = "#{row.floorplan_img}";
+                                                var indexs = "#{index}";
                                                 
-                                    #profile.tab-pane
-                                        //input(type="text", value="#{JSON.stringify(data)}",id="data",hidden='true')
-                                        //img(alt='', height='400', src='images/mapStacks2.png', width='800')
-                                        div(id="image-map-dashboard2")
-                                        script(type='text/javascript').
-                                            //var data = document.getElementById("data").value;
-                                            //var dd;
-                                            //alert(data);
-                                            //if(data!=='undefined'){
-                                            //dd = JSON.parse(data);
-                                            //alert(dd.length+" record(s) found");
-                                            //}
+                                                var map_string = 'image-map-dashboard'+floorplan_id;
 
-                                            /*var humanMark1-1,humanMark2-1,humanMark3-1;
-                                            function doalert(checkboxElem) {
+                                                var dd,man;
 
-                                              if (checkboxElem.checked) {
-                                                  var emp_id = checkboxElem.id;
-                                                  //alert(emp_id);
-                                                  for(var i=0;i<dd.length;i++){
-                                                      var num = dd[i].employee_id.toString();
-                                                      if(num === emp_id){
-                                                          //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                          if(dd[i].employee_location === "A"){
-                                                              //alert("in 1");
-                                                                humanMark1-1 = L.marker(map.unproject([man1.x, man1.y], map.getMaxZoom()), {
-                                                                  icon: human1
-                                                                }).addTo(map);
-                                                          }
-                                                          else if(dd[i].employee_location === "B"){
-                                                              //alert("in 2");
-                                                                humanMark2-1 = L.marker(map.unproject([man2.x, man2.y], map.getMaxZoom()), {
-                                                                  icon: human2
-                                                                }).addTo(map);
-                                                          }
-                                                          else if(dd[i].employee_location === "C"){
-                                                              //alert("in 3");
-                                                              humanMark3-1 = L.marker(map.unproject([man3.x, man3.y], map.getMaxZoom()), {
-                                                                icon: human3
-                                                              }).addTo(map);
-                                                          }
+                                                maps.push(L.map(map_string, {minZoom: 0,maxZoom: 4,zoom: 0,center: [0, 0],crs: L.CRS.Simple,attributionControl: false}));
 
-                                                      }
-                                                  }
+                                                maps[indexs].invalidateSize();
 
-                                              } else {
-                                                  var emp_id = checkboxElem.id;
-                                                  //alert(emp_id);
-                                                  for(var i=0;i<dd.length;i++){
-                                                      var num = dd[i].employee_id.toString();
-                                                      if(num === emp_id){
-                                                          //alert(emp_id+"---"+dd[i].employee_id+"---"+dd[i].employee_location);
-                                                          if(dd[i].employee_location === "A"){
-                                                              map.removeLayer(humanMark1-1);
-                                                          }
-                                                          else if(dd[i].employee_location === "B"){
-                                                              map.removeLayer(humanMark2-1);
-                                                          }
-                                                          else if(dd[i].employee_location === "C"){
-                                                             map.removeLayer(humanMark3-1);
-                                                          }
+                                                var ff = JSON.parse(floorplan);
+                                                floorplan_list.push(ff);
 
-                                                      }
-                                                  }
+                                                //alert("floorplan_list--"+JSON.stringify(floorplan_list));
+                                                if(data!=='undefined'){
+                                                //alert(data);
+                                                dd = JSON.parse(data);
+                                                //alert(JSON.stringify(dd));
+                                                //alert(dd.length+" record(s) found");
+                                                }
 
-                                              }
-                                            }*/
+                                                //alert("on 2");
+                                                L.control.attribution({
+                                                  prefix: false
+                                                }).addAttribution('').addTo(maps[indexs]);
 
-                                            //source => http://codepen.io/zachdunn/pen/VvRXdP
-                                                // Using leaflet.js to pan and zoom a big image.
-                                            // See also: http://kempe.net/blog/2014/06/14/leaflet-pan-zoom-image.html
-                                            // Marker Pin: http://codepen.io/zachdunn/pen/wapEam
-                                            // create the slippy map
-                                            //var map = L.map('image-map-dashboard', {
-                                             // minZoom: 1,
-                                             // maxZoom: 4,
-                                             // center: [0, 0],
-                                              //zoom: 1,
-                                              //crs: L.CRS.Simple,
-                                              //attributionControl: false
-                                            //});
-                                            
-                                            var map2 = L.map('image-map-dashboard2', {
-                                              minZoom: 1,
-                                              maxZoom: 4,
-                                              zoom: 1,
-                                              center: [0, 0],
-                                              crs: L.CRS.Simple,
-                                              attributionControl: false
-                                            });
+                                                var w = 4500* 1.4,
+                                                h = 2843* 1.1,
+                                                //url = '/images/floor_plan.jpg';
+                                                url = '/'+floorplan_img;
+                                                //alert("on k1");
+                                                // calculate the edges of the image, in coordinate space
+                                                var southWest = maps[indexs].unproject([0, h], maps[indexs].getMaxZoom() - 1);
+                                                var northEast = maps[indexs].unproject([w, 0], maps[indexs].getMaxZoom() - 1);
+                                                var bounds = new L.LatLngBounds(southWest, northEast);
 
-                                            
-                                            L.control.attribution({
-                                              prefix: false
-                                            }).addAttribution('').addTo(map2);
-                                            // House: http://i.imgur.com/cenqiCf.jpg
-                                            // Palace SVG (1280 x 806): https://dl.dropbox.com/s/yhrpnftsuis15z6/Topkapi_Palace_plan.svg
-                                            // dimensions of the image
-                                            var w = 1600 * 2,
-                                            h = 800 * 2,
-                                            //url = '/adminlte/dist/img/hospital_floor_plan.jpg';
-                                            url = 'images/floor_plan.jpg';
+                                                // add the image overlay, 
+                                                // so that it covers the entire map
+                                                L.imageOverlay(url, bounds).addTo(maps[indexs]);
 
-                                            // calculate the edges of the image, in coordinate space
-                                            var southWest = map2.unproject([0, h], map2.getMaxZoom() - 1);
-                                            var northEast = map2.unproject([w, 0], map2.getMaxZoom() - 1);
-                                            var bounds = new L.LatLngBounds(southWest, northEast);
+                                                // tell leaflet that the map is exactly as big as the image
+                                                maps[indexs].setMaxBounds(bounds);
 
-                                            // add the image overlay, 
-                                            // so that it covers the entire map
-                                            L.imageOverlay(url, bounds).addTo(map2);
+                                                //var humanMark1,humanMark2,humanMark3;
 
-                                            // tell leaflet that the map is exactly as big as the image
-                                            map2.setMaxBounds(bounds);
-                                            map2.touchZoom.disable();
-                                            map2.doubleClickZoom.disable();
-                                            map2.scrollWheelZoom.disable();
-                                            map2.dragging.disable();
-                                            map2.boxZoom.disable();
-                                            map2.keyboard.disable();
-                                            map2.removeControl(map2.zoomControl);
-                                            map2.zoomControl.remove();
+                                                marker = JSON.parse(floorplan);
+                                                //console.log("marker-- "+JSON.stringify(marker));
+                                                if (marker !== null && marker.length !== 0) {
+                                                for (i in marker) {
+                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindPopup("<div><b>" + marker[i].popup + "</b></div>").on('popupopen', "");
 
-                                            // pixel coords
-                                            var mmap2 = {
-                                                x: 700,
-                                                y: 400
-                                              };
+                                                maps[indexs].addLayer(marks);
 
-                                              var man1map2 = {
-                                                x: 800,
-                                                y: 410
-                                              };
+                                                }
+                                                } else {
+                                                marker = [];
+                                                }
 
-                                              var nmap2 = {
-                                                x: 5000,
-                                                y: 250
-                                              };
+                                        else
+                                          div.tab-pane(id='home#{row.floorplan_id}')
+                                            div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
+                                            script(type='text/javascript').
 
-                                              var man2map2 = {
-                                                x: 5000,
-                                                y: 250
-                                              };
+                                                var floorplan_id = "#{row.floorplan_id}";
+                                                var floorplan = "#{row.markers}".replace(/&quot;/g, '"');
+                                                //alert(floorplan);
+                                                var data = "#{data}".replace(/&quot;/g, '"');
+                                                var floorplan_img = "#{row.floorplan_img}";
+                                                var indexs = "#{index}";
+                                                var map_string = 'image-map-dashboard'+floorplan_id;
 
-                                              var kmap2 = {
-                                                x: 2000,
-                                                y: 1300
-                                              };
+                                                var dd,man;
 
-                                              var man3map2 = {
-                                                x: 2000,
-                                                y: 1300
-                                              };
+                                                maps.push(L.map(map_string, {minZoom: 0,maxZoom: 4,zoom: 0,center: [0, 0],crs: L.CRS.Simple,attributionControl: false}));
 
-                                              //Add marker
+                                                maps[indexs].invalidateSize();
 
-                                            //map.on('click', addMarker);
-                                            var addedOne = false,
-                                              checkpoint1 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
+                                                var ff = JSON.parse(floorplan);
 
+                                                floorplan_list.push(ff);
 
-                                              var table = false,
-                                              checkpoint2 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal2">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
+                                                //alert("floorplan_list--"+JSON.stringify(floorplan_list));
+                                                if(data!=='undefined'){
+                                                dd = JSON.parse(data);
+                                                //alert(dd.length+" record(s) found");
+                                                }
 
+                                                //alert("on 2");
+                                                L.control.attribution({
+                                                  prefix: false
+                                                }).addAttribution('').addTo(maps[indexs]);
 
-                                              var table = false,
-                                              checkpoint3 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/placeholder.png" data-toggle="modal" data-target="#myModal3">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
+                                                var w = 4500* 1.4,
+                                                h = 2843* 1.1,
+                                                //url = '/images/floor_plan.jpg';
+                                                url = '/'+floorplan_img;
+                                                //alert("on k1");
+                                                // calculate the edges of the image, in coordinate space
+                                                var southWest = maps[indexs].unproject([0, h], maps[indexs].getMaxZoom() - 1);
+                                                var northEast = maps[indexs].unproject([w, 0], maps[indexs].getMaxZoom() - 1);
+                                                var bounds = new L.LatLngBounds(southWest, northEast);
 
-                                              var table = false,
-                                              human1 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
+                                                // add the image overlay, 
+                                                // so that it covers the entire map
+                                                L.imageOverlay(url, bounds).addTo(maps[indexs]);
 
-                                              var table = false,
-                                              human2 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
+                                                // tell leaflet that the map is exactly as big as the image
+                                                maps[indexs].setMaxBounds(bounds);
 
-                                              var table = false,
-                                              human3 = L.divIcon({
-                                                className: 'checkpoint-pin',
-                                                html: '<img src="images/man.png">',
-                                                iconSize: [20, 20],
-                                                iconAnchor: [18, 30]
-                                              });
+                                                var markers = new L.FeatureGroup();
+                                                //var humanMark1,humanMark2,humanMark3;
 
-                                            // Lookup neighbors https://github.com/mapbox/leaflet-knn
-                                                var chekpointMark = L.marker(map2.unproject([mmap2.x, mmap2.y], map2.getMaxZoom()), {
-                                                  icon: checkpoint1
-                                                }).addTo(map2);
+                                                marker = JSON.parse(floorplan);
+                                                //console.log("marker-- "+JSON.stringify(marker));
+                                                if (marker !== null && marker.length !== 0) {
+                                                for (i in marker) {
+                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindPopup("<div><b>" + marker[i].popup + "</b></div>").on('popupopen', "");
 
-                                                var chekpointMark2 = L.marker(map2.unproject([nmap2.x, nmap2.y], map2.getMaxZoom()), {
-                                                  icon: checkpoint2
-                                                }).addTo(map2);
+                                                maps[indexs].addLayer(marks);
 
-                                                var chekpointMark3 = L.marker(map2.unproject([kmap2.x, kmap2.y], map2.getMaxZoom()), {
-                                                  icon: checkpoint3
-                                                }).addTo(map2);
+                                                }
+                                                } else {
+                                                marker = [];
+                                                }
+                                    
+                          
+                                         
+                                        
 
-                        #tab_content2.tab-pane.fade(role='tabpanel', aria-labelledby='Mission_List-tab', div='')
+                                    //.well
+                                      form.form-horizontal
+                                        fieldset
+                                          .control-group(style='width: 264px')
+                                            label#Label1(style='width: 40px') Date :
+                                            input(type='date')
+                                          .x_content
+                                            .row.grid_slider
+                                              .col-md-12.col-sm-6.col-xs-12
+                                                input#range_31(type='text', value='', name='range')
 // /page content
 
 

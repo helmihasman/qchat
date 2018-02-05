@@ -1,0 +1,48 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                  div
+                    .col-md-12.col-sm-6.col-xs-12
+                      .x_panel
+                        .x_title
+                          h2
+                            img(src='/images/system_admin.png',height='35px',width='30px')
+                            &nbsp;考勤资料
+                          .clearfix
+                        .x_content
+                          div(role='tabpanel', data-example-id='togglable-tabs')
+                               .col-md-12
+                                    table#datatable.table.table-striped.table-bordered
+                                        thead
+                                          tr
+                                            th No
+                                            th 雇员姓名
+                                            th 路线名称
+                                            th 日期 / 时间
+                                            th 考勤
+                                            
+                                        tbody
+                                         for row, index in data
+                                            
+                                            tr
+                                              td #{index+1}
+                                              td #{row.employee_name}
+                                              td #{row.route_name}
+                                              td #{row.route_datetime.toLocaleString()}
+                                              td 
+                                                if row.attendance === 0 || row.attendance === '0'
+                                                 | 是
+                                                else
+                                                 | 否
+                                .clearfix
+
+
+    // /page content
+

@@ -19,13 +19,15 @@ block content
                           .clearfix
                         .x_content
                             form.form-horizontal.form-label-left(role='form',method='post' action='/api/v1/save_map')
-                                input(type='text', name='map_string',id='map_string',hidden)
+                                input(type='text', name='map_string_load',id='map_string_load',hidden,value='#{data[0].map_string}')
+                                input(type='text', name='map_string',id='map_string',hidden,value='#{data[0].map_string}')
                                 button.btn(type='submit',id="confirm_btn",hidden)
                             #panel-content
                                 #controls
                                   | 点选 
                                   select#polyList
                                   button#btnDelete 删除
+                                  button(type='button',onclick="refresh();") 保存
                             #googleMap(style='width:100%;height:400px;')
 
     // /page content

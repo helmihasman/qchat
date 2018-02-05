@@ -20,7 +20,10 @@ block content
                     // end of image cropping
                     #crop-avatar
                       // Current avatar
-                      img(src='../#{data[0].employee_image}', alt='Avatar', title='Change the avatar', height='160', width='179')
+                      if data[0].employee_image !== null 
+                       img(src='../#{data[0].employee_image}', alt='Avatar', title='Change the avatar', height='160', width='169')
+                      else
+                       img(src='../gentelella/production/images/user.png', alt='Avatar', title='Change the avatar', height='160', width='169')
                   form.form-horizontal(enctype="multipart/form-data",role='form',method='post' action='/profile/pic')
                    div.form-group
                       button.btn-dark.fa.fa-edit(type='button', onclick='choose_file();return false;',style='padding-left:80px;font-size:15px') &nbsp;修改头像
@@ -43,7 +46,7 @@ block content
                   .row
                     .e_panel
                       .e_title
-                        h2.text-right Manage Account
+                        h2.text-right 账号管理
                         .clearfix
                       .x_content
                         br

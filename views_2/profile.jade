@@ -1,0 +1,93 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main', style='background-color:#49A8FF')
+      div
+        .page-title
+          .title_left
+            h3.auto-style1
+              i.fa.fa-cog(style='color:black;')  用户设定
+        .clearfix
+        .row
+          .col-md-12.col-sm-12.col-xs-12
+            .d_panel
+              .d_title
+                h2 用户资料
+                .clearfix
+              .x_content(style='left: 0px; top: 0px; height: 491px')
+                .col-md-3.col-sm-3.col-xs-12.profile_left
+                  .profile_img
+                    // end of image cropping
+                    #crop-avatar
+                      // Current avatar
+                      if data[0].employee_image !== null 
+                       img(src='../#{data[0].employee_image}', alt='Avatar', title='Change the avatar', height='160', width='169')
+                      else
+                       img(src='../gentelella/production/images/user.png', alt='Avatar', title='Change the avatar', height='160', width='169')
+                  form.form-horizontal(enctype="multipart/form-data",role='form',method='post' action='/profile/pic')
+                   div.form-group
+                      button.btn-dark.fa.fa-edit(type='button', onclick='choose_file();return false;',style='padding-left:80px;font-size:15px') &nbsp;修改头像
+                      input(type="file",id="emp_image",name="emp_image",style="height:0px;overflow:hidden")
+                      input(type="hidden",id="emp_id",name="emp_id",value="#{data[0].employee_id}")
+                      button(type="submit",id="save_btn",hidden)
+                  h3 #{data[0].employee_name}
+                  ul.list-unstyled.user_data
+                    li
+                      i.fa.fa-book
+                      |  #{data[0].employee_motto}
+                    li
+                      i.fa.fa-envelope
+                      |  #{data[0].employee_email}
+                    li
+                      i.fa.fa-phone
+                      |  #{data[0].employee_phone_no}
+                  // end of skills
+                .col-md-9.col-sm-9.col-xs-12
+                  .row
+                    .e_panel
+                      .e_title
+                        h2.text-right Manage Account
+                        .clearfix
+                      .x_content
+                        br
+                        form#demo-form2.form-horizontal.form-label-left(role='form',method='post',action='/profile/update')
+                          .form-group
+                            label.control-label.col-md-3.col-sm-3.col-xs-12(for='first-name')
+                              | 姓名 
+                              span.required
+                            .col-md-6.col-sm-6.col-xs-12
+                              input.form-control.col-md-7.col-xs-12(type='text', required='required',id='name',name='name',value="#{data[0].employee_name}")
+                              input(type="hidden",id="emp_id",name="emp_id",value="#{data[0].employee_id}")
+                          .form-group
+                            label.control-label.col-md-3.col-sm-3.col-xs-12(for='last-name')
+                              | 座右铭
+                              span.required
+                            .col-md-6.col-sm-6.col-xs-12
+                              input.form-control.col-md-7.col-xs-12(type='text', name='motto',id='motto',value="#{data[0].employee_motto}")
+                          .form-group
+                            label.control-label.col-md-3.col-sm-3.col-xs-12(for='middle-name') 手机号码
+                            .col-md-6.col-sm-6.col-xs-12
+                              input.form-control.col-md-7.col-xs-12(type='text', name='sim_card',id='sim_card',value="#{data[0].employee_phone_no}",readonly)
+                            a#simcard_bind.col-md-3.col-sm-3.col-xs-12(href='#', onclick='simcard_bind();return false;')  解绑 
+                          .form-group
+                            label.control-label.col-md-3.col-sm-3.col-xs-12(for='middle-name') 电邮
+                            .col-md-6.col-sm-6.col-xs-12
+                              input.form-control.col-md-7.col-xs-12(type='text', name='email',id='email',value="#{data[0].employee_email}",readonly)
+                            a#email_bind.col-md-3.col-sm-3.col-xs-12(href='#', onclick='email_bind();return false;') 解绑电邮
+                          .form-group
+                            label.control-label.col-md-3.col-sm-3.col-xs-12 账号密码
+                            .col-md-9.col-sm-9.col-xs-12
+                              input.form-control(type='password', style='width: 65%',name='password',id='password',value="#{data[0].employee_password}")
+                          .ln_solid
+                          .form-group
+                            .col-md-6.col-sm-6.col-xs-12.col-md-offset-3
+                              button.btn.btn-primary(type='button',onclick='goHome()',id='cancel') 取消
+                              button.btn.btn-success(type='submit',id='submit') 确定
+    script.
+        document.getElementById("emp_image").onchange = function() {
+            $("#save_btn").click();
+        };
+        function choose_file() {
+            $("#emp_image").click();
+            
+        }

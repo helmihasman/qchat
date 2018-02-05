@@ -1,0 +1,427 @@
+extends base_floorplan
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                h2
+                 img(src='/images/system_admin.png',height='35px',width='30px')
+                 a(href='/location') &nbsp;Location |
+                 a(href='/location_add') &nbsp;Add Location |
+                 a(href='/floor_plan_list') &nbsp;Floor Plan |
+                 a(href='/floor_plan') &nbsp;Add Floor Plan |
+                  br
+                  br
+              .col-md-12
+                div
+                  for row, index in data
+                   form.form-horizontal.form-label-left(role='form',method='post' action='/api/v1/save_markers')
+                    button#draw_marker(onclick='drawMarker()') Draw Marker
+                    button#clear_marker(onclick='clearMarker()') Clear Marker
+
+                    input(type='text', name='floorplan_img',id='floorplan_img',hidden,value='#{row.floorplan_img}')
+                   
+                    input(type='text', name='markers',id='markers',hidden)
+                    input(type='text', name='markers_in',id='markers_in',hidden,value='#{row.markers}')
+                    input(type='text', name='floorplan_id',id='floorplan_id',hidden,value='#{row.floorplan_id}')
+                    button(type='submit',id="confirm_btn",hidden) Save
+
+               
+                  #mapid(style='width: 100%; height: 500px;')
+                  script.
+                    var mapMinZoom = 0;
+                    var mapMaxZoom = 4;
+                    var mymap = L.map('mapid', {
+                    modal: true,
+                    center: [0,0],
+                    crs: L.CRS.Simple,
+                    minZoom: mapMinZoom,
+                    maxZoom: mapMaxZoom,
+                    zoom: mapMinZoom
+                    });
+                    var width = 4500,
+                    height = 2843,
+                    url = "/"+document.getElementById("floorplan_img").value;
+                    var mapBounds = new L.LatLngBounds(
+                    mymap.unproject([0, height], mapMaxZoom-1),
+                    mymap.unproject([width, 0], mapMaxZoom-1));
+                    L.imageOverlay(url, mapBounds).addTo(mymap);
+                    mymap.setMaxBounds(mapBounds);
+                    var TYPE = "marker";
+                    var EDIT = "marker";
+                    var tempHold,
+                    tempHoldPopup,
+                    tempHoldPopupContent,
+                    tempHoldPopupContentET;
+                    //Creating markers
+                    //variables
+                    var markers = new L.layerGroup().addTo(mymap);
+                    var marker = [];
+                    var markerDrawer;
+                    var markerToggle = false;
+                    var markerPopUpButtons =
+                    "<div><input type='button' value='Edit this popup' class='marker-edit-button'/></div>"
+                    + "<div><input type='button' value='Delete this popup' class='marker-delete-button'/></div>"
+                    ;
+                    var marker_options = {
+                    riseOnHover: true,
+                    title: "Generic marker"
+                    };
+                    //
+                    function drawMarker()
+                    {
+                      markerDrawer = new L.Draw.Marker(mymap, marker_options);
+                      TYPE = "marker";
+                      markerDrawer.enable();
+                    }
+                    function drawMarkerToggle()
+                    {
+                    markerToggle = !markerToggle;
+                    document.getElementById("marker_draw_toggle").innerText = (markerToggle);
+                    }
+                    mymap.on('draw:created', function (e)
+                    {
+                    if (TYPE === "marker") {
+                    var type = e.layerType,
+                    layer = e.layer,
+                    //POP UP DETAILS ASSIGN HERE
+                    popUp =
+                    "<b>This is a marker</b>"
+                    ;
+                    layer.bindPopup("<div>" + popUp + "</div>" + markerPopUpButtons);
+                    layer.on('popupopen', onPopUp_marker);
+                    marker.push({ latlngs: layer._latlng, options: marker_options, popup: popUp });
+                    localStorage.setItem('marker', JSON.stringify(marker));
+                    
+                    document.getElementById("markers").value = JSON.stringify(marker);
+                    $("#confirm_btn").click();
+                    
+                    markers.addLayer(layer);
+                    if (markerToggle===true) drawMarker();
+                    drawPolyline();
+                    }
+                    });
+                    function drawMarkerCancel()
+                    {
+                      markerDrawer.disable();
+                    }
+                    function clearMarker()
+                    {
+                    marker = [];
+                    markers.clearLayers();
+                    localStorage.removeItem('marker');
+                    console.log('cleared markers');
+                    clearPolyline();
+                    }
+                    function onPopUp_marker(e)
+                    {
+                    EDIT = "marker";
+                    tempHold = this;
+                    onPopUp(e);
+                    // To edit marker details on click of edit button in the popup of marker
+                    $(".marker-edit-button:visible").click(function ()
+                    {
+                    openModalBox(tempHoldPopupContent);
+                    });
+                    // To remove marker on click of delete button in the popup of marker
+                    $(".marker-delete-button:visible").click(function ()
+                    {
+                    var i;
+                    for (i = 0; i < marker.length ; i++) {
+                    if (compareLatLng(marker[i].latlngs, tempHold._latlng)) {
+                    marker.splice(i, 1);
+                    console.log('deleted the marker');
+                    break;
+                    }
+                    }
+                    localStorage.setItem("marker", JSON.stringify(marker));
+                    
+                    document.getElementById("markers").value = JSON.stringify(marker);
+                    $("#confirm_btn").click();
+                    
+                    markers.removeLayer(tempHold);
+                    drawPolyline();
+                    });
+                    }
+                    function getMarker()
+                    {
+                    //marker = JSON.parse(localStorage.getItem("marker"));
+                    marker = JSON.parse(document.getElementById("markers_in").value);
+                    console.log("marker-- "+marker);
+                    if (marker !== null && marker.length !== 0) {
+                    for (i in marker) {
+                    
+                    console.log("marker length-- "+marker.length);
+                    console.log("marker latlngs-- "+marker[i].latlngs);
+                    console.log("marker options-- "+marker[i].options);
+                    console.log("marker popup-- "+marker[i].popup);
+                    var m = L.marker(marker[i].latlngs, marker[i].options).bindPopup("<div><b>" + marker[i].popup + "</b></div>" + markerPopUpButtons).on('popupopen', onPopUp_marker);
+                    console.log("marker m-- "+m);
+                    markers.addLayer(m);
+                    console.log("end layer");
+                    }
+                    } else {
+                    marker = [];
+                    }
+                    }
+                    //
+                    //Creating polygons
+                    //variables
+                    var polygons = new L.layerGroup().addTo(mymap);
+                    var polygon = [];
+                    var polygonDrawer;
+                    var polygonPopUpButtons =
+                    "<div><input type='button' value='Edit this popup' class='polygon-edit-button'/></div>"
+                    + "<div><input type='button' value='Delete this popup' class='polygon-delete-button'/></div>";
+                    var polygon_options = {
+                    showArea: false,
+                    shapeOptions: {
+                    stroke: true,
+                    color: '#6e83f0',
+                    weight: 4,
+                    opacity: 0.5,
+                    fill: true,
+                    fillColor: null, //same as color by default
+                    fillOpacity: 0.2,
+                    clickable: true
+                    }
+                    };
+                    //
+
+
+
+                    function onPopUp_Polygon(e)
+                    {
+                    EDIT = "polygon";
+                    tempHold = this;
+                    onPopUp(e);
+                    // To edit polygon details on click of edit button in the popup of polygon
+                    $(".polygon-edit-button:visible").click(function ()
+                    {
+                    openModalBox(tempHoldPopupContent);
+                    });
+                    // To remove polygon on click of delete button in the popup of polygon
+                    $(".polygon-delete-button:visible").click(function ()
+                    {
+                    var i;
+                    for (i = 0; i < polygon.length ; i++) {
+                    if (compareLatLngs(polygon[i].latlngs[0], tempHold._latlngs[0])) {
+                    polygon.splice(i, 1);
+                    console.log('deleted the polygon');
+                    break;
+                    }
+                    }
+                    localStorage.setItem("polygon", JSON.stringify(polygon));
+                    polygons.removeLayer(tempHold);
+                    });
+                    }
+                    function getPolygon()
+                    {
+                    polygon = JSON.parse(localStorage.getItem("polygon"));
+                    if (polygon !== null && polygon.length !== 0) {
+                    console.log("found polygon", polygon);
+                    for (i in polygon) {
+                    var m = L.polygon(polygon[i].latlngs, polygon[i].options)
+                    .bindPopup("<div>" + polygon[i].popup + "</div>" + polygonPopUpButtons)
+                    .bindTooltip(polygon[i].tooltip,polygon[i].tooltipOpt)
+                    .on('popupopen', onPopUp_Polygon);
+                    polygons.addLayer(m);
+                    }
+                    } else {
+                    polygon = [];
+                    }
+                    }
+                    //
+                    //Comparing LatLng
+                    function compareLatLng(latlng1, latlng2)
+                    {
+                    return (latlng1.lat === latlng2.lat && latlng1.lng === latlng2.lng);
+                    }
+                    function compareLatLngs(latlngs1, latlngs2)
+                    {
+                    if (latlngs2.length <= 1) {
+                    latlngs2 = latlngs2[0];
+                    }
+                    var is_same;
+                    if (latlngs1.length > 1) {  //Comparing array of latlng
+                    is_same =
+                    (latlngs1.length === latlngs2.length) && latlngs1.every(
+                    function (element, index)
+                    {
+                    return compareLatLng(latlngs1[index], latlngs2[index]);
+                    }
+                    )
+                    ;
+                    } else {    //Comparing just one latlng
+                    is_same = compareLatLng(latlngs1, latlngs2);
+                    }
+                    //console.log(is_same);
+                    return is_same;
+                    }
+                    //
+                    function onPopUp(e)
+                    {
+                    tempHoldPopup = tempHold.getPopup();
+                    //Get the lines in the popup details
+                    tempHoldPopupContent = tempHoldPopup.getContent().split("<div>");
+                    tempHoldPopupContentET = [];
+                    tempHoldPopupContent.splice(0, 1);
+                    tempHoldPopupContent.pop();
+                    tempHoldPopupContent.pop();
+                    for (x in tempHoldPopupContent) {
+                    tempHoldPopupContent[x] = tempHoldPopupContent[x].substring(0, tempHoldPopupContent[x].length - 6);
+                    //getting the element type (does not catch <div>, so if there is nested <div> then need to modify this part of the code to catch it
+                    var temp = tempHoldPopupContent[x]
+                    .replace(/[<>]/g, "|")
+                    .split("|");
+                    tempHoldPopupContentET[x] = temp[1];
+                    tempHoldPopupContent[x] = temp[2];
+                    }
+                    //
+                    }
+                    //On load function
+                    function loadStuff()
+                    {
+                    getMarker();
+                    getPolygon();
+                    }
+                    //Modal box - EDITING
+                    function openModalBox(details)
+                    {
+                    mymap.fire('modal', {
+                    title: 'Location detail',
+                    content:
+                    '<form>' +
+                    '   Location ' +
+                    '   <input id="detail1" type="text"/><br />' +
+                    '</form>'
+                    ,
+                    template: ['<div class="modal-header"><h2>{title}</h2></div>',
+                    '<div class="modal-body">{content}</div>',
+                    '<div class="modal-footer">',
+                    '<button class="topcoat-button--large {OK_CLS}">{okText}</button>',
+                    '<button class="topcoat-button--large {CANCEL_CLS}">{cancelText}</button>',
+                    '</div>'
+                    ].join(''),
+                    okText: 'Ok',
+                    cancelText: 'Cancel',
+                    OK_CLS: 'modal-ok',
+                    CANCEL_CLS: 'modal-cancel',
+                    width: 300,
+                    onShow: function (evt)
+                    {
+                    var edited;
+                    var det = [];
+                    det[0] = document.getElementById("detail1");
+                    for (var i = 0; i<details.length; i++) {
+                    det[i].value = details[i];
+                    }
+                    var modal = evt.modal;
+                    L.DomEvent
+                    .on(modal._container.querySelector('.modal-ok'), 'click', function ()
+                    {
+                    console.log('commit edit');
+                    if (det[0].value !== details[0]) {
+                    //this is just for one detail, if more detail then need to change the code for editPopUp
+                    editPopUp(det[0].value);
+                    }
+                    modal.hide();
+                    })
+                    .on(modal._container.querySelector('.modal-cancel'), 'click', function ()
+                    {
+                    console.log('cancel edit');
+                    modal.hide();
+                    });
+                    }
+                    });
+                    }
+                    function editPopUp(newVal)
+                    {
+                    //this is just for one details, if more details then need to change this part
+                    //var temp = '<' + tempHoldPopupContentET[0] + '>' + newVal + '</' + tempHoldPopupContentET[0] + '>';
+                    var temp = newVal;
+                    //
+                    var buttons = markerPopUpButtons;
+                    if (EDIT === "polygon") buttons = polygonPopUpButtons;
+                    tempHold.setPopupContent("<div>" + temp + "</div>" + buttons);
+                    tempHold.closePopup();
+                    tempHold.openPopup();
+                    var tempArr, latlngs1, latlngs2;
+                    if (EDIT === "marker") {
+                    tempArr = marker;
+                    latlngs2 = tempHold._latlng;
+                    }
+                    else if (EDIT === "polygon") {
+                    tempArr = polygon;
+                    latlngs2 = tempHold._latlngs;
+                    }
+                    var i;
+                    //if (EDIT == "marker") {
+                    for (i = 0; i < tempArr.length ; i++) {
+                    latlngs1 = tempArr[i].latlngs;
+                    if (EDIT === "polygon") { latlngs1 = latlngs1[0]; }
+                    if (compareLatLngs(latlngs1,latlngs2)) {
+                    tempArr.splice(i, 1);
+                    if (EDIT === "marker") tempArr.splice(i, 0, { latlngs: tempHold._latlng, options: marker_options, popup: temp });
+                    else if (EDIT === "polygon") tempArr.splice(i, 0, { latlngs: tempHold._latlngs, options: marker_options, popup: temp, tooltip: tempHold._tooltip._content, tooltipOpt: tempHold._tooltip.options });
+                    console.log('edited the '+EDIT);
+                    localStorage.setItem(EDIT, JSON.stringify(tempArr));
+                    console.log(localStorage.getItem("marker"));
+                    document.getElementById("markers").value = localStorage.getItem("marker");
+                    console.log(document.getElementById("markers").value);
+                    $("#confirm_btn").click();
+                    
+                    break;
+                    }
+                    }
+                    //} else if (EDIT == "polygon") {
+                    //    for (i = 0; i < polygon.length ; i++) {
+                    //        if (compareLatLngs(polygon[i].latlngs[0], tempHold._latlngs[0])) {
+                    //            polygon.splice(i, 1);
+                    //            polygon.splice(i, 0, { latlngs: tempHold._latlngs, options: tempHold.options, popup: temp, tooltip: tempHold._tooltip._content, tooltipOpt: tempHold._tooltip.options });
+                    //            console.log('edited the polygon');
+                    //            localStorage.setItem("polygon", JSON.stringify(polygon));
+                    //            break;
+                    //        }
+                    //    }
+                    //}
+                    }
+                    //
+                    //Path
+                    var paths = L.layerGroup().addTo(mymap);
+                    var path = [];
+                    var showPath = false;
+                    function displayPath()
+                    {
+                    showPath = true;
+                    drawPolyline();
+                    }
+                    function drawPolyline()
+                    {
+                    if (marker !== null && marker.length !== 0 && showPath === true) {
+                    path = [];
+                    marker.every(function (element, index)
+                    {
+                    return path.push([marker[index].latlngs.lat, marker[index].latlngs.lng]);
+                    });
+                    //console.log(path);
+                    paths.clearLayers();
+                    var newPath = L.polyline(path, {color:'red'}).addTo(paths);
+                    }
+                    }
+                    function clearPolyline()
+                    {
+                    showPath = false;
+                    paths.clearLayers();
+                    path = [];
+                    }
+                    //
+                  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+                
+            .clearfix
+    // /page content
+

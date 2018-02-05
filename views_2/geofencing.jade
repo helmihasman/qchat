@@ -1,0 +1,34 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                  div
+                    .col-md-12.col-sm-6.col-xs-12
+                      .x_panel
+                        .x_title
+                          h2
+                            img(src='/images/system_admin.png',height='35px',width='30px')
+                            a(href='/map_management') &nbsp;限制区域 |
+                            a(href='/geofencing') &nbsp;地理围栏 |
+                          .clearfix
+                        .x_content
+                            form.form-horizontal.form-label-left(role='form',method='post' action='/api/v1/save_map')
+                                input(type='text', name='map_string_load',id='map_string_load',hidden,value='#{data[0].map_string}')
+                                input(type='text', name='map_string',id='map_string',hidden,value='#{data[0].map_string}')
+                                button.btn(type='submit',id="confirm_btn",hidden)
+                            #panel-content
+                                #controls
+                                  | 点选 
+                                  select#polyList
+                                  button#btnDelete 删除
+                                  button(type='button',onclick="refresh();") Save
+                            #googleMap(style='width:100%;height:400px;')
+
+    // /page content
+

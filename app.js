@@ -350,7 +350,9 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
 
 app.get(deployPath +'/documents',isAuthenticated,function(req,res,next){
     
-    con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'read'",function(error,rows,fields){
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code left join company on employee.company_id = company.company_id where document.document_status = 'read' and company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -372,7 +374,10 @@ app.get(deployPath +'/documents',isAuthenticated,function(req,res,next){
 
 //----------------------------ALERT----------------------------
 app.get(deployPath +'/alert',isAuthenticated,function(req,res,next){
-    con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'unread'",function(error,rows,fields){
+    
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code left join company on company.company_id = employee.company_id where document.document_status = 'unread' and company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -412,7 +417,146 @@ app.get(deployPath +'/alert/:id',isAuthenticated,function(req,res,next){
 
 //----------------------------EMPLOYEE MANAGEMENT----------------------------
 app.get(deployPath +'/employee_management',isAuthenticated,function(req,res,next){
-    con.query("SELECT * FROM employee left join location on employee.employee_location = location.location_code where employee_level != '1'",function(error,rows,fields){
+    var company_id = req.session.passport.user.company_id;
+    console.log("company_id ="+company_id);
+    if(company_id === "0" || company_id === 0){
+        con.query("SELECT * FROM employee left join location on employee.employee_location = location.location_code left join company on employee.company_id = company.company_id where employee_level != '0'",function(error,rows,fields){
+            if(!!error){
+                console.log('Error in the query '+error);
+            }
+            else{
+                //console.log('Successful query11\n');
+                //console.log(rows);
+                 if(req.session.language === 'en'){
+                     res.render('employee_management_en',{title:"Employee Management",data:rows});
+                 }
+                 else{
+                     res.render('employee_management',{title:"Employee Management",data:rows});
+                 }
+     //           res.render('employee_management',{title:"Employee Management",data:rows});
+            }
+        });
+    }
+    else{
+        con.query("SELECT * FROM employee left join company on employee.company_id = company.company_id left join location on employee.employee_location = location.location_code where employee.company_id = '"+company_id+"' and location.company_id = '"+company_id+"'",function(error,rows,fields){
+            if(!!error){
+                console.log('Error in the query '+error);
+            }
+            else{
+                //console.log('Successful query\n');
+                //console.log(rows);
+                 if(req.session.language === 'en'){
+                     res.render('employee_management_en',{title:"Employee Management",data:rows});
+                 }
+                 else{
+                     res.render('employee_management',{title:"Employee Management",data:rows});
+                 }
+     //           res.render('employee_management',{title:"Employee Management",data:rows});
+            }
+        });
+    }
+     
+    //res.render('employee_management',{title:"Employee Management"});
+});
+
+app.get(deployPath +'/employee_add',isAuthenticated,function(req,res,next){
+    
+    var company_id = req.session.passport.user.company_id;
+    
+    if(company_id === "0" || company_id === 0){
+        
+        con.query("SELECT * FROM company",function(error,rows,fields){
+            if(!!error){
+                console.log('Error in the query '+error);
+            }
+            else{
+                //console.log('Successful query\n');
+                //console.log(rows);
+                 if(req.session.language === 'en'){
+                     res.render('employee_add_en',{title:"Add Employee",data:rows});
+                 }
+                 else{
+                     res.render('employee_add',{title:"Add Employee",data:rows});
+                 }
+     //           res.render('employee_management',{title:"Employee Management",data:rows});
+            }
+        });
+        
+    }
+    
+    else{
+        con.query("SELECT * FROM company where company_id ='"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query '+error);
+           }
+           else{
+               //console.log('Successful query\n');
+               //console.log(rows);
+                if(req.session.language === 'en'){
+                    res.render('employee_add_en',{title:"Add Employee",data:rows});
+                }
+                else{
+                    res.render('employee_add',{title:"Add Employee",data:rows});
+                }
+    //           res.render('employee_management',{title:"Employee Management",data:rows});
+           }
+       }); 
+    }
+    
+   //res.render('company_add',{title:"Add Employee"});
+
+});
+
+app.post(deployPath +'/employee/add',isAuthenticated,function(req,res,next){
+    
+    v_employee_name = req.sanitize( 'employee_name' ); 
+    v_employee_phone_no = req.sanitize( 'employee_phone_no' );
+    v_employee_email = req.sanitize( 'employee_email' );
+    v_employee_motto = req.sanitize( 'employee_motto' );
+    v_employee_address = req.sanitize( 'employee_address' );
+    v_employee_password = req.sanitize( 'employee_password' );
+    v_employee_level = req.sanitize( 'employee_level' );
+    v_company_id = req.sanitize( 'company_id' );
+    
+    
+    con.query("INSERT INTO employee(employee_name,employee_phone_no,employee_email,employee_motto,employee_address,employee_password,employee_level,company_id) values ('"+v_employee_name+"','"+v_employee_phone_no+"','"+v_employee_email+"','"+v_employee_motto+"','"+v_employee_address+"','"+v_employee_password+"','"+v_employee_level+"','"+v_company_id+"')",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query routeadd='+error);
+                }
+                else{
+//                    console.log('Successful query\n');
+//                    console.log(rows);
+                    //res.redirect('/route_management');
+                }
+            });
+    
+    res.redirect(deployPath +'/employee_management');
+    
+
+});
+
+app.get(deployPath +'/employee/delete/:id',isAuthenticated,function(req,res,next){
+    
+     var employee_id = req.params.id;
+   
+    con.query("DELETE from employee where employee_id = '"+employee_id+"'",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query routeadd='+error);
+                }
+                else{
+//                    console.log('Successful query\n');
+//                    console.log(rows);
+                    //res.redirect('/route_management');
+                }
+            });
+    
+        res.redirect(deployPath +'/employee_management');
+    
+
+});
+
+app.get(deployPath +'/company_management',isAuthenticated,function(req,res,next){
+    con.query("SELECT * from company",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -420,15 +564,111 @@ app.get(deployPath +'/employee_management',isAuthenticated,function(req,res,next
            //console.log('Successful query\n');
            //console.log(rows);
             if(req.session.language === 'en'){
-                res.render('employee_management_en',{title:"Employee Management",data:rows});
+                res.render('company_management_en',{title:"Company Management",data:rows});
             }
             else{
-                res.render('employee_management',{title:"Employee Management",data:rows});
+                res.render('company_management',{title:"Company Management",data:rows});
             }
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
    }); 
     //res.render('employee_management',{title:"Employee Management"});
+});
+
+app.get(deployPath +'/company_add',isAuthenticated,function(req,res,next){
+    
+   res.render('company_add',{title:"Add Company"});
+
+});
+
+app.post(deployPath +'/company/add',isAuthenticated,function(req,res,next){
+    
+    v_company_name = req.sanitize( 'company_name' ); 
+    v_company_reg_no = req.sanitize( 'company_reg_no' );
+    v_company_address = req.sanitize( 'company_address' );
+    v_company_website = req.sanitize( 'company_website' );
+    v_company_phone_no = req.sanitize( 'company_phone_no' );
+    v_company_email = req.sanitize( 'company_email' );
+    
+    
+    con.query("INSERT INTO company(company_name,company_address,company_website,company_phone_no,company_email,company_reg_no) values ('"+v_company_name+"','"+v_company_address+"','"+v_company_website+"','"+v_company_phone_no+"','"+v_company_email+"','"+v_company_reg_no+"')",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query routeadd='+error);
+                }
+                else{
+//                    console.log('Successful query\n');
+//                    console.log(rows);
+                    //res.redirect('/route_management');
+                }
+            });
+    
+    res.redirect(deployPath +'/company_management');
+    
+
+});
+
+app.get(deployPath +'/company/edit/:id',isAuthenticated,function(req,res,next){
+    var company_id = req.params.id;
+    con.query("SELECT * FROM company where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            if(req.session.language === 'en'){
+                res.render('company_edit_en',{title:"Company",data:rows});
+            }
+            else{
+                res.render('company_edit',{title:"Company",data:rows});
+            }
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   }); 
+    //res.render('employee_management',{title:"Employee Management"});
+});
+
+app.post(deployPath +'/company/edit/:id',isAuthenticated,function(req,res,next){
+    var company_id = req.params.id;
+    v_company_name = req.sanitize( 'company_name' ); 
+    v_company_reg_no = req.sanitize( 'company_reg_no' );
+    v_company_address = req.sanitize( 'company_address' );
+    v_company_website = req.sanitize( 'company_website' );
+    v_company_phone_no = req.sanitize( 'company_phone_no' );
+    v_company_email = req.sanitize( 'company_email' );
+    
+    con.query("UPDATE company set company_name='"+v_company_name+"',company_reg_no='"+v_company_reg_no+"',company_address='"+v_company_address+"',company_website='"+v_company_website+"',company_phone_no='"+v_company_phone_no+"',company_email='"+v_company_email+"' where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            res.redirect(deployPath +'/company_management');
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   }); 
+    //res.render('employee_management',{title:"Employee Management"});
+});
+
+app.get(deployPath +'/company/delete/:id',isAuthenticated,function(req,res,next){
+    
+     var company_id = req.params.id;
+   
+    con.query("DELETE from company where company_id = '"+company_id+"'",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query routeadd='+error);
+                }
+                else{
+//                    console.log('Successful query\n');
+//                    console.log(rows);
+                    //res.redirect('/route_management');
+                }
+            });
+    
+        res.redirect(deployPath +'/company_management');
+    
+
 });
 
 
@@ -441,6 +681,7 @@ app.get(deployPath +'/employee_details/:id',isAuthenticated,function(req,res,nex
      var emp_id = req.params.id;
 //    var route = [];
     var route;
+    var company_id = req.session.passport.user.company_id;
     
     con.query("SELECT route_name,employee_id,year(route_datetime) as years,month(route_datetime) as months, day(route_datetime) as days, hour(route_datetime) as hours, minute(route_datetime) as minutes, second(route_datetime) as seconds FROM route where employee_id = '"+emp_id+"'",function(error,rows,fields){
        if(!!error){
@@ -451,7 +692,7 @@ app.get(deployPath +'/employee_details/:id',isAuthenticated,function(req,res,nex
        }
    }); 
    
-    con.query("SELECT * FROM employee left join location on employee.employee_location = location.location_code where employee.employee_id='"+emp_id+"'",function(error,rows,fields){
+    con.query("SELECT * FROM employee left join location on employee.employee_location = location.location_code where employee.employee_id='"+emp_id+"' and location.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -475,8 +716,9 @@ app.get(deployPath +'/employee_details/:id',isAuthenticated,function(req,res,nex
 app.get(deployPath +'/route_management',isAuthenticated,function(req,res,next){
     
     var route;
+    var company_id = req.session.passport.user.company_id;
     
-    con.query("SELECT route_name,employee.employee_id,employee_name,employee_phone_no,year(route_datetime) as years,month(route_datetime) as months, day(route_datetime) as days, hour(route_datetime) as hours, minute(route_datetime) as minutes, second(route_datetime) as seconds FROM route left join employee on route.employee_id = employee.employee_id",function(error,rows,fields){
+    con.query("SELECT route_name,employee.employee_id,employee_name,employee_phone_no,year(route_datetime) as years,month(route_datetime) as months, day(route_datetime) as days, hour(route_datetime) as hours, minute(route_datetime) as minutes, second(route_datetime) as seconds FROM route left join employee on route.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -520,8 +762,9 @@ app.get(deployPath +'/route_management',isAuthenticated,function(req,res,next){
 app.get(deployPath +'/set_route',isAuthenticated,function(req,res,next){
     
    var checkpoint;
+   var company_id = req.session.passport.user.company_id;
    
-   con.query("SELECT * FROM location ",function(error,rows,fields){
+   con.query("SELECT * FROM location where company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -530,7 +773,7 @@ app.get(deployPath +'/set_route',isAuthenticated,function(req,res,next){
        }
    }); 
    
-   con.query("SELECT employee_name,employee_phone_no,employee_id FROM employee where employee_level != '1'",function(error,rows,fields){
+   con.query("SELECT employee_name,employee_phone_no,employee_id FROM employee where employee_level = '2' and company_id='"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -568,19 +811,19 @@ app.post(deployPath +'/set_route/add',isAuthenticated,function(req,res,next){
                     console.log('Error in the query routeadd='+error);
                 }
                 else{
-//                    console.log('Successful query\n');
-//                    console.log(rows);
+                    //console.log('Successful query\n');
+                    //console.log(rows);
                     //res.redirect('/route_management');
                 }
             });
         }
     }
-    if(req.session.language === 'en'){
-        res.redirect(deployPath +'/route_management_en');
-    }
-    else{
+//    if(req.session.language === 'en'){
+//        res.redirect(deployPath +'/route_management_en');
+//    }
+//    else{
         res.redirect(deployPath +'/route_management');
-    }
+//    }
 //    res.redirect('/route_management');
     
 //    con.query("SELECT employee_name,employee_phone_no,employee_id FROM employee ",function(error,rows,fields){
@@ -608,7 +851,8 @@ app.post(deployPath +'/set_route/add',isAuthenticated,function(req,res,next){
 
 //----------------------------LOCATION----------------------------
 app.get(deployPath +'/location',isAuthenticated,function(req,res,next){
-    con.query("SELECT * FROM location",function(error,rows,fields){
+    var company_id = req.session.passport.user.company_id;
+    con.query("SELECT * FROM location where company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -642,9 +886,10 @@ app.post(deployPath +'/location/add',isAuthenticated,function(req,res,next){
     v_beacon_location = req.sanitize( 'beacon_location' ).escape();
     v_beacon_level = req.sanitize( 'beacon_level' ).escape();
     v_location_code = req.sanitize( 'location_code' ).escape();
+    var company_id = req.session.passport.user.company_id;
     
     
-    con.query("INSERT INTO location(beacon_id,beacon_location,beacon_level,location_code) values ('"+v_beacon_id+"','"+v_beacon_location+"','"+v_beacon_level+"','"+v_location_code+"')",function(error,rows,fields){
+    con.query("INSERT INTO location(beacon_id,beacon_location,beacon_level,location_code,company_id) values ('"+v_beacon_id+"','"+v_beacon_location+"','"+v_beacon_level+"','"+v_location_code+"','"+company_id+"')",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query routeadd='+error);
                 }
@@ -654,12 +899,9 @@ app.post(deployPath +'/location/add',isAuthenticated,function(req,res,next){
                     //res.redirect('/route_management');
                 }
             });
-    if(req.session.language === 'en'){
-        res.redirect(deployPath +'/location_en');
-    }
-    else{
-        res.redirect(deployPath +'/location');
-    }
+    
+    res.redirect(deployPath +'/location');
+    
 
 });
 
@@ -677,12 +919,9 @@ app.get(deployPath +'/location/delete/:id',isAuthenticated,function(req,res,next
                     //res.redirect('/route_management');
                 }
             });
-    if(req.session.language === 'en'){
-        res.redirect(deployPath +'/location_en');
-    }
-    else{
-        res.redirect(deployPath +'/location');
-    }
+    
+    res.redirect(deployPath +'/location');
+    
 
 });
 
@@ -721,12 +960,9 @@ app.post(deployPath +'/location/edit/:id',isAuthenticated,function(req,res,next)
        else{
            //console.log('Successful query\n');
            //console.log(rows);
-            if(req.session.language === 'en'){
-                 res.redirect(deployPath +'/location_en');
-            }
-            else{
-                 res.redirect(deployPath +'/location');
-            }
+           
+            res.redirect(deployPath +'/location');
+            
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
    }); 
@@ -741,15 +977,22 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     var route;
     var days = 31;
     var attendance;
+    var routes;
     var employee;
     var employee_list;
     var attendance_list =[];
     var attendance_table = [];
     
+    var path;
+    
+    
+    var company_id = req.session.passport.user.company_id;
+    
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
     d.setMinutes(d.getMinutes()-480);
     var dmonth = d.getMonth()+1;
+    var orimonth = d.getMonth()+1;
     //var dmonth = 9;
     
     if(dmonth < 10){
@@ -759,55 +1002,18 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
 
     
     
-    con.query("SELECT employee_id from employee where employee_level != '1'",function(error,rows,fields){
+    con.query("SELECT employee_id,employee_name from employee where employee_level = '2' and company_id='"+company_id+"'",function(error,rows,fields){
        if(!!error){
-           console.log('Error in the query '+error);
+           console.log('Error in the query1 '+error);
        }
        else{
            employee = rows;
        }
    });
-    
-    con.query("SELECT count(route_attendance) as attendance, sum(route_attendance) as total_attend,day(route_datetime) as day, employee_id from route where month(route_datetime) = '"+dmonth+"' group by day(route_datetime),employee_id",function(error,rows,fields){
-       if(!!error){
-           console.log('Error in the query '+error);
-       }
-       else{
-           attendance = rows;
-
-                for(var i=0;i<employee.length;i++){
-                    if(attendance.length!==0){
-                     for(var k=0;k<attendance.length;k++){
-                         //console.log("emp="+employee[i].employee_id+" att_emp="+attendance[k].employee_id);
-                         var emp = employee[i].employee_id.toString();
-                         var att = attendance[k].employee_id.toString();
-                         if(emp === att){
-                             attendance_list.push(attendance[k]);
-                             console.log("attendace ="+JSON.stringify(attendance[k]));
-                         }
-                         //console.log("attendace_list ="+JSON.stringify(attendance_list));
-                         employee_list = { employee_id:employee[i].employee_id.toString(),emp_attendance:attendance_list};
-
-                         //employee_list.push(attendance_list);
-                       }
-                    }
-                    else{
-                        
-                         employee_list = { employee_id:employee[i].employee_id.toString(),emp_attendance:0};
-
-                        
-                    }
-                     attendance_list = [];
-                     attendance_table.push(employee_list);
-                 }
-            //console.log("tavble=="+JSON.stringify(attendance_table));
-            
-       }
-   });
    
-    con.query("SELECT * from route",function(error,rows,fields){
+   con.query("SELECT * from route left join employee on route.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
-           console.log('Error in the query '+error);
+           console.log('Error in the query3 '+error);
        }
        else{
            route = rows;
@@ -816,25 +1022,95 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
    
    
    
-    con.query("SELECT * from path",function(error,rows,fields){
+    con.query("SELECT * from path left join employee on path.employee_id = employee.employee_id left join company on company.company_id = employee.employee_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
-           console.log('Error in the query '+error);
+           console.log('Error in the query4 '+error);
        }
        else{
 //           console.log('Successful query\n');
 //           console.log(rows);
-        console.log("monnth--"+dmonth);
-        if(req.session.language === 'en'){
-            console.log("attendance_table== "+attendance_table);
-            res.render('attendance_en',{title:"Attendance",data:rows,route:route,days:days,attendance:attendance_table,month:dmonth});
-        }
-        else{
-            console.log("attendance_table== "+attendance_table);
-            res.render('attendance',{title:"Attendance",data:rows,route:route,days:days,attendance:attendance_table,month:dmonth});
-        }
+        path = rows;
+        
+        
            
        }
    });
+    
+    con.query("SELECT count(route_attendance) as attendance, sum(route_attendance) as total_attend,day(route_datetime) as day, route.employee_id,employee_name from route left join employee on route.employee_id = employee.employee_id where month(route_datetime) = '"+dmonth+"' and company_id='"+company_id+"' group by day(route_datetime),employee_id",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query2 '+error);
+       }
+       else{
+           attendance = rows;
+           
+                for(var i=0;i<employee.length;i++){
+                    if(attendance.length!==0){
+                     for(var k=0;k<attendance.length;k++){
+                         //console.log("emp="+employee[i].employee_id+" att_emp="+attendance[k].employee_id);
+                         var emp = employee[i].employee_id.toString();
+                         var att = attendance[k].employee_id.toString();
+                        
+                        
+                         if(emp === att){
+                             
+                                //console.log("SELECT * from route where employee_id = '"+emp+"' and day(route_datetime) = '"+attendance[k].day+"' and month(route_datetime) = '"+orimonth+"'");
+//                                con.query("SELECT * from route where employee_id = '"+emp+"' and day(route_datetime) = '"+attendance[k].day+"' and month(route_datetime) = '"+orimonth+"'",function(error,rows,fields){
+//                                   if(!!error){
+//                                       console.log('Error in the query12 '+error);
+//                                   }
+//                                   else{
+//                                       console.log("in here");
+//                                       routess = [];
+//                                       routes = rows;
+//                                       for(var j=0;j<routes.length;j++){
+//                                       //console.log("routessz== "+routes);
+//                                       route_list = {route_name : routes[j].route_name, employee_id : routes[j].employee_id,route_datetime : routes[j].route_datetime};
+//                                       console.log("route_list-- "+JSON.stringify(route_list));
+//                                       routess.push(route_list);
+//                                       console.log("routess-- "+routess);
+//                                    }
+//
+//                                   }
+//                               });
+                               
+                               attendance_list.push(attendance[k]);
+                              //console.log("in here2");
+                             //console.log("attendace ="+JSON.stringify(attendance[k]));
+                         }
+                         
+                         //console.log("route_list ="+JSON.stringify(route_list));
+                         //console.log("attendace_list ="+JSON.stringify(attendance_list));
+                         
+                         employee_list = { employee_id:employee[i].employee_id,employee_name:employee[i].employee_name,emp_attendance:attendance_list};
+
+                         //console.log("employee_list=="+JSON.stringify(employee_list));
+                         //employee_list.push(attendance_list);
+                       }
+                    }
+                    else{
+                        
+                         employee_list = { employee_id:employee[i].employee_id,employee_name:employee[i].employee_name,emp_attendance:0};
+
+                        
+                    }
+                     attendance_list = [];
+                     attendance_table.push(employee_list);
+                 }
+            //console.log("tavble=="+JSON.stringify(attendance_table));
+
+            if(req.session.language === 'en'){
+                    //console.log("attendance_table== "+attendance_table);
+                    res.render('attendance_en',{title:"Attendance",data:path,route:route,days:days,attendance:attendance_table,month:dmonth});
+                }
+                else{
+                    console.log("attendance_table== "+attendance_table);
+                    res.render('attendance',{title:"Attendance",data:path,route:route,days:days,attendance:attendance_table,month:dmonth});
+                }
+            
+       }
+   });
+   
+    
     //res.render('attendance',{title:"Attendance"});
 });
 
@@ -881,10 +1157,53 @@ app.post(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     else if(months === '12'){
         days = 31;
     }
+    
+    var dmonth = months;
+    //var dmonth = 9;
+    if(dmonth === '01' || dmonth === 01){
+         dmonth = '1';
+     }
+     else if(dmonth === '02' || dmonth === 02){
+         dmonth = '2';
+     }
+     else if(dmonth === '03' || dmonth === 03){
+         dmonth = '3';
+     }
+     else if(dmonth === '04' || dmonth === 04){
+         dmonth = '4';
+     }
+     else if(dmonth === '05' || dmonth === 05){
+         dmonth = '5';
+     }
+     else if(dmonth === '06' || dmonth === 06){
+         dmonth = '6';
+     }
+     else if(dmonth === '07' || dmonth === 07){
+         dmonth = '7';
+     }
+     else if(dmonth === '08' || dmonth === 08){
+         dmonth = '8';
+     }
+     else if(dmonth === '09' || dmonth === 09){
+         dmonth = '9';
+     }
+     else if(dmonth === '10' || dmonth === 10){
+         dmonth = '10';
+     }
+     else if(dmonth === '11' || dmonth === 11){
+         dmonth = '11';
+     }
+     else if(dmonth === '12' || dmonth === 12){
+         dmonth = '12';
+     }
+     
+    
     console.log("in 1");
 //    console.log("days==="+days);
 //    console.log("render finish");
 //    res.redirect('/login');
+
+    var company_id = req.session.passport.user.company_id;
 
     var route;
     var attendance;
@@ -894,14 +1213,14 @@ app.post(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     var attendance_table = [];
     
     
-    con.query("SELECT employee_id from employee where employee_level != '1'",function(error,rows,fields){
+    con.query("SELECT employee_id,employee_name from employee where employee_level = '2' and company_id='"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
        else{
            employee = rows;
            
-           con.query("SELECT count(route_attendance) as attendance, sum(route_attendance) as total_attend,day(route_datetime) as day, employee_id from route where month(route_datetime) = '"+months+"'group by day(route_datetime),employee_id",function(error,rows,fields){
+           con.query("SELECT count(route_attendance) as attendance, sum(route_attendance) as total_attend,day(route_datetime) as day, route.employee_id,employee_name from route left join employee on route.employee_id = employee.employee_id where month(route_datetime) = '"+dmonth+"' and company_id='"+company_id+"' group by day(route_datetime),employee_id",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
             }
@@ -916,17 +1235,17 @@ app.post(deployPath +'/attendance',isAuthenticated,function(req,res,next){
                          var att = attendance[k].employee_id.toString();
                          if(emp === att){
                              attendance_list.push(attendance[k]);
-                             console.log("attendace ="+JSON.stringify(attendance[k]));
+                             //console.log("attendace ="+JSON.stringify(attendance[k]));
                          }
                          //console.log("attendace_list ="+JSON.stringify(attendance_list));
-                         employee_list = { employee_id:employee[i].employee_id.toString(),emp_attendance:attendance_list};
+                         employee_list = { employee_id:employee[i].employee_id,employee_name:employee[i].employee_name,emp_attendance:attendance_list};
 
                          //employee_list.push(attendance_list);
                        }
                     }
                     else{
                         
-                         employee_list = { employee_id:employee[i].employee_id.toString(),emp_attendance:0};
+                         employee_list = { employee_id:employee[i].employee_id,employee_name:employee[i].employee_name,emp_attendance:0};
 
                         
                     }
@@ -1013,6 +1332,73 @@ app.post(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     //res.render('/',{title:"Attendance"});
 });
 
+app.get(deployPath +'/show_route/:emp_id-:day-:month',isAuthenticated,function(req,res,next){
+    
+     var emp_id= req.params.emp_id;
+     var day= req.params.day;
+     var month= req.params.month;
+     var dmonth;
+     
+     if(month === '01' || month === 01){
+         dmonth = '1';
+     }
+     else if(month === '02' || month === 02){
+         dmonth = '2';
+     }
+     else if(month === '03' || month === 03){
+         dmonth = '3';
+     }
+     else if(month === '04' || month === 04){
+         dmonth = '4';
+     }
+     else if(month === '05' || month === 05){
+         dmonth = '5';
+     }
+     else if(month === '06' || month === 06){
+         dmonth = '6';
+     }
+     else if(month === '07' || month === 07){
+         dmonth = '7';
+     }
+     else if(month === '08' || month === 08){
+         dmonth = '8';
+     }
+     else if(month === '09' || month === 09){
+         dmonth = '9';
+     }
+     else if(month === '10' || month === 10){
+         dmonth = '10';
+     }
+     else if(month === '11' || month === 11){
+         dmonth = '11';
+     }
+     else if(month === '12' || month === 12){
+         dmonth = '12';
+     }
+     
+   
+    con.query("SELECT * from route left join employee on route.employee_id = employee.employee_id where route.employee_id = '"+emp_id+"' and day(route_datetime) = '"+day+"' and month(route_datetime) = '"+dmonth+"'",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query routeadd='+error);
+                }
+                else{
+//                    console.log('Successful query\n');
+//                    console.log(rows);
+                    if(req.session.language === 'en'){
+                       res.render('show_route_en',{title:"Show Route",data:rows});
+                   }
+                   else{
+                       res.render('show_route',{title:"Show Route",data:rows});
+                   }
+                     
+                }
+            });
+    
+    
+    
+
+});
+
 
 app.get(deployPath +'/login',function(req,res,next){
     res.render('login',{title:"Login"});
@@ -1045,10 +1431,10 @@ app.get(deployPath +'/profile/:users_id',isAuthenticated,function(req,res){
 
 app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
 //        var users_id = req.params.users_id;
-        v_emp_id = req.sanitize( 'emp_id' ).escape().trim();
-        v_name = req.sanitize( 'name' ).escape().trim(); 
-        v_motto = req.sanitize( 'motto' ).escape().trim();
-        v_sim_card = req.sanitize( 'sim_card' ).escape().trim();
+        v_emp_id = req.sanitize( 'emp_id' );
+        v_name = req.sanitize( 'name' ); 
+        v_motto = req.sanitize( 'motto' );
+        v_sim_card = req.sanitize( 'sim_card' );
         v_email = req.sanitize( 'email' ).escape();
         v_password = req.sanitize( 'password' ).escape();
  
@@ -1082,7 +1468,7 @@ app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
 app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
     
     upload(req,res,function(err) {
-        v_emp_id = req.sanitize('emp_id').escape().trim();
+        v_emp_id = req.sanitize('emp_id');
        
         if(err) {
             return res.end("Error uploading file."+err);
@@ -1109,22 +1495,89 @@ app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
 //----------------------------PROFILE----------------------------
 
 app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
-    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
-       if(!!error){
-           console.log('Error in the query '+error);
-       }
-       else{
-//           console.log('Successful query\n');
-//           console.log(rows);
-            if(req.session.language === 'en'){
-                res.render('tracking_en',{title:"Tracking",data:rows});
-            }
-            else{
-                res.render('tracking',{title:"Tracking",data:rows});
-            }
-           
-       }
-   });
+//    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
+//       if(!!error){
+//           console.log('Error in the query '+error);
+//       }
+//       else{
+////           console.log('Successful query\n');
+////           console.log(rows);
+//            if(req.session.language === 'en'){
+//                //res.render('tracking_en',{title:"Tracking",data:rows});
+//                res.render('tracking_new',{title:"Tracking",data:rows});
+//            }
+//            else{
+//                //res.render('tracking',{title:"Tracking",data:rows});
+//                res.render('tracking_new',{title:"Tracking",data:rows});
+//            }
+//           
+//       }
+//   });
+
+    var company_id = req.session.passport.user.company_id;
+
+        var d = createDateAsUTC(new Date());
+    //    d.setMinutes(d.getMinutes()+480);
+        d.setMinutes(d.getMinutes()-480);
+        var ddate = d.getDate();
+        var dmonth = d.getMonth()+1;
+        var dyear = d.getFullYear();
+        var dhour = d.getHours();
+        var dminutes = d.getMinutes();
+        var dseconds = d.getSeconds();
+        var d_date = d.getDate();
+        var d_month = d.getMonth()+1;;
+
+        if(ddate < 10){
+            ddate = "0"+ddate;
+        }
+        if(dmonth < 10){
+            dmonth = "0"+dmonth;
+        }
+
+        if(dhour < 10){
+            dhour = "0"+dhour;
+        }
+        if(dminutes < 10){
+            dminutes = "0"+dminutes;
+        }
+        if(dseconds < 10){
+            dseconds = "0"+dseconds;
+        }
+
+        var newdate;
+        newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+
+        var employee,floor_plan;
+
+        con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query '+error);
+           }
+           else{
+    //           console.log('Successful query\n');
+    //           console.log(rows);
+               employee = rows;
+           }
+       });
+
+       //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
+
+       con.query("SELECT * FROM floor_plan where company_id='"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query'+error);
+           }
+           else{
+               floor_plan = rows;
+    //           res.render('employee_management',{title:"Employee Management",data:rows});
+                if(req.session.language === 'en'){
+                    res.render('tracking_en',{title:"Tracking",data:JSON.stringify(employee),employee:employee,floor_plan:floor_plan});
+                }
+                else{
+                    res.render('tracking',{title:"Tracking",data:JSON.stringify(employee),employee:employee,floor_plan:floor_plan});
+                }
+           }
+       });
     
 });
 
@@ -1197,40 +1650,107 @@ app.get(deployPath +'/path_playback_2',isAuthenticated,function(req,res,next){
 });
 
 app.get(deployPath +'/map_management',isAuthenticated,function(req,res,next){
+
+var company_id = req.session.passport.user.company_id;
     
-//    con.query("SELECT * from map",function(error,rows,fields){
-//       if(!!error){
-//           console.log('Error in the query '+error);
-//           
-//       }
-//       else{
-//           if(rows.length !== 0){
-//            
-//            var map= JSON.parse(rows[0].map_string);
-//            console.log("------------in or out-----------");
-//            console.log([inside.feature(map,[101.6110998,3.0692049] ),inside.feature(map,[101.6101003,3.0688367])]);
-//        }
-//       }
-//   });
-         
-        
-    if(req.session.language === 'en'){
+    con.query("SELECT * from map where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           if(rows.length === 0){
+               
+               con.query("INSERT INTO map(map_string,company_id) values ('','"+company_id+"')",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query '+error);
+                }
+                else{
+                    con.query("SELECT * from map where company_id='"+company_id+"'",function(error,rows,fields){
+                        if(!!error){
+                            console.log('Error in the query '+error);
+                        }
+                        else{
+                                if(req.session.language === 'en'){
+                                        res.render('map_management_en',{title:"Map Management",data:rows});
+                                    }
+                                    else{
+                                        res.render('map_management',{title:"Map Management",data:rows});
+                                    }
+
+                       }
+                    });
+                    
+                    
+               }
+            });
+               
+           }
+           else{
+               if(req.session.language === 'en'){
  
-        res.render('map_management_en',{title:"Map Management"});
-    }
-    else{
-        res.render('map_management',{title:"Map Management"});
-    }
+                    res.render('map_management_en',{title:"Map Management",data:rows});
+                }
+                else{
+                    res.render('map_management',{title:"Map Management",data:rows});
+                }
+           }
+           
+      }
+   });
+        
+    
     
 });
 
 app.get(deployPath +'/geofencing',isAuthenticated,function(req,res,next){
-    if(req.session.language === 'en'){
-        res.render('geofencing_en',{title:"Geofencing"});
-    }
-    else{
-        res.render('geofencing',{title:"Geofencing"});
-    }
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * from map where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           if(rows.length === 0){
+               
+               con.query("INSERT INTO map(map_string,company_id) values ('','"+company_id+"')",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query '+error);
+                }
+                else{
+                    con.query("SELECT * from map where company_id='"+company_id+"'",function(error,rows,fields){
+                        if(!!error){
+                            console.log('Error in the query '+error);
+                        }
+                        else{
+                                if(req.session.language === 'en'){
+                                    res.render('geofencing_en',{title:"Geofencing",data:rows});
+                                    }
+                                    else{
+                                        res.render('geofencing',{title:"Geofencing",data:rows});
+                                    }
+
+                       }
+                    });
+                    
+                    
+               }
+            });
+               
+           }
+           else{
+               if(req.session.language === 'en'){
+                    res.render('geofencing_en',{title:"Geofencing",data:rows});
+                    }
+                    else{
+                        res.render('geofencing',{title:"Geofencing",data:rows});
+                    }
+           }
+           
+      }
+   });
+   
+   
+    
     
 });
 
@@ -1381,6 +1901,8 @@ app.get(deployPath +'/test_time',isAuthenticated,function(req,res,next){
 
 app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
     
+    var company_id = req.session.passport.user.company_id;
+    
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
     d.setMinutes(d.getMinutes()-480);
@@ -1415,7 +1937,7 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
     
     var employee,floor_plan;
     
-    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
+    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"' ",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -1428,7 +1950,7 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
    
    //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
    
-   con.query("SELECT * FROM floor_plan",function(error,rows,fields){
+   con.query("SELECT * FROM floor_plan where company_id='"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query'+error);
        }
@@ -1438,7 +1960,7 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
        }
    });
    
-    con.query("SELECT * from path",function(error,rows,fields){
+    con.query("SELECT * from path left join employee on path.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -1459,6 +1981,8 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
 
 app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     
+    var company_id = req.session.passport.user.company_id;
+    
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
     d.setMinutes(d.getMinutes()-480);
@@ -1493,7 +2017,7 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     
     var employee,floor_plan;
     
-    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
+    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -1506,7 +2030,7 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
    
    //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
    
-   con.query("SELECT * FROM floor_plan",function(error,rows,fields){
+   con.query("SELECT * FROM floor_plan where company_id='"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query'+error);
        }
@@ -1516,7 +2040,7 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
        }
    });
    
-    con.query("SELECT * from path",function(error,rows,fields){
+    con.query("SELECT * from path left join employee on path.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -1539,7 +2063,9 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
 
 app.get(deployPath +'/floor_plan_list',isAuthenticated,function(req,res,next){
     
-    con.query("SELECT * FROM floor_plan",function(error,rows,fields){
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * FROM floor_plan where company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -1561,15 +2087,16 @@ app.get(deployPath +'/floor_plan_list',isAuthenticated,function(req,res,next){
 
 app.get(deployPath +'/floor_plan',isAuthenticated,function(req,res,next){
     if(req.session.language === 'en'){
-        res.render('floor_plan_en',{title:"Geofencing"});
+        res.render('floor_plan_en',{title:"Floor Plan"});
     }
     else{
-        res.render('floor_plan',{title:"Geofencing"});
+        res.render('floor_plan',{title:"Floor Plan"});
     }
     
 });
 
 app.post(deployPath +'/floor_plan/add',isAuthenticated,function(req,res,next){
+    var company_id = req.session.passport.user.company_id;
     upload(req,res,function(err) {
         //console.log("get select from body ="+req.body.dept_code);
         v_floor_name = req.sanitize( 'floor_name' ).escape(); 
@@ -1583,7 +2110,7 @@ app.post(deployPath +'/floor_plan/add',isAuthenticated,function(req,res,next){
         //console.log("filepath-- "+filepath);
         //console.log("INSERT INTO floor_plan(floorplan_img,floor_name) VALUES ('"+filepath+"','"+v_floor_name+"')");
         
-        con.query("INSERT INTO floor_plan(floorplan_img,floor_name) VALUES ('"+filepath+"','"+v_floor_name+"')",function(error,rows,fields){
+        con.query("INSERT INTO floor_plan(floorplan_img,floor_name,company_id) VALUES ('"+filepath+"','"+v_floor_name+"','"+company_id+"')",function(error,rows,fields){
             if(error)
                 {
                     var errors_detail  = ("Error Insert : %s ",error ); 
@@ -1602,6 +2129,20 @@ app.post(deployPath +'/floor_plan/add',isAuthenticated,function(req,res,next){
 app.get(deployPath +'/floor_plan_detail/:id',isAuthenticated,function(req,res,next){
     
     var floorplan_id = req.params.id;
+    var location;
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * FROM location where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+           location = rows;
+       }
+            
+   });
     
     con.query("SELECT * FROM floor_plan where floorplan_id='"+floorplan_id+"'",function(error,rows,fields){
        if(!!error){
@@ -1611,10 +2152,10 @@ app.get(deployPath +'/floor_plan_detail/:id',isAuthenticated,function(req,res,ne
            //console.log('Successful query\n');
            //console.log(rows);
             if(req.session.language === 'en'){
-                res.render(deployPath +'floor_plan_detail_en',{title:"Floor Plan Detail",data:rows});
+                res.render(deployPath +'floor_plan_detail_en',{title:"Floor Plan Detail",data:rows,location:JSON.stringify(location)});
             }
             else{
-                res.render(deployPath +'floor_plan_detail',{title:"Floor Plan Detail",data:rows});
+                res.render(deployPath +'floor_plan_detail',{title:"Floor Plan Detail",data:rows,location:JSON.stringify(location)});
             }
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
@@ -1637,12 +2178,9 @@ app.get(deployPath +'/floor_plan/delete/:id',isAuthenticated,function(req,res,ne
                     //res.redirect('/route_management');
                 }
             });
-    if(req.session.language === 'en'){
-        res.redirect(deployPath +'/floor_plan_list_en');
-    }
-    else{
-        res.redirect(deployPath +'/floor_plan_list');
-    }
+   
+    res.redirect(deployPath +'/floor_plan_list');
+    
 
 });
  
@@ -2402,8 +2940,9 @@ app.post(deployPath +'/api/v1/send_location', function(req, res) {
 app.post(deployPath +'/api/v1/save_map/:map_string', function(req, res) {
     
      var map_string = req.params.map_string;
+     var company_id = req.session.passport.user.company_id;
      
-    con.query("INSERT INTO map(map_string) values ('"+map_string+"')",function(error,rows,fields){
+    con.query("INSERT INTO map(map_string,company_id) values ('"+map_string+"','"+company_id+"')",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
            res.send(error);
@@ -2419,14 +2958,15 @@ app.post(deployPath +'/api/v1/save_map', function(req, res,next) {
      //var map_string = req.params.map_string;
      map_string = req.sanitize( 'map_string' );
      //console.log("map_string== "+map_string);
+     var company_id = req.session.passport.user.company_id;
      
-     con.query("TRUNCATE map",function(error,rows,fields){
-         if(!!error){
-           console.log('Error in the query '+error);
-           //res.send(error);
-       }
-       else{
-           con.query("INSERT INTO map(map_string) values ('"+map_string+"')",function(error,rows,fields){
+//     con.query("TRUNCATE map",function(error,rows,fields){
+//         if(!!error){
+//           console.log('Error in the query '+error);
+//           //res.send(error);
+//       }
+//       else{
+           con.query("UPDATE map set map_string='"+map_string+"' where company_id='"+company_id+"'",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
                 //res.send(error);
@@ -2436,9 +2976,9 @@ app.post(deployPath +'/api/v1/save_map', function(req, res,next) {
                //res.send('good');
             }
         });
-       }
+       //}
        
-   }); 
+   //}); 
      
      
 });

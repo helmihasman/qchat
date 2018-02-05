@@ -17,17 +17,19 @@ block content
                 table#datatable.table.table-striped.table-bordered
                     thead
                       tr
-                        th 雇员编号
+                        th 编号
                         th 姓名
-                        th 手机号码
+                        th SIM 号码
                         th 电邮
-                        th 在线
-                        th 地点
+                        th 在职
+                        th 公司
+                        th 职位
+                        th 当前位置
+                        th 行动
                     tbody
                       for row, index in data
                         tr
-                          td 
-                            a(href='/employee_details/#{row.employee_id}',style='color:blue') #{row.employee_id}
+                          td #{index+1}
                           td #{row.employee_name}
                           td #{row.employee_phone_no}
                           td #{row.employee_email}
@@ -36,7 +38,23 @@ block content
                               | 是
                             else
                               | 否
+                          td #{row.company_name}
+                          td 
+                            if row.employee_level === '1'
+                              | 管理
+                            else if row.employee_level === '2'
+                              | 普通用户
                           td #{row.beacon_location+", "+row.beacon_level}
+                          td
+                            div(style='display:inline-block')
+                                a(href='/employee_details/#{row.employee_id}').btn.btn-sm.btn-info
+                                        i.fa.fa-user
+                            div(style='display:inline-block')
+                                a(href='profile/#{row.employee_id}').btn.btn-sm.btn-primary
+                                        i.fa.fa-edit
+                             div(style='display:inline-block')
+                                a(href='/employee/delete/#{row.employee_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                        i.fa.fa-remove
                       
             .clearfix
     // /page content

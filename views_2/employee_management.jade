@@ -1,0 +1,61 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-6
+                h3
+                  img(src='/images/system_admin.png',height='35px',width='30px')
+                  | &nbsp;雇员管理 
+                  br
+                  br
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                        th No
+                        th Name
+                        th SIM Number
+                        th Email Account
+                        th On Duty
+                        th Company
+                        th Level
+                        th Current location
+                        th Action
+                    tbody
+                      for row, index in data
+                        tr
+                          td #{index+1}
+                          td #{row.employee_name}
+                          td #{row.employee_phone_no}
+                          td #{row.employee_email}
+                          td 
+                            if row.employee_status === 'online'
+                              | Yes
+                            else
+                              | No
+                          td #{row.company_name}
+                          td 
+                            if row.employee_level === '1'
+                              | Admin
+                            else if row.employee_level === '2'
+                              | Normal User
+                          td #{row.beacon_location+", "+row.beacon_level}
+                          td
+                            div(style='display:inline-block')
+                                a(href='/employee_details/#{row.employee_id}').btn.btn-sm.btn-info
+                                        i.fa.fa-user
+                            div(style='display:inline-block')
+                                a(href='profile/#{row.employee_id}').btn.btn-sm.btn-primary
+                                        i.fa.fa-edit
+                             div(style='display:inline-block')
+                                a(href='/employee/delete/#{row.employee_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                        i.fa.fa-remove
+                      
+            .clearfix
+    // /page content
+
