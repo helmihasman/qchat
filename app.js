@@ -144,12 +144,20 @@ app.use(methodOverride(function(req, res){
 //     database:'ad_4a07813f131a943'
 //});
 
+//Qchat development
+//var con = mysql.createConnection({
+//    host: "us-cdbr-sl-dfw-01.cleardb.net",
+//    user: "bf0ba532c5ea11",
+//    password: "5d2e7966",
+//    database: "ibmx_5615f24298630b0"
+//});
 
+//Qchat production
 var con = mysql.createConnection({
     host: "us-cdbr-sl-dfw-01.cleardb.net",
-    user: "bf0ba532c5ea11",
-    password: "5d2e7966",
-    database: "ibmx_5615f24298630b0"
+    user: "be5751a8fb97c0",
+    password: "16126bbe",
+    database: "ibmx_7b9b06ebe049e12"
 });
 
  
@@ -197,6 +205,7 @@ var audio=0,note=0,photo=0,alert_bil=0,sum=0;
 app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
     
     var employee,alert,notification;
+    var company_id = req.session.passport.user.company_id;
 //    var audio=0,note=0,photo=0,alert_bil=0,sum=0;
     
 //    con.query("SELECT count(*) as bil,document_type FROM document where document_status = 'read' group by document_type",function(error,rows,fields){
@@ -250,7 +259,7 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
                     
   
    
-  con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'read' order by document.document_time desc limit 5",function(error,rows,fields){
+  con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'read' and employee.company_id='"+company_id+"' order by document.document_time desc limit 5",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -262,7 +271,7 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
    }); 
    
    
-   con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'unread' order by document.document_time desc limit 5",function(error,rows,fields){
+   con.query("SELECT * FROM document left join employee on document.doc_emp_id = employee.employee_id left join location on document.document_location = location.location_code where document.document_status = 'unread' and employee.company_id='"+company_id+"' order by document.document_time desc limit 5",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -273,7 +282,7 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
        }
    }); 
    
-   con.query("SELECT * FROM employee where employee_level != '1'",function(error,rows,fields){
+   con.query("SELECT * FROM employee where employee_level = '2' and company_id='"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -282,7 +291,7 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
            //console.log(rows);
            employee = rows;
            
-           con.query("SELECT count(*) as bil,document_type FROM document where document_status = 'read' group by document_type",function(error,rows,fields){
+           con.query("SELECT count(*) as bil,document_type FROM document left join employee on document.doc_emp_id = employee.employee_id where document.document_status = 'read' and employee.company_id='"+company_id+"' group by document_type",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
             }
@@ -302,7 +311,7 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
                     }
                 }
 
-                 con.query("SELECT count(*) as bil FROM document where document_status = 'unread'",function(error,rows,fields){
+                 con.query("SELECT count(*) as bil FROM document left join employee on document.doc_emp_id = employee.employee_id where document_status = 'unread' and employee.company_id='"+company_id+"'",function(error,rows,fields){
                      if(!!error){
                          console.log('Error in the query '+error);
                      }
