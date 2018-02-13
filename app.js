@@ -3010,6 +3010,12 @@ app.post(deployPath +'/api/v1/save_markers', function(req, res,next) {
   
 });
  //----------------------------REST API-------------------------------------
+ 
+ app.get('/logout', function (req, res){
+  req.session.destroy(function (err) {
+    res.redirect('/'); 
+  });
+});
 
 function createDateAsUTC(date) {
     return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
