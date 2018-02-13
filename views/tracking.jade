@@ -1,4 +1,4 @@
-extends base
+extends base_tracking
 block content 
     .right_col(role='main', style='background-color:#49A8FF')
         .row
@@ -43,7 +43,9 @@ block content
                                     ul.nav.nav-tabs.tabs-left
                                       for row, index in floor_plan
                                         li
-                                          a(href='#home#{row.floorplan_id}', data-toggle='tab') #{row.floor_name}
+                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}') #{row.floor_name}
+                                      li
+                                          a(href='#outdoor', data-toggle='tab',id='outdoor') Outdoor
                                         
                                         
                                       
@@ -59,10 +61,11 @@ block content
                                      var maps = [];
                                      var floorplan_list = [];
                                      var markers = new L.FeatureGroup();
+                                     var floors = "#{floors}".replace(/&quot;/g, '"');
                                           
                                     for row, index in floor_plan
                                         if index === 0
-                                         div.tab-pane.active(id='home#{row.floorplan_id}')
+                                         div.tab-pane(id='home#{row.floorplan_id}')
                                             div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
                                             script(type='text/javascript').
 
@@ -194,6 +197,8 @@ block content
                                                 } else {
                                                 marker = [];
                                                 }
+                                    div.tab-pane.active(id='outdoor')
+                                        #googleMapTracking(style='width:100%;height:400px;')
                                     
                           
                                          

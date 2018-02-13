@@ -3,10 +3,10 @@ html
     head
         include header.jade
      //body.nav-md(onload='runMaps()')
-    body.nav-md(onload='loadStuff()')
+    body.nav-md(onload='companyMap()')
      div.container.body
       div.main_container
-       if session.language === 'en'
+        if session.language === 'en'
             if session.passport.user.employee_level === '2'
                 include navigation_user_en.jade
                 include sidebar_user_en.jade
@@ -15,7 +15,7 @@ html
                 include sidebar_en.jade
             else if session.passport.user.employee_level === '0'
                 include navigation_en.jade
-                include sidebar_en.jade
+                include sidebar_admin_en.jade
         else if session.language === 'cn'
             if session.passport.user.employee_level === '2'
                 include navigation_user.jade
@@ -25,7 +25,8 @@ html
                 include sidebar.jade
             else if session.passport.user.employee_level === '0'
                 include navigation.jade
-                include sidebar.jade
+                include sidebar_admin.jade
+
         block content
         include footer.jade
         include js.jade

@@ -1,0 +1,35 @@
+.col-md-3.left_col
+  .left_col.scroll-view
+    .clearfix
+    // menu profile quick info
+    .profile
+      .profile_pic
+        if session.passport.user.employee_image !== null
+         img.img-circle.profile_img(src='/#{session.passport.user.employee_image}', alt='...')
+        else
+         img.img-circle.profile_img(src='../gentelella/production/images/user.png', alt='...')
+      .profile_info
+        span Welcome,
+        h2 #{session.passport.user.employee_name}
+    // /menu profile quick info
+    br
+    // sidebar menu
+    #sidebar-menu.main_menu_side.hidden-print.main_menu
+      .menu_section
+        h3  
+        h3 #{session.passport.user.employee_motto}
+        ul.nav.side-menu
+          li
+            a
+              i.fa.fa-user
+              |  System Admin 
+              span.fa.fa-chevron-down
+            ul.nav.child_menu
+              li
+                a(href='/company_management')
+                    img(src='../images/building.png' width='25px' height='25px')
+                    | &nbsp;&nbsp;Company Management
+              li
+                a(href='/employee_management')
+                    img(src='../images/system_admin.png' width='25px' height='25px')
+                    | &nbsp;&nbsp;Employee Management

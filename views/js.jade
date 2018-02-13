@@ -107,6 +107,150 @@ script.
      
 script(src='http://maps.google.cn/maps/api/js?key=AIzaSyDdtF6BnY-mKqQmaOIyLVy-rrCI_jJGkDs&libraries=drawing')
 
+script.
+    var companyMap = function() {
+        
+    //if (navigator.geolocation) {
+        //navigator.geolocation.getCurrentPosition(function(position) {
+
+            map_g = new google.maps.Map(document.getElementById('googleMapCompany'), {
+                center: {
+                    //lat: position.coords.latitude,
+                    //lng: position.coords.longitude
+                    lat: 23.1253491,
+                    lng: 112.9469622
+                },
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
+            });
+            
+            var marker;
+            function placeMarker(location) {
+              if ( marker ) {
+                marker.setPosition(location);
+              } else {
+                marker = new google.maps.Marker({
+                  position: location,
+                  map: map_g
+                });
+              }
+
+              $("#location").val(location);
+
+            }
+            google.maps.event.addListener(map_g, 'click', function(event) {
+              placeMarker(event.latLng);
+            });
+         
+
+           
+            
+            
+
+    //}
+    };
+    
+    
+script.
+    var trackingMap = function() {
+        
+    //if (navigator.geolocation) {
+        //navigator.geolocation.getCurrentPosition(function(position) {
+
+            map_g = new google.maps.Map(document.getElementById('googleMapTracking'), {
+                center: {
+                    //lat: position.coords.latitude,
+                    //lng: position.coords.longitude
+                    lat: 23.1253491,
+                    lng: 112.9469622
+                },
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
+            });
+            
+            
+            //map_g.data.setControls(['Polygon']);
+            
+            bindDataLayerListeners(map_g.data);
+            
+            loadPolygons();  //load saved data
+            
+            function bindDataLayerListeners(dataLayer) {
+                dataLayer.addListener('addfeature', savePolygon);
+                dataLayer.addListener('removefeature', savePolygon);
+                //dataLayer.addListener('setgeometry', savePolygon);
+            }
+
+            
+
+        //});
+        function loadPolygons() {
+                //var data = JSON.parse(localStorage.getItem('geoData'));
+                var data = JSON.parse(document.getElementById("map_string_load").value) ;
+                //alert(data);
+                map_g.data.forEach(function (f) {
+                    map_g.data.remove(f);
+                });
+                  
+                map_g.data.addGeoJson(data);
+                //alert("load polygon");
+            }
+
+            function savePolygon() {
+                //console.log("mapp11-- "+map.data);
+                //alert("save polygon1");
+                //var polyname = prompt("Enter polygon name:", "");
+                 var coord;
+                 var features = [];
+                 //map.bindPopup("<div>This is a polygon</div>" + polygonPopUpButtons);
+                map_g.data.toGeoJson(function (json) {
+                    //alert("save name here");
+                    //json.features[0].geometry.polyname = "testname";
+                    //localStorage.setItem('geoData', JSON.stringify(json));
+                    for (var i = 0; i < json.features.length; i++) {
+                        console.log(json.features[i].geometry.coordinates);
+                        coord = json.features[i].geometry.coordinates;
+                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":"Area "+(i+1)},"properties":{}});
+                    }
+                    
+                    var jsonstring = {"type":"FeatureCollection","features":features};
+                    console.log("jsonstring-- "+JSON.stringify(jsonstring));
+                    localStorage.setItem('geoData', JSON.stringify(jsonstring));
+                    
+                    initControls(jsonstring);
+                    alert("save polygon2");
+                });
+            }
+            
+            function initControls(data)
+            {
+                var sel = document.getElementById('polyList');
+                sel.options.length = 0;
+                console.log("savepolygon22-- "+JSON.stringify(data));
+
+                for (var i = 0; i < data.features.length; i++) {
+                    var opt = document.createElement('option');
+                    opt.innerHTML = data.features[i].geometry.polyname;
+                    opt.value = i;
+                    sel.appendChild(opt);
+                }
+
+                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
+                document.getElementById("btnDelete").onclick = function(){
+                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
+                    data.features.splice(parseInt(selIdx), 1);   
+
+                    //reload 
+                    localStorage.setItem('geoData', JSON.stringify(data));
+                    initControls(data);  
+                    loadPolygons(map_g);   
+                };
+            }
+
+    //}
+    };
 
 script.
     var showMaps = function() {
@@ -378,18 +522,20 @@ script.
        for(var l=0;l<maps.length;l++){
            maps[l].eachLayer(function (layer) {
                 maps[l].removeLayer(markers);
-                
+                //alert("clean ");
             });
-        for(i in maps[l]._layers) {
+            
+        /*for(i in maps[l]._layers) {
             if(maps[l]._layers[i]._path !== undefined) {
                 try {
+                    //alert("clean2 ");
                     maps[l].removeLayer(maps[l]._layers[i]);
                 }
                 catch(e) {
                     console.log("problem with " + e + maps[l]._layers[i]);
                 }
             }
-        }
+        }*/
       }
     }
     
@@ -452,7 +598,9 @@ script.
 
 
                   //mhuman = JSON.parse(floorplan);
-                  //alert("floorplan-- "+floorplan);
+                  //alert("floorplan_list-- "+floors);
+                  var mfloors = JSON.parse(floors);
+                  //alert(mfloors.floor[0].floor_id);
                   mhuman = floorplan_list;
                   for(var j=0;j<maps.length;j++){
                   for (k in mhuman[j]) {
@@ -495,7 +643,8 @@ script.
                           
                           //html += '<li><a href="#step-1"><span class="step_no">'+dd[i].employee_location+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
                           
-                         
+                          document.getElementById(mfloors.floor[j].floor_id).click();
+                          //alert(mfloors.floor[i].floor_id);
                           maps[j].addLayer(markers);
                          
                           //document.getElementById("wizard_steps").innerHTML = html;
@@ -583,7 +732,8 @@ script.
 
 
                   //mhuman = JSON.parse(floorplan);
-                  //alert("floorplan-- "+floorplan);
+                  //alert("floorplan_list-- "+floorplan_list);
+                  var mfloors = JSON.parse(floors);
                   mhuman = floorplan_list;
                   for(var j=0;j<maps.length;j++){
                   for (k in mhuman[j]) {
@@ -628,7 +778,7 @@ script.
                           
                          
                           maps[j].addLayer(markers);
-                         
+                          document.getElementById(mfloors.floor[j].floor_id).click();
                           document.getElementById("wizard_steps").innerHTML = html;
                         
 

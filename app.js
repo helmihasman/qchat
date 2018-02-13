@@ -195,6 +195,7 @@ app.get(deployPath +'/map_test',function(req,res,next){
 
 var audio=0,note=0,photo=0,alert_bil=0,sum=0;
 app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
+    
     var employee,alert,notification;
 //    var audio=0,note=0,photo=0,alert_bil=0,sum=0;
     
@@ -309,19 +310,18 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
                          //console.log('Successful query\n');
                          //console.log(rows);
                          alert_bil = rows[0].bil;
-                         
 
-                          console.log("audio-"+audio+" note-"+note+" photo-"+photo+" alert_bil-"+alert_bil);
+                          //console.log("audio-"+audio+" note-"+note+" photo-"+photo+" alert_bil-"+alert_bil);
                           
                        req.session.audio = audio;
                           req.session.note = note;
                           req.session.photo = photo;
                           req.session.alert = alert_bil;
                           sum = audio + note + photo + alert_bil;
-                          console.log("sum-"+sum);
+                          //console.log("sum-"+sum);
                          req.session.sum = sum;
-                        console.log("audio2-"+audio+" note2-"+note+" photo2-"+photo+" alert_bil2-"+alert_bil+" sum2-"+sum);
-                         console.log("audio3-"+req.session.audio+" note3-"+req.session.note+" photo3-"+req.session.photo+" alert_bil3-"+req.session.alert+" sum3-"+req.session.sum);
+                        //console.log("audio2-"+audio+" note2-"+note+" photo2-"+photo+" alert_bil2-"+alert_bil+" sum2-"+sum);
+                         //console.log("audio3-"+req.session.audio+" note3-"+req.session.note+" photo3-"+req.session.photo+" alert_bil3-"+req.session.alert+" sum3-"+req.session.sum);
                        if(req.session.language === 'en'){
                            res.render('index_en',{title:"Home",employee:employee,alert:alert,notification:notification});
                        }
@@ -330,11 +330,7 @@ app.get(deployPath +'/',isAuthenticated, function(req, res, next) {
                        }
 
                      }
-                 }); 
-                 
-                 
-                    
-                     
+                 });     
 
             }
 
@@ -577,7 +573,12 @@ app.get(deployPath +'/company_management',isAuthenticated,function(req,res,next)
 
 app.get(deployPath +'/company_add',isAuthenticated,function(req,res,next){
     
-   res.render('company_add',{title:"Add Company"});
+   if(req.session.language === 'en'){
+       res.render('company_add_en',{title:"Add Company"});
+   }
+   else{
+       res.render('company_add',{title:"Add Company"});
+   }
 
 });
 
@@ -589,9 +590,10 @@ app.post(deployPath +'/company/add',isAuthenticated,function(req,res,next){
     v_company_website = req.sanitize( 'company_website' );
     v_company_phone_no = req.sanitize( 'company_phone_no' );
     v_company_email = req.sanitize( 'company_email' );
+    v_location = req.sanitize( 'location' );
     
     
-    con.query("INSERT INTO company(company_name,company_address,company_website,company_phone_no,company_email,company_reg_no) values ('"+v_company_name+"','"+v_company_address+"','"+v_company_website+"','"+v_company_phone_no+"','"+v_company_email+"','"+v_company_reg_no+"')",function(error,rows,fields){
+    con.query("INSERT INTO company(company_name,company_address,company_website,company_phone_no,company_email,company_reg_no,company_location) values ('"+v_company_name+"','"+v_company_address+"','"+v_company_website+"','"+v_company_phone_no+"','"+v_company_email+"','"+v_company_reg_no+"','"+v_location+"')",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query routeadd='+error);
                 }
@@ -636,8 +638,9 @@ app.post(deployPath +'/company/edit/:id',isAuthenticated,function(req,res,next){
     v_company_website = req.sanitize( 'company_website' );
     v_company_phone_no = req.sanitize( 'company_phone_no' );
     v_company_email = req.sanitize( 'company_email' );
+    v_location = req.sanitize( 'location' );
     
-    con.query("UPDATE company set company_name='"+v_company_name+"',company_reg_no='"+v_company_reg_no+"',company_address='"+v_company_address+"',company_website='"+v_company_website+"',company_phone_no='"+v_company_phone_no+"',company_email='"+v_company_email+"' where company_id='"+company_id+"'",function(error,rows,fields){
+    con.query("UPDATE company set company_name='"+v_company_name+"',company_reg_no='"+v_company_reg_no+"',company_address='"+v_company_address+"',company_website='"+v_company_website+"',company_phone_no='"+v_company_phone_no+"',company_email='"+v_company_email+"',company_location='"+v_location+"' where company_id='"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -969,9 +972,7 @@ app.post(deployPath +'/location/edit/:id',isAuthenticated,function(req,res,next)
     //res.render('employee_management',{title:"Employee Management"});
 });
 
-
 //----------------------------LOCATION----------------------------
-
 
 app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     var route;
@@ -1495,24 +1496,6 @@ app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
 //----------------------------PROFILE----------------------------
 
 app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
-//    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee where employee_level != '1'",function(error,rows,fields){
-//       if(!!error){
-//           console.log('Error in the query '+error);
-//       }
-//       else{
-////           console.log('Successful query\n');
-////           console.log(rows);
-//            if(req.session.language === 'en'){
-//                //res.render('tracking_en',{title:"Tracking",data:rows});
-//                res.render('tracking_new',{title:"Tracking",data:rows});
-//            }
-//            else{
-//                //res.render('tracking',{title:"Tracking",data:rows});
-//                res.render('tracking_new',{title:"Tracking",data:rows});
-//            }
-//           
-//       }
-//   });
 
     var company_id = req.session.passport.user.company_id;
 
@@ -1549,6 +1532,8 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
         newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
 
         var employee,floor_plan;
+        var floors_id = [];
+        var floors;
 
         con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
            if(!!error){
@@ -1569,12 +1554,16 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
            }
            else{
                floor_plan = rows;
+               for(var i=0;i<rows.length;i++){
+                   floors_id.push({floor_id:rows[i].floorplan_id});
+               }
+               floors = {floor:floors_id};
     //           res.render('employee_management',{title:"Employee Management",data:rows});
                 if(req.session.language === 'en'){
-                    res.render('tracking_en',{title:"Tracking",data:JSON.stringify(employee),employee:employee,floor_plan:floor_plan});
+                    res.render('tracking_en',{title:"Tracking",data:JSON.stringify(employee),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors)});
                 }
                 else{
-                    res.render('tracking',{title:"Tracking",data:JSON.stringify(employee),employee:employee,floor_plan:floor_plan});
+                    res.render('tracking',{title:"Tracking",data:JSON.stringify(employee),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors)});
                 }
            }
        });
@@ -2016,6 +2005,8 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
     
     var employee,floor_plan;
+    var floors_id = [];
+    var floors;
     
     con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
@@ -2036,6 +2027,10 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
        }
        else{
            floor_plan = rows;
+           for(var i=0;i<rows.length;i++){
+                   floors_id.push({floor_id:rows[i].floorplan_id});
+           }
+               floors = {floor:floors_id};
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
    });
@@ -2046,12 +2041,12 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
        }
        else{
 //           console.log('Successful query\n');
-//           console.log(rows);
+           //console.log(rows);
             if(req.session.language === 'en'){
-                res.render('mapmap2_en',{title:"Path Playback",data:JSON.stringify(rows),employee:employee,floor_plan:floor_plan});
+                res.render('mapmap2_en',{title:"Path Playback",data:JSON.stringify(rows),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors)});
             }
             else{
-                res.render('mapmap2',{title:"Path Playback",data:JSON.stringify(rows),employee:employee,floor_plan:floor_plan});
+                res.render('mapmap2',{title:"Path Playback",data:JSON.stringify(rows),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors)});
             }
            
        }
@@ -3057,6 +3052,7 @@ passport.use('local_qchat', new LocalStrategy({
 
          }
         // console.log("rowwww = "+JSON.stringify(rows[0]));
+        req.session.language = "cn";
         return done(null, rows[0]);
 
       });

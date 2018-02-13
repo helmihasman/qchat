@@ -24,6 +24,7 @@ block content
                         th 公司名字
                         th 联络号码
                         th 联络电邮
+                        th 
                     tbody
                       for row, index in data
                         tr
@@ -32,6 +33,13 @@ block content
                           td #{row.company_name}
                           td #{row.company_phone_no}
                           td #{row.company_email}
+                          td
+                            div(style='display:inline-block')
+                                a(href='/company/edit/#{row.company_id}').btn.btn-sm.btn-primary
+                                        i.fa.fa-edit
+                             div(style='display:inline-block')
+                                a(href='/company/delete/#{row.company_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                        i.fa.fa-remove
                             
             .clearfix
     // /page content

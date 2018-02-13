@@ -7,16 +7,26 @@ html
      div.container.body
       div.main_container
         if session.language === 'en'
-          include navigation_en.jade
-        else
-          include navigation.jade
-        if session.language === 'en'
-          include sidebar_en.jade
-        else
-          include sidebar.jade
+            if session.passport.user.employee_level === '2'
+                include navigation_user_en.jade
+                include sidebar_user_en.jade
+            else if session.passport.user.employee_level === '1'
+                include navigation_en.jade
+                include sidebar_en.jade
+            else if session.passport.user.employee_level === '0'
+                include navigation_en.jade
+                include sidebar_admin_en.jade
+        else if session.language === 'cn'
+            if session.passport.user.employee_level === '2'
+                include navigation_user.jade
+                include sidebar_user.jade
+            else if session.passport.user.employee_level === '1'
+                include navigation.jade
+                include sidebar.jade
+            else if session.passport.user.employee_level === '0'
+                include navigation.jade
+                include sidebar_admin.jade
+
         block content
-        if session.language === 'en'
-          include footer_en.jade
-        else
-          include footer.jade
+        include footer.jade
         include js.jade

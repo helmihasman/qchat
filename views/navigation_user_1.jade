@@ -1,0 +1,25 @@
+.top_nav(style='background-color:#FFFFFF')
+  .nav_menu(style='background-color:#FFFFFF')
+    nav(role='navigation')
+      img(alt='', height='50', src='../images/logo.jpg', width='70', style='padding-top:5px')
+      .nav.toggle
+        a#menu_toggle
+          i.fa.fa-bars
+      img(alt='', height='40', src='../images/word.png')
+      ul.nav.navbar-nav.navbar-right(style='height: 61px;width:243px; margin-left:0px')
+        if session.passport.user.company_id === "0"
+            li
+              a(href='/company_management')
+                i.fa.fa-cog(alt='', title='Setting')
+        else
+            li
+              a(href='/profile/#{session.passport.user.employee_id}')
+                i.fa.fa-cog(alt='', title='Setting')
+        
+        li
+          a(href='/')
+            i.fa.fa-home(alt='', title='Home')
+        li
+          a(href='language/en') EN
+        li
+          a(href='language/cn') 中文

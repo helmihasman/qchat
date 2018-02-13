@@ -1,4 +1,4 @@
-extends base
+extends base_company
 block content 
     // page content
     .right_col(role='main',style="background:#49a8ff")
@@ -38,6 +38,15 @@ block content
                         label.control-label.col-md-3.col-sm-3.col-xs-12 Email &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='company_email',id='company_email',style='width:400px')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Location &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='text', name='location',id='location',style='width:400px')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 &nbsp;&nbsp;
+                        .col-md-9
+                          #googleMapCompany(style='width:100%;height:250px;')
+                          
                     .form-group
                         .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
                           button.btn.btn-primary(type='submit',id="confirm_btn") Confirm
