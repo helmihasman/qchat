@@ -145,12 +145,6 @@ app.use(methodOverride(function(req, res){
 //     database:'ad_4a07813f131a943'
 //});
 
-var con = mysql.createConnection({
-    host: "us-cdbr-sl-dfw-01.cleardb.net",
-    user: "bf0ba532c5ea11",
-    password: "5d2e7966",
-    database: "ibmx_5615f24298630b0"
-});
 
 //Qchat development
 //var con = mysql.createConnection({
@@ -161,12 +155,12 @@ var con = mysql.createConnection({
 //});
 
 //Qchat production
-//var con = mysql.createConnection({
-//    host: "us-cdbr-sl-dfw-01.cleardb.net",
-//    user: "be5751a8fb97c0",
-//    password: "16126bbe",
-//    database: "ibmx_7b9b06ebe049e12"
-//});
+var con = mysql.createConnection({
+    host: "us-cdbr-sl-dfw-01.cleardb.net",
+    user: "be5751a8fb97c0",
+    password: "16126bbe",
+    database: "ibmx_7b9b06ebe049e12"
+});
 
  
 app.post(deployPath +"/login", passport.authenticate('local_qchat', {
