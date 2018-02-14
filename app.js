@@ -123,6 +123,7 @@ var storage_image =   multer.diskStorage({
 });
 
 var upload = multer({ storage : storage}).single('floorplan_img');
+var upload_emp_image = multer({ storage : storage}).single('emp_image');
 
 var upload_image = multer({ storage : storage_image}).single('file');
 
@@ -144,6 +145,13 @@ app.use(methodOverride(function(req, res){
 //     database:'ad_4a07813f131a943'
 //});
 
+var con = mysql.createConnection({
+    host: "us-cdbr-sl-dfw-01.cleardb.net",
+    user: "bf0ba532c5ea11",
+    password: "5d2e7966",
+    database: "ibmx_5615f24298630b0"
+});
+
 //Qchat development
 //var con = mysql.createConnection({
 //    host: "us-cdbr-sl-dfw-01.cleardb.net",
@@ -153,12 +161,12 @@ app.use(methodOverride(function(req, res){
 //});
 
 //Qchat production
-var con = mysql.createConnection({
-    host: "us-cdbr-sl-dfw-01.cleardb.net",
-    user: "be5751a8fb97c0",
-    password: "16126bbe",
-    database: "ibmx_7b9b06ebe049e12"
-});
+//var con = mysql.createConnection({
+//    host: "us-cdbr-sl-dfw-01.cleardb.net",
+//    user: "be5751a8fb97c0",
+//    password: "16126bbe",
+//    database: "ibmx_7b9b06ebe049e12"
+//});
 
  
 app.post(deployPath +"/login", passport.authenticate('local_qchat', {
@@ -1477,7 +1485,7 @@ app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
 
 app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
     
-    upload(req,res,function(err) {
+    upload_emp_image(req,res,function(err) {
         v_emp_id = req.sanitize('emp_id');
        
         if(err) {
@@ -2941,6 +2949,76 @@ app.post(deployPath +'/api/v1/send_location', function(req, res) {
 
 });
 
+app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    
+    var d = createDateAsUTC(new Date());
+//    d.setMinutes(d.getMinutes()+480);
+    d.setMinutes(d.getMinutes()-480);
+    var ddate = d.getDate();
+    var dmonth = d.getMonth()+1;
+    var dyear = d.getFullYear();
+    var dhour = d.getHours();
+    var dminutes = d.getMinutes();
+    var dseconds = d.getSeconds();
+    var d_date = d.getDate();
+    var d_month = d.getMonth()+1;;
+
+    if(ddate < 10){
+        ddate = "0"+ddate;
+    }
+    if(dmonth < 10){
+        dmonth = "0"+dmonth;
+    }
+
+    if(dhour < 10){
+        dhour = "0"+dhour;
+    }
+    if(dminutes < 10){
+        dminutes = "0"+dminutes;
+    }
+    if(dseconds < 10){
+        dseconds = "0"+dseconds;
+    }
+    
+    var newdate;
+    newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+    //console.log("neweedatee = "+newdate);
+   
+    
+    var employee_id = req.body.send_gps_loc_data.emp_id;
+    var location = req.body.send_gps_loc_data.gps_loc;
+    
+    var good = {send_gps_loc_data: { data:"good" }};
+    var bad = {send_gps_loc_data: { data:"bad" }};
+    
+    con.query("INSERT INTO path(employee_id,path_datetime,gps_loc) values ('"+employee_id+"','"+newdate+"','"+location+"')",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+           res.send(error);
+       }
+       else{
+            
+            res.status(200).send(good);
+            
+           
+       }
+   }); 
+    
+    
+
+});
+
 app.post(deployPath +'/api/v1/save_map/:map_string', function(req, res) {
     
      var map_string = req.params.map_string;
@@ -3025,6 +3103,18 @@ app.post(deployPath +'/api/v1/save_markers', function(req, res,next) {
     res.redirect('/'); 
   });
 });
+
+
+setInterval(function(){ 
+       con.query('SELECT * FROM company',function(err,rows){
+         if(err) throw err;
+//         console.log('Data received from Db:\n');
+//         console.log("data from db="+JSON.stringify(rows));
+         
+       });
+}, 10000);
+
+
 
 function createDateAsUTC(date) {
     return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
