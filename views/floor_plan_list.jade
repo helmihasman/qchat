@@ -34,10 +34,10 @@ block content
                           
                           td
                             div(style='display:inline-block')
-                                a(href='/location/edit/#{row.location_id}').btn.btn-sm.btn-primary
+                                a(href='/floor_plan_detail/#{row.floorplan_id}').btn.btn-sm.btn-primary
                                         i.fa.fa-edit
                              div(style='display:inline-block')
-                                a(href='/location/delete/#{row.location_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                a(href='/floor_plan/delete/#{row.floorplan_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
                                         i.fa.fa-remove
             .clearfix
     // /page content

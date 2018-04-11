@@ -26,7 +26,6 @@ block content
                         th 在职
                         th 公司
                         th 职位
-                        th 当前位置
                         th 行动
                     tbody
                       for row, index in data
@@ -46,7 +45,6 @@ block content
                               | 管理
                             else if row.employee_level === '2'
                               | 普通用户
-                          td #{row.beacon_location+", "+row.beacon_level}
                           td
                             div(style='display:inline-block')
                                 a(href='/employee_details/#{row.employee_id}').btn.btn-sm.btn-info

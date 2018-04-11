@@ -109,13 +109,13 @@ var storage =   multer.diskStorage({
     callback(null, './uploads');
   },
   filename: function (req, file, callback) {
-    callback(null, "/"+file.fieldname + '-' + Date.now()+'.jpg');
+    callback(null, file.fieldname + '-' + Date.now()+'.jpg');
   }
 });
 
 var storage_image =   multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, './uploads/image');
+    callback(null, '/uploads/image/');
   },
   filename: function (req, file, callback) {
     callback(null, file.fieldname + '-' + Date.now()+'.jpg');
@@ -155,11 +155,20 @@ app.use(methodOverride(function(req, res){
 //});
 
 //Qchat production
+//var con = mysql.createConnection({
+//    host: "us-cdbr-sl-dfw-01.cleardb.net",
+//    user: "be5751a8fb97c0",
+//    password: "16126bbe",
+//    database: "ibmx_7b9b06ebe049e12"
+//});
+
+//Qchat compose production
 var con = mysql.createConnection({
-    host: "us-cdbr-sl-dfw-01.cleardb.net",
-    user: "be5751a8fb97c0",
-    password: "16126bbe",
-    database: "ibmx_7b9b06ebe049e12"
+    host: "sl-us-south-1-portal.19.dblayer.com",
+    user: "admin",
+    password: "XPONHULHEZMIPZZH",
+    database: "compose",
+    port:37139
 });
 
  
@@ -427,7 +436,7 @@ app.get(deployPath +'/employee_management',isAuthenticated,function(req,res,next
     var company_id = req.session.passport.user.company_id;
     console.log("company_id ="+company_id);
     if(company_id === "0" || company_id === 0){
-        con.query("SELECT * FROM employee left join location on employee.employee_location = location.location_code left join company on employee.company_id = company.company_id where employee_level != '0'",function(error,rows,fields){
+        con.query("SELECT * FROM employee left join company on employee.company_id = company.company_id where employee_level != '0'",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
             }
@@ -445,7 +454,7 @@ app.get(deployPath +'/employee_management',isAuthenticated,function(req,res,next
         });
     }
     else{
-        con.query("SELECT * FROM employee left join company on employee.company_id = company.company_id left join location on employee.employee_location = location.location_code where employee.company_id = '"+company_id+"' and location.company_id = '"+company_id+"'",function(error,rows,fields){
+        con.query("SELECT * FROM employee left join company on employee.company_id = company.company_id where employee.company_id = '"+company_id+"'",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
             }
@@ -1002,7 +1011,7 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var dmonth = d.getMonth()+1;
     var orimonth = d.getMonth()+1;
     //var dmonth = 9;
@@ -1487,9 +1496,10 @@ app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
         }
 //        res.end("File is uploaded."+req.file.path);
         filepath = req.file.path;
+        filepath = filepath.substr(7);
         
         
-        con.query("Update employee SET employee_image='"+filepath+"' WHERE employee_id ="+v_emp_id,function(error,rows,fields){
+        con.query("Update employee SET employee_image='uploads/"+filepath+"' WHERE employee_id ="+v_emp_id,function(error,rows,fields){
             if(error)
                 {
                     var errors_detail  = ("Error Insert : %s ",error );
@@ -1512,7 +1522,7 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
 
         var d = createDateAsUTC(new Date());
     //    d.setMinutes(d.getMinutes()+480);
-        d.setMinutes(d.getMinutes()-480);
+        //d.setMinutes(d.getMinutes()-480);
         var ddate = d.getDate();
         var dmonth = d.getMonth()+1;
         var dyear = d.getFullYear();
@@ -1585,7 +1595,7 @@ app.get(deployPath +'/path_playback_2',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -1802,7 +1812,7 @@ app.get(deployPath +'/test_time',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -1832,7 +1842,7 @@ app.get(deployPath +'/test_time',isAuthenticated,function(req,res,next){
     
     
     var dd = createDateAsUTC(new Date());
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     //dd.setMinutes(dd.getMinutes()+480);
     var dddate = dd.getDate();
     var ddmonth = dd.getMonth()+1;
@@ -1863,7 +1873,7 @@ app.get(deployPath +'/test_time',isAuthenticated,function(req,res,next){
     
     
     var dk = createDateAsUTC(new Date());
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
 //    dk.setMinutes(dk.getMinutes()+ 480);
     var dkdate = dk.getDate();
     var dkmonth = dk.getMonth()+1;
@@ -1905,7 +1915,7 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -1985,7 +1995,7 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2112,11 +2122,13 @@ app.post(deployPath +'/floor_plan/add',isAuthenticated,function(req,res,next){
             return res.end("Error uploading file."+err);
         }
 //        res.end("File is uploaded."+req.file.path);
+//        filepath = req.file.path;
         filepath = req.file.path;
+        filepath = filepath.substr(7);
         //console.log("filepath-- "+filepath);
         //console.log("INSERT INTO floor_plan(floorplan_img,floor_name) VALUES ('"+filepath+"','"+v_floor_name+"')");
         
-        con.query("INSERT INTO floor_plan(floorplan_img,floor_name,company_id) VALUES ('"+filepath+"','"+v_floor_name+"','"+company_id+"')",function(error,rows,fields){
+        con.query("INSERT INTO floor_plan(floorplan_img,floor_name,company_id) VALUES ('uploads/"+filepath+"','"+v_floor_name+"','"+company_id+"')",function(error,rows,fields){
             if(error)
                 {
                     var errors_detail  = ("Error Insert : %s ",error ); 
@@ -2191,6 +2203,104 @@ app.get(deployPath +'/floor_plan/delete/:id',isAuthenticated,function(req,res,ne
 });
  
  //----------------------------REST API-------------------------------------
+
+app.get('/api/v1/get_login',function(req,res){
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    var requestData = {
+            send_login_data: {
+              emp_login: "ymd_emp",
+              emp_pass: "123"
+             
+            }
+          };
+
+    request({
+            url: "http://localhost:3000/api/v1/send_login",
+            method: "POST",
+            json: true,   // <--Very important!!!
+            body:requestData
+        }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+        console.log("success="+JSON.parse(body));
+//        var json_string = JSON.parse(body);
+//        res.status(200).send(json_string);
+     }
+     else{
+         console.log("error="+error);
+     }
+    });
+});
+
+app.post(deployPath +'/api/v1/send_location_list',function(req,res){
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    //var json_data = JSON.parse(req.body);
+    //console.log("bodyyy="+JSON.stringify(req.body.send_text_data.emp_id));      // your JSON
+
+    //res.status(200);
+
+    
+    var login = req.body.send_location_list_data.emp_id;
+    var company_id;
+    
+    var good = {data:"location_list",status:"good"};
+    var bad = {data:"location_list",status:"bad"};
+    
+    con.query("SELECT company_id from employee where employee_id='"+login+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+           res.send(error);
+       }
+       else{
+           if(rows.length === 0){
+               res.status(200).send({data:"location_list",status:"bad1",list:rows,company_id:company_id});
+           }
+           else{
+               company_id = rows[0].company_id;
+               con.query("SELECT beacon_id from location where company_id='"+company_id+"'",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query '+error);
+                    res.send(error);
+                }
+                else{
+                    if(rows.length === 0){
+                        res.status(200).send({data:"location_list",status:"bad2",list:rows,company_id:company_id,query:"SELECT * from location where company_id='"+company_id+"'"});
+                    }
+                    else{
+                        res.status(200).send({data:"location_list",status:"good",list:rows,company_id:company_id});
+                    }
+
+                }
+            });
+           }
+           
+       }
+   }); 
+   
+  
+    
+    
+    //res.send(req.body);    // echo the result back
+
+//    var getdata = req.body;
+//    res.status(200).send(getdata);
+
+});
 
 app.post(deployPath +'/api/v1/send_login',function(req,res){
     // Website you wish to allow to connect
@@ -2310,7 +2420,7 @@ app.get(deployPath +'/api/v1/get_text',function(req,res){
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
 
-        var requestData = {send_text_data:{emp_id:"1",location:"A",remark:"this is remark",remark_other:"this is other remark",text:"send text"}};
+        var requestData = {send_text_data:{emp_id:"1",location:"B0:B4:48:DC:BF:CC",remark:"情况 1",remark_other:"",text:"test text"}};
 
     request({
             url: "http://localhost:3000/api/v1/send_text",
@@ -2348,7 +2458,7 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
 
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2389,8 +2499,26 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
     var doc_name = employee_id + '-' + Date.now()+'-text';
     var location_code;
     
-    var good = {send_text_data: { data:"good" }};
-    var bad = {send_text_data: { data:"bad" }};
+    var remarks = doc_remark.split(" ");
+    var new_remark;
+    
+   if(remarks[1] === '1'){
+       new_remark = '情况 1';
+   }
+   else if(remarks[1] === '2'){
+       new_remark = '情况 2';
+   }
+   else if(remarks[1] === '3'){
+       new_remark = '情况 3';
+   }
+   else {
+       new_remark = '其他';
+   }
+    
+    
+    var good = { data:"send_text",status:"good" };
+    var bad = {data:"send_text",status:"bad" };
+    var remark = {data:"send_text",status:doc_remark };
     
     con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%'",function(error,rows,fields){
        if(!!error){
@@ -2402,7 +2530,7 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
            console.log("locationcode ="+location_code);
            //console.log('Successful query\n');
            //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_text) values ('"+doc_name+"','Note','"+employee_id+"','"+newdate+"','"+location_code+"','"+doc_remark+"','"+remark_other+"','"+doc_text+"')",function(error,rows,fields){
+           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_text) values ('"+doc_name+"','Note','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+doc_text+"')",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
             }
@@ -2410,6 +2538,7 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
                 //console.log('Successful query\n');
                 //console.log(rows);
                 res.status(200).send(good);
+               // res.status(200).send(remark);
             }
         }); 
        }
@@ -2466,7 +2595,7 @@ app.post(deployPath +'/api/v1/send_image', function(req, res) {
 
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2506,12 +2635,28 @@ app.post(deployPath +'/api/v1/send_image', function(req, res) {
     var doc_name = employee_id + '_' + Date.now()+'.jpg';
     var location_code;
     
+    var remarks = doc_remark.split(" ");
+    var new_remark;
+    
+   if(remarks[1] === '1'){
+       new_remark = '情况 1';
+   }
+   else if(remarks[1] === '2'){
+       new_remark = '情况 2';
+   }
+   else if(remarks[1] === '3'){
+       new_remark = '情况 3';
+   }
+   else {
+       new_remark = '其他';
+   }
+    
     fs.writeFile("uploads/"+doc_name, new Buffer(b64string, "base64"), function(err) {console.log("fs error=="+err);});
     
     var filepath = "uploads/"+doc_name;
     
-    var good = {send_image_data: { data:"good" }};
-    var bad = {send_image_data: { data:"bad" }};
+    var good = { data:"send_image",status:"good" };
+    var bad =  { data:"send_image",status:"bad" };
     
     con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%'",function(error,rows,fields){
        if(!!error){
@@ -2523,7 +2668,7 @@ app.post(deployPath +'/api/v1/send_image', function(req, res) {
            console.log("locationcode ="+location_code);
            //console.log('Successful query\n');
            //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_image) values ('"+doc_name+"','Photo','"+employee_id+"','"+newdate+"','"+location_code+"','"+doc_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
+           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_image) values ('"+doc_name+"','Photo','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
                 res.send(error);
@@ -2585,7 +2730,7 @@ app.post(deployPath +'/api/v1/send_audio', function(req, res) {
 
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2625,12 +2770,28 @@ app.post(deployPath +'/api/v1/send_audio', function(req, res) {
     var doc_name = employee_id + '_' + Date.now()+'.mp3';
     var location_code;
     
+    var remarks = doc_remark.split(" ");
+    var new_remark;
+    
+   if(remarks[1] === '1'){
+       new_remark = '情况 1';
+   }
+   else if(remarks[1] === '2'){
+       new_remark = '情况 2';
+   }
+   else if(remarks[1] === '3'){
+       new_remark = '情况 3';
+   }
+   else {
+       new_remark = '其他';
+   }
+    
     fs.writeFile("uploads/"+doc_name, new Buffer(b64string, "base64"), function(err) {console.log("fs error=="+err);});
     
     var filepath = "uploads/"+doc_name;
     
-    var good = {send_audio_data: { data:"good" }};
-    var bad = {send_audio_data: { data:"bad" }};
+    var good = { data:"send_audio",status:"good" };
+    var bad =  { data:"send_audio",status:"bad" };
     
     con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%'",function(error,rows,fields){
        if(!!error){
@@ -2642,7 +2803,7 @@ app.post(deployPath +'/api/v1/send_audio', function(req, res) {
            console.log("locationcode ="+location_code);
            //console.log('Successful query\n');
            //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_audio) values ('"+doc_name+"','Audio','"+employee_id+"','"+newdate+"','"+location_code+"','"+doc_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
+           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_audio) values ('"+doc_name+"','Audio','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
                 res.send(error);
@@ -2725,7 +2886,7 @@ app.post(deployPath +'/api/v1/send_route', function(req, res) {
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2796,7 +2957,7 @@ app.post(deployPath +'/api/v1/send_location', function(req, res) {
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2958,7 +3119,7 @@ app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    d.setMinutes(d.getMinutes()-480);
+    //d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -3090,6 +3251,26 @@ app.post(deployPath +'/api/v1/save_markers', function(req, res,next) {
     });
   
 });
+
+app.get(deployPath +'/api/v1/save_remarks', function(req, res,next) {
+    
+     //var map_string = req.params.map_string;
+     markers = req.sanitize( 'markers' );
+     floorplan_id = req.sanitize( 'floorplan_id' );
+     //console.log("map_string== "+map_string);
+    
+    con.query("INSERT INTO remark(remark_id,remarks) values ('1','情况1')",function(error,rows,fields){
+     if(!!error){
+         console.log('Error in the query '+error);
+         //res.send(error);
+     }
+     else{
+         //res.status(204).send();
+        res.send('good');
+     }
+    });
+  
+});
  //----------------------------REST API-------------------------------------
  
  app.get('/logout', function (req, res){
@@ -3099,14 +3280,14 @@ app.post(deployPath +'/api/v1/save_markers', function(req, res,next) {
 });
 
 
-setInterval(function(){ 
-       con.query('SELECT * FROM company',function(err,rows){
-         if(err) throw err;
-//         console.log('Data received from Db:\n');
-//         console.log("data from db="+JSON.stringify(rows));
-         
-       });
-}, 10000);
+//setInterval(function(){ 
+//       con.query('SELECT * FROM company',function(err,rows){
+//         if(err) throw err;
+////         console.log('Data received from Db:\n');
+////         console.log("data from db="+JSON.stringify(rows));
+//         
+//       });
+//}, 10000);
 
 
 

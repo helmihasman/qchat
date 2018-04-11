@@ -77,9 +77,9 @@ html(lang='en')
               .text-left
                 span.auto-style1
                   button.btn.btn-default(type='submit', style='width: 170px; margin-left:37px; background-color:#0f5fa8; color: #FFFFFF;') 登入
-                p
+               p.text-center
                 - if(messages.message)
-                   | !{messages.message}
+                   | 错误的用户名或密码
               h1
                 input(name='Checkbox1', style='margin-top:10px; height: 15px;', type='checkbox', value='REMEMBER ME')
                 span.auto-style4

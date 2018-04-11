@@ -26,7 +26,6 @@ block content
                         th On Duty
                         th Company
                         th Level
-                        th Current location
                         th Action
                     tbody
                       for row, index in data
@@ -46,7 +45,6 @@ block content
                               | Admin
                             else if row.employee_level === '2'
                               | Normal User
-                          td #{row.beacon_location+", "+row.beacon_level}
                           td
                             div(style='display:inline-block')
                                 a(href='/employee_details/#{row.employee_id}').btn.btn-sm.btn-info
