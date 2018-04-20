@@ -37,7 +37,7 @@ block content
                           td #{row.document_remark}
                           td #{row.employee_phone_no}
                           td #{row.document_time.toLocaleString()}
-                          td #{row.beacon_location+', '+row.beacon_level}
+                          td #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
             .clearfix
       
     for row, index in data
@@ -58,7 +58,7 @@ block content
                       p
                         | Time : #{row.document_time.toLocaleString()}
                       p
-                        | Location : #{row.beacon_location+', '+row.beacon_level}
+                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer
@@ -82,7 +82,7 @@ block content
                       p
                         | Time : #{row.document_time.toLocaleString()}
                       p
-                        | Location : #{row.beacon_location+', '+row.beacon_level}
+                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer
@@ -103,7 +103,7 @@ block content
                       p
                         | Time : #{row.document_time.toLocaleString()}
                       p
-                        | Location : #{row.beacon_location+', '+row.beacon_level}
+                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer

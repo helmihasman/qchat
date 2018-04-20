@@ -174,7 +174,6 @@ var con = mysql.createConnection({
  
 app.post(deployPath +"/login", passport.authenticate('local_qchat', {
     
-
     successRedirect: deployPath +'/',
 
     failureRedirect: deployPath +'/login',
@@ -1011,7 +1010,7 @@ app.get(deployPath +'/attendance',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var dmonth = d.getMonth()+1;
     var orimonth = d.getMonth()+1;
     //var dmonth = 9;
@@ -1522,7 +1521,7 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
 
         var d = createDateAsUTC(new Date());
     //    d.setMinutes(d.getMinutes()+480);
-        //d.setMinutes(d.getMinutes()-480);
+        d.setMinutes(d.getMinutes()-480);
         var ddate = d.getDate();
         var dmonth = d.getMonth()+1;
         var dyear = d.getFullYear();
@@ -1595,7 +1594,7 @@ app.get(deployPath +'/path_playback_2',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -1812,7 +1811,7 @@ app.get(deployPath +'/test_time',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -1915,7 +1914,7 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -1995,7 +1994,7 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2458,7 +2457,7 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
 
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2530,7 +2529,7 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
            console.log("locationcode ="+location_code);
            //console.log('Successful query\n');
            //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_text) values ('"+doc_name+"','Note','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+doc_text+"')",function(error,rows,fields){
+           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_text) values ('"+doc_name+"','笔记','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+doc_text+"')",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
             }
@@ -2595,7 +2594,7 @@ app.post(deployPath +'/api/v1/send_image', function(req, res) {
 
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2668,7 +2667,7 @@ app.post(deployPath +'/api/v1/send_image', function(req, res) {
            console.log("locationcode ="+location_code);
            //console.log('Successful query\n');
            //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_image) values ('"+doc_name+"','Photo','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
+           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_image) values ('"+doc_name+"','照片','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
                 res.send(error);
@@ -2730,7 +2729,7 @@ app.post(deployPath +'/api/v1/send_audio', function(req, res) {
 
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2803,7 +2802,7 @@ app.post(deployPath +'/api/v1/send_audio', function(req, res) {
            console.log("locationcode ="+location_code);
            //console.log('Successful query\n');
            //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_audio) values ('"+doc_name+"','Audio','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
+           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_audio) values ('"+doc_name+"','音响','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
             if(!!error){
                 console.log('Error in the query '+error);
                 res.send(error);
@@ -2886,7 +2885,7 @@ app.post(deployPath +'/api/v1/send_route', function(req, res) {
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -2915,6 +2914,8 @@ app.post(deployPath +'/api/v1/send_route', function(req, res) {
     
     var newdate;
     newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+    
+    console.log("newwww--"+newdate);
     
     var employee_id = req.body.send_route_data.emp_id;
    
@@ -2957,7 +2958,7 @@ app.post(deployPath +'/api/v1/send_location', function(req, res) {
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();
@@ -3119,7 +3120,7 @@ app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
-    //d.setMinutes(d.getMinutes()-480);
+    d.setMinutes(d.getMinutes()-480);
     var ddate = d.getDate();
     var dmonth = d.getMonth()+1;
     var dyear = d.getFullYear();

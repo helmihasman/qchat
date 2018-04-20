@@ -6,7 +6,7 @@ html
     body.nav-md(onload='loadStuff()')
      div.container.body
       div.main_container
-       if session.language === 'en'
+        if session.language === 'en'
             if session.passport.user.employee_level === '2'
                 include navigation_user_en.jade
                 include sidebar_user_en.jade
@@ -26,6 +26,7 @@ html
             else if session.passport.user.employee_level === '0'
                 include navigation.jade
                 include sidebar.jade
+                
         block content
         include footer.jade
         include js.jade

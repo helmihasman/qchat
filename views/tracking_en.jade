@@ -43,7 +43,7 @@ block content
                                     ul.nav.nav-tabs.tabs-left
                                       for row, index in floor_plan
                                         li
-                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}') #{row.floor_name}
+                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}') #{row.floor_name} Floor
                                       li
                                           a(href='#outdoor', data-toggle='tab') Outdoor
                                         
@@ -200,20 +200,3 @@ block content
                                                 }
                                     div.tab-pane.active(id='outdoor')
                                         #googleMapTracking(style='width:100%;height:400px;')
-                          
-                                         
-                                        
-
-                                    //.well
-                                      form.form-horizontal
-                                        fieldset
-                                          .control-group(style='width: 264px')
-                                            label#Label1(style='width: 40px') Date :
-                                            input(type='date')
-                                          .x_content
-                                            .row.grid_slider
-                                              .col-md-12.col-sm-6.col-xs-12
-                                                input#range_31(type='text', value='', name='range')
-// /page content
-
-
