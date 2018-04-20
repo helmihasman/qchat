@@ -44,8 +44,8 @@ block content
                     maxZoom: mapMaxZoom,
                     zoom: mapMinZoom
                     });
-                    var width = 4500,
-                    height = 2843,
+                    var width = 4500* 1.4,
+                    height = 2843* 1.1,
                     url = "/"+document.getElementById("floorplan_img").value;
                     var mapBounds = new L.LatLngBounds(
                     mymap.unproject([0, height], mapMaxZoom-1),

@@ -28,6 +28,7 @@ block content
                     input(type='text', name='markers',id='markers',hidden)
                     input(type='text', name='markers_in',id='markers_in',hidden,value='#{row.markers}')
                     input(type='text', name='floorplan_id',id='floorplan_id',hidden,value='#{row.floorplan_id}')
+                    input(type='text', name='location',id='location',hidden,value='#{location}')
                     button(type='submit',id="confirm_btn",hidden) 保存
 
                
@@ -292,14 +293,24 @@ block content
                     //Modal box - EDITING
                     function openModalBox(details)
                     {
+                    var loc = document.getElementById("location").value;
+                    //alert(loc);
+                    var location = JSON.parse(loc);
+                    //alert(loc.length);
+                    //alert(location);
+                    //alert(location.length);
+                    var content = '';
+                    content += '<form>';
+                    content += 'Location: ';
+                    content += '<select id="detail1">';
+                    for(var i=0;i<location.length;i++){
+                        content += '<option value="'+location[i].location_code+'">'+location[i].beacon_level+' ('+location[i].location_code+')</option>';
+                    }
+                    content+='</select></form>';
+                    
                     mymap.fire('modal', {
                     title: 'Location detail',
-                    content:
-                    '<form>' +
-                    '   Location ' +
-                    '   <input id="detail1" type="text"/><br />' +
-                    '</form>'
-                    ,
+                    content:content,
                     template: ['<div class="modal-header"><h2>{title}</h2></div>',
                     '<div class="modal-body">{content}</div>',
                     '<div class="modal-footer">',
