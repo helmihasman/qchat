@@ -86,7 +86,7 @@ block content
                                                 var ff = JSON.parse(floorplan);
                                                 floorplan_list.push(ff);
 
-                                                //alert("floorplan_list--"+JSON.stringify(floorplan_list));
+                                                //alert("floorplan_list--"+JSON.parse(data));
                                                 if(data!=='undefined'){
                                                 dd = JSON.parse(data);
                                                 //alert(dd.length+" record(s) found");
@@ -113,6 +113,7 @@ block content
 
                                                 // tell leaflet that the map is exactly as big as the image
                                                 maps[indexs].setMaxBounds(bounds);
+                                                
 
                                                 //var humanMark1,humanMark2,humanMark3;
 
@@ -120,7 +121,7 @@ block content
                                                 //console.log("marker-- "+JSON.stringify(marker));
                                                 if (marker !== null && marker.length !== 0) {
                                                 for (i in marker) {
-                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindPopup("<div><b>" + marker[i].popup + "</b></div>").on('popupopen', "");
+                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindTooltip("<div><b>" + marker[i].popup + "</b></div>",{direction:'top'});
 
                                                 maps[indexs].addLayer(marks);
 
@@ -147,7 +148,7 @@ block content
                                                 maps.push(L.map(map_string, {minZoom: 0,maxZoom: 4,zoom: 0,center: [0, 0],crs: L.CRS.Simple,attributionControl: false}));
 
                                                 maps[indexs].invalidateSize();
-
+                                               
                                                 var ff = JSON.parse(floorplan);
 
                                                 floorplan_list.push(ff);
@@ -179,6 +180,7 @@ block content
 
                                                 // tell leaflet that the map is exactly as big as the image
                                                 maps[indexs].setMaxBounds(bounds);
+                                                
 
                                                 var markers = new L.FeatureGroup();
                                                 //var humanMark1,humanMark2,humanMark3;
@@ -187,7 +189,9 @@ block content
                                                 //console.log("marker-- "+JSON.stringify(marker));
                                                 if (marker !== null && marker.length !== 0) {
                                                 for (i in marker) {
-                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindPopup("<div><b>" + marker[i].popup + "</b></div>").on('popupopen', "");
+                                                
+                                                }
+                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindTooltip("<div><b>" + marker[i].popup + "</b></div>",{direction:'top'});
 
                                                 maps[indexs].addLayer(marks);
 

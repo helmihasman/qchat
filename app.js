@@ -2055,13 +2055,13 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
        }
    });
    
-    con.query("SELECT * from path left join employee on path.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
+    con.query("SELECT * from history left join employee on history.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
        else{
 //           console.log('Successful query\n');
-           //console.log(rows);
+//           console.log(rows);
             if(req.session.language === 'en'){
                 res.render('mapmap2_en',{title:"Path Playback",data:JSON.stringify(rows),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors)});
             }
@@ -3007,6 +3007,53 @@ app.post(deployPath +'/api/v1/send_location', function(req, res) {
            //console.log("locationcode ="+location_code);
            //console.log('Successful query\n');
            //console.log(rows);
+           
+            con.query("UPDATE employee set employee_location='"+location_code+"', employee_time='"+newdate+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query '+error);
+                    res.send(error);
+                }
+                else{
+ 
+                }
+            }); 
+            
+            con.query("SELECT * from history where employee_id = '"+employee_id+"' order by path_datetime desc limit 1",function(error,rows,fields){
+                if(!!error){
+                    console.log('Error in the query '+error);
+                    res.send(error);
+                }
+                else{
+                    if(rows.length === 0){
+                        con.query("INSERT INTO history(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
+                            if(!!error){
+                                console.log('Error in the query '+error);
+                                res.send(error);
+                            }
+                            else{
+
+                            }
+                        }); 
+                    }
+                    else{
+                        if(rows[0].location_id !== location_code){
+                            con.query("INSERT INTO history(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
+                                if(!!error){
+                                    console.log('Error in the query '+error);
+                                    res.send(error);
+                                }
+                                else{
+
+                                }
+                            }); 
+                        }
+                    }
+ 
+                }
+            }); 
+            
+            
+            
            con.query("SELECT * from path where employee_id='"+employee_id+"' order by path_datetime desc limit 1",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query '+error);
@@ -3099,6 +3146,7 @@ app.post(deployPath +'/api/v1/send_location', function(req, res) {
             }); 
            
        }
+
    }); 
     
     

@@ -733,11 +733,18 @@ script.
     
 script.
     function doalert(checkboxElem) {
+        
         $('.subject-list').on('change', function() {
             $('.subject-list').not(this).prop('checked', false);  
         });
        var html='';
        var pointlist = [];
+       var test = [];
+       var loc1 = [];
+       var loc2 = [];
+       var sorted = [];
+       var sorted_loc1 = [];
+       var sorted_loc2 = [];
         
         if (checkboxElem.checked) {
             
@@ -781,15 +788,18 @@ script.
                   }
 
 
-
                   //mhuman = JSON.parse(floorplan);
                   //alert("floorplan_list-- "+floorplan_list);
                   var mfloors = JSON.parse(floors);
+                  //alert("floors-- "+mfloors);
                   mhuman = floorplan_list;
                   for(var j=0;j<maps.length;j++){
+                      
                   for (k in mhuman[j]) {
                       
                   var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
+                  
+                  
                   //console.log("num--- "+num);
                   //console.log("emp_id--- "+emp_id);
                   //console.log("dd["+i+"].location_id--- "+dd[i].location_id);
@@ -801,54 +811,50 @@ script.
                           y: mhuman[j][k].latlngs.lng
                         };
 
-                      human1 = L.divIcon({
-                          className: 'checkpoint-pin',
-                          html: '<img src="/images/man.png">',
-                          iconSize: [15, 15],
-                          iconAnchor: [10, 10]
-                        });
+                      
 
                     //alert(emp_id+"---"+dd[i].employee_id+"---"+mhuman[j][k].popup+"---"+dd[i].location_id);
-                    
-                    if(dd[i].location_id === mhuman[j][k].popup){
-                        //alert(j);
-                        console.log(dd[i].location_id+" -- "+mhuman[j][k].popup);
-                        //var random = Math.floor(Math.random() * 10) + 1; 
-                        //console.log("random--"+random);
-                        //alert("in 1 i="+i+" k="+k);
-                          var marker = L.marker([man.x, man.y], {
-                            icon: human1
-                          }).bindPopup("<div><b>" + dd[i].employee_name + "</b> <br>("+newdate+")</div>").on('popupopen', "");
-
-                          markers.addLayer(marker);
-                          pointlist.push([man.x, man.y]);
-                          //console.log("pointlist11--"+pointlist);
-                          //drawPolyline();
-                          
-                          html += '<li><a href="#step-1"><span class="step_no">'+dd[i].location_id+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
-                          
-                         
-                          maps[j].addLayer(markers);
-                          document.getElementById(mfloors.floor[j].floor_id).click();
-                          document.getElementById("wizard_steps").innerHTML = html;
+                    if(dd[i].location_id === mhuman[j][k].popup){   
+                        test.push(mhuman[j][k].popup);
+                        loc1.push(mhuman[j][k].latlngs.lat);
+                        loc2.push(mhuman[j][k].latlngs.lng);
                         
+                        sorted = test.filter(onlyUnique);
+                        sorted_loc1 = loc1.filter(onlyUnique);
+                        sorted_loc2 = loc2.filter(onlyUnique);
+                        //alert("s="+sorted+" l1="+sorted_loc1+" l2="+sorted_loc2);
+                        html += '<li><a href="#step-1"><span class="step_no">'+dd[i].location_id+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
+                        document.getElementById(mfloors.floor[j].floor_id).click();
+                        document.getElementById("wizard_steps").innerHTML = html; 
+                        }
 
-                          /*L.polyline(pointlist, {
-                                color: 'red',
-                                weight: 3,
-                                opacity: 0.5,
-                                smoothFactor: 1
-                            }).addTo(maps[j]);*/
                     }
 
-                }
-
                   }
-                  
-                  
-          }
+
             }
 
+            }
+            
+            for(var jk=0;jk<maps.length;jk++){
+                human1 = L.divIcon({
+                          className: 'checkpoint-pin',
+                          html: '<img src="/images/man.png">',
+                          iconSize: [20, 20],
+                          iconAnchor: [10, 10]
+                        });
+                        
+            //alert("s="+sorted+" l1="+sorted_loc1+" l2="+sorted_loc2+" leh="+sorted.length);
+                  for(var g=0;g<sorted.length;g++){
+                    var marker = L.marker([sorted_loc1[g], sorted_loc2[g]], {
+                                icon: human1
+                              });
+
+                             markers.addLayer(marker);
+                             maps[jk].addLayer(markers);
+                }
+            }
+            
         } else {
 
             for(var i=0;i<maps.length;i++){ 
@@ -862,5 +868,9 @@ script.
 
         }
       }
+      
+      function onlyUnique(value, index, self) { 
+        return self.indexOf(value) === index;
+        }
  
 
