@@ -65,12 +65,12 @@ block content
                     var markerDrawer;
                     var markerToggle = false;
                     var markerPopUpButtons =
-                    "<div><input type='button' value='Edit this popup' class='marker-edit-button'/></div>"
-                    + "<div><input type='button' value='Delete this popup' class='marker-delete-button'/></div>"
+                    "<div><input type='button' value='更改' class='marker-edit-button'/></div>"
+                    + "<div><input type='button' value='删除' class='marker-delete-button'/></div>"
                     ;
                     var marker_options = {
                     riseOnHover: true,
-                    title: "Generic marker"
+                    title: ""
                     };
                     //
                     function drawMarker()
@@ -91,7 +91,7 @@ block content
                     layer = e.layer,
                     //POP UP DETAILS ASSIGN HERE
                     popUp =
-                    "<b>This is a marker</b>"
+                    ""
                     ;
                     layer.bindPopup("<div>" + popUp + "</div>" + markerPopUpButtons);
                     layer.on('popupopen', onPopUp_marker);
@@ -176,8 +176,8 @@ block content
                     var polygon = [];
                     var polygonDrawer;
                     var polygonPopUpButtons =
-                    "<div><input type='button' value='Edit this popup' class='polygon-edit-button'/></div>"
-                    + "<div><input type='button' value='Delete this popup' class='polygon-delete-button'/></div>";
+                    "<div><input type='button' value='更改' class='polygon-edit-button'/></div>"
+                    + "<div><input type='button' value='删除' class='polygon-delete-button'/></div>";
                     var polygon_options = {
                     showArea: false,
                     shapeOptions: {
@@ -301,7 +301,7 @@ block content
                     //alert(location.length);
                     var content = '';
                     content += '<form>';
-                    content += 'Location: ';
+                    content += '位置: ';
                     content += '<select id="detail1">';
                     for(var i=0;i<location.length;i++){
                         content += '<option value="'+location[i].location_code+'">'+location[i].beacon_level+' ('+location[i].location_code+')</option>';
@@ -309,7 +309,7 @@ block content
                     content+='</select></form>';
                     
                     mymap.fire('modal', {
-                    title: 'Location detail',
+                    title: '位置详情',
                     content:content,
                     template: ['<div class="modal-header"><h2>{title}</h2></div>',
                     '<div class="modal-body">{content}</div>',
@@ -318,8 +318,8 @@ block content
                     '<button class="topcoat-button--large {CANCEL_CLS}">{cancelText}</button>',
                     '</div>'
                     ].join(''),
-                    okText: 'Ok',
-                    cancelText: 'Cancel',
+                    okText: '好',
+                    cancelText: '取消',
                     OK_CLS: 'modal-ok',
                     CANCEL_CLS: 'modal-cancel',
                     width: 300,

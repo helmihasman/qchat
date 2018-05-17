@@ -203,24 +203,73 @@ script.
     
     
 script.
+    var marker_g = [];
     var trackingMap = function() {
         
     //if (navigator.geolocation) {
         //navigator.geolocation.getCurrentPosition(function(position) {
-
+            var data = "#{data}".replace(/&quot;/g, '"');
+            var company = "#{company}".replace(/&quot;/g, '"');
+            data_p = JSON.parse(data);
+            comp_p = JSON.parse(company);
+            var mystring = comp_p[0].company_location.replace('(','');
+            mystring = mystring.replace(')','');
+            var splitstr = mystring.split(',');
+            var latt,lonn;
+            
+            
+            if(splitstr[0] === ''){
+                latt = 23.1253491;
+            }
+            else{
+                latt = parseFloat(splitstr[0]);
+            }
+            if(splitstr[1] === '' || splitstr[1] === undefined || splitstr[1] === 'undefined'){
+                lonn = 112.9469622;
+            }
+            else{
+                lonn = parseFloat(splitstr[1]);
+            }
+            
             map_g = new google.maps.Map(document.getElementById('googleMapTracking'), {
                 center: {
                     //lat: position.coords.latitude,
                     //lng: position.coords.longitude
-                    lat: 23.1253491,
-                    lng: 112.9469622
+                    lat: latt,
+                    lng: lonn
                 },
                 zoom: 10,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: false
             });
+                var myLatLng = {lat: parseFloat(splitstr[0]), lng: parseFloat(splitstr[1])};
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    icon: '/images/skyline.png',
+                    map: map_g,
+                    title: 'test',
+                    label: comp_p[0].company_name,
+                    });
+                
+                marker.setMap(map_g); 
             
-            
+              
+
+            for(var i=0;i<data_p.length;i++){
+                var partsOfStr = data_p[i].employee_gps.split(',');
+                //alert(partsOfStr);
+                var myLatLng = {lat: parseFloat(partsOfStr[1]), lng: parseFloat(partsOfStr[0])};
+                //alert(myLatLng);
+                marker_g[i] = new google.maps.Marker({
+                    position: myLatLng,
+                    icon: '/images/man2_1.png',
+                    map: map_g,
+                    title: 'test',
+                    label: data_p[i].employee_name,
+                    });
+                
+                marker_g[i].setMap(map_g);    
+            }
             //map_g.data.setControls(['Polygon']);
             
             bindDataLayerListeners(map_g.data);
@@ -270,7 +319,6 @@ script.
                     localStorage.setItem('geoData', JSON.stringify(jsonstring));
                     
                     initControls(jsonstring);
-                    alert("save polygon2");
                 });
             }
             
@@ -308,6 +356,104 @@ script.
     //if (navigator.geolocation) {
         //navigator.geolocation.getCurrentPosition(function(position) {
 
+            map_k = new google.maps.Map(document.getElementById('googleMapArea'), {
+                center: {
+                    //lat: position.coords.latitude,
+                    //lng: position.coords.longitude
+                    lat: 23.1253491,
+                    lng: 112.9469622
+                },
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
+            });
+            
+            
+            //map_k.data.setControls(['Polygon']);
+            
+            bindDataLayerListeners(map_k.data);
+            
+            loadPolygons();  //load saved data
+            
+            function bindDataLayerListeners(dataLayer) {
+                dataLayer.addListener('addfeature', savePolygon);
+                dataLayer.addListener('removefeature', savePolygon);
+                //dataLayer.addListener('setgeometry', savePolygon);
+            }
+
+            
+
+        //});
+        function loadPolygons() {
+                //var data = JSON.parse(localStorage.getItem('geoData'));
+                data = JSON.parse(document.getElementById("map_string_load").value) ;
+                //alert("llll-- "+JSON.stringify(data));
+                map_g.data.forEach(function (f) {
+                    map_g.data.remove(f);
+                });
+                map_g.data.addGeoJson(data);
+            }
+
+        function savePolygon() {
+                //console.log("mapp11-- "+map.data);
+                //alert("save polygon1");
+                //var polyname = prompt("Enter polygon name:", "");
+                 var coord;
+                 var features = [];
+                 //map.bindPopup("<div>This is a polygon</div>" + polygonPopUpButtons);
+                map_k.data.toGeoJson(function (json) {
+                    //alert("save name here");
+                    //json.features[0].geometry.polyname = "testname";
+                    //localStorage.setItem('geoData', JSON.stringify(json));
+                    for (var i = 0; i < json.features.length; i++) {
+                        console.log(json.features[i].geometry.coordinates);
+                        coord = json.features[i].geometry.coordinates;
+                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":"Area "+(i+1)},"properties":{}});
+                    }
+                    
+                    var jsonstring = {"type":"FeatureCollection","features":features};
+                    console.log("jsonstring-- "+JSON.stringify(jsonstring));
+                    localStorage.setItem('geoData', JSON.stringify(jsonstring));
+                    
+                    initControls(jsonstring);
+                    alert("save polygon2");
+                });
+            }
+            
+        function initControls(data)
+            {
+                var sel = document.getElementById('polyList');
+                sel.options.length = 0;
+                alert("savepolygon22-- "+JSON.stringify(data));
+
+                for (var i = 0; i < data.features.length; i++) {
+                    var opt = document.createElement('option');
+                    opt.innerHTML = data.features[i].geometry.polyname;
+                    opt.value = i;
+                    sel.appendChild(opt);
+                }
+
+                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
+                document.getElementById("btnDelete").onclick = function(){
+                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
+                    data.features.splice(parseInt(selIdx), 1);   
+
+                    //reload 
+                    localStorage.setItem('geoData', JSON.stringify(data));
+                    initControls(data);  
+                    loadPolygons(map_k);   
+                };
+            }
+
+    //}
+    };
+
+script.
+    var runMaps2 = function() {
+       
+    //if (navigator.geolocation) {
+        //navigator.geolocation.getCurrentPosition(function(position) {
+            var data;
             map_g = new google.maps.Map(document.getElementById('googleMapArea'), {
                 center: {
                     //lat: position.coords.latitude,
@@ -338,44 +484,102 @@ script.
         //});
         function loadPolygons() {
                 //var data = JSON.parse(localStorage.getItem('geoData'));
-                var data = JSON.parse(document.getElementById("map_string_load").value) ;
-                //alert(data);
+                data = JSON.parse(document.getElementById("map_string_load").value) ;
+                //alert("llll-- "+JSON.stringify(data));
                 map_g.data.forEach(function (f) {
                     map_g.data.remove(f);
                 });
-                  
                 map_g.data.addGeoJson(data);
-                //alert("load polygon");
             }
 
             function savePolygon() {
-                //console.log("mapp11-- "+map.data);
-                //alert("save polygon1");
+                //alert("mapp11-- "+map_g.data);
+                
                 //var polyname = prompt("Enter polygon name:", "");
                  var coord;
                  var features = [];
+                 var polyname;
+                
+                 /*if(data !== undefined){
+                    for (var i = 0; i < data.features.length; i++) {
+                        alert("--------1 "+JSON.stringify(data.features[i].geometry));
+                        //alert("-------- "+json.features[i].geometry.coordinates);
+                        //polyname = data.features[i].geometry.polyname;
+                        
+                        polyname = data.features[i].geometry.polyname;
+                        
+                        coord = data.features[i].geometry.coordinates;
+                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":polyname},"properties":{}});
+                    }
+                }*/
                  //map.bindPopup("<div>This is a polygon</div>" + polygonPopUpButtons);
                 map_g.data.toGeoJson(function (json) {
-                    //alert("save name here");
+                    //alert("sjon -- "+JSON.stringify(json));
+                    //alert("sdata -- "+JSON.stringify(data));
+                    //alert("sjon -- "+JSON.stringify(data));
                     //json.features[0].geometry.polyname = "testname";
                     //localStorage.setItem('geoData', JSON.stringify(json));
+                    
                     for (var i = 0; i < json.features.length; i++) {
-                        console.log(json.features[i].geometry.coordinates);
+                        
+                        if(data !== undefined){
+                            //alert("iii -- "+i);
+                            
+                            //alert("iii json -- "+json.features[i].geometry.polyname);
+                            //alert("iii data -- "+JSON.stringify(data));
+                            //alert("iii data features -- "+JSON.stringify(data.features[i]));
+                            //alert("iii data f geo -- "+JSON.stringify(data.features[i].geometry));
+                            
+                                if(data.features[i] === undefined){
+                                    /*if(json.features[i].geometry.polyname === undefined){
+                                        polyname = prompt("Enter polygon name1:", "");
+                                        }
+                                        else{
+                                            polyname = json.features[i].geometry.polyname;
+                                        }*/
+                                  }
+                                  else{
+                                      //alert("inhere");
+                                      json.features[i].geometry.polyname = data.features[i].geometry.polyname;
+                                  }
+                               
+                                //alert("-------- "+json.features[i].geometry.coordinates);
+                                
+                            //json.features[i].geometry.polyname = data.features[i].geometry.polyname;
+                            
+                        }
+                        
+                        //alert("--------2  "+JSON.stringify(json.features[i].geometry));
+                         
+                        if(json.features[i].geometry.polyname === undefined){
+
+                            polyname = prompt("Enter polygon name:", "");
+                            }
+                            else{
+                                polyname = json.features[i].geometry.polyname;
+                        }
+                        
+                        
+                        //json.features[i].geometry.polyname = data.features[i].geometry.polyname;
+                        
+                        //polyname = json.features[i].geometry.polyname;
                         coord = json.features[i].geometry.coordinates;
-                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":"Area "+(i+1)},"properties":{}});
+                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":polyname},"properties":{}});
                     }
                     
                     var jsonstring = {"type":"FeatureCollection","features":features};
                     console.log("jsonstring-- "+JSON.stringify(jsonstring));
-                    localStorage.setItem('geoData', JSON.stringify(jsonstring));
-                    
+                    //localStorage.setItem('geoData', JSON.stringify(jsonstring));
+                    document.getElementById("map_string").value = JSON.stringify(jsonstring);
+                    $("#confirm_btn").click();
                     initControls(jsonstring);
-                    alert("save polygon2");
+                    
                 });
             }
             
             function initControls(data)
             {
+                
                 var sel = document.getElementById('polyList');
                 sel.options.length = 0;
                 console.log("savepolygon22-- "+JSON.stringify(data));
@@ -386,24 +590,28 @@ script.
                     opt.value = i;
                     sel.appendChild(opt);
                 }
-
+                
                 document.getElementById("btnDelete").disabled = (data.features.length === 0); 
                 document.getElementById("btnDelete").onclick = function(){
                     var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
                     data.features.splice(parseInt(selIdx), 1);   
 
                     //reload 
-                    localStorage.setItem('geoData', JSON.stringify(data));
+                    //localStorage.setItem('geoData', JSON.stringify(data));
+                    document.getElementById("map_string").value = JSON.stringify(data);
+                    $("#confirm_btn").click();
                     initControls(data);  
-                    loadPolygons(map_g);   
+                    loadPolygons();
+                    //window.location.reload();
                 };
+                
             }
-
+           
+    
     //}
     };
-
-
-
+    
+    
 script.
     var runMaps = function() {
        
@@ -569,10 +777,31 @@ script.
     
 script.
     function clearMap() {
+       
        for(var l=0;l<maps.length;l++){
            maps[l].eachLayer(function (layer) {
-                maps[l].removeLayer(markers);
-                //alert("clean ");
+                maps[l].removeLayer(markers[l]);
+                markers[l].clearLayers();
+
+            });
+
+      }
+    }
+    
+    function clearMapPlayback() {
+       for(var l=0;l<maps.length;l++){
+           maps[l].eachLayer(function (layer) {
+               //alert("1");
+               //alert(maps[l].hasLayer(markers_play[l]));
+               //alert("2");
+               if(maps[l].hasLayer(markers_play[l])){
+                maps[l].removeLayer(markers_play[l]);
+                markers_play[l].clearLayers();
+               }
+                //markers_play[l].clearLayers();
+               
+               
+             
             });
             
         /*for(i in maps[l]._layers) {
@@ -609,18 +838,22 @@ script.
                 //document.getElementById("wizard_steps").innerHTML = '';
                 clearMap();
                 pointlist = [];
-                markers.clearLayers();
-                
+                //markers.clearLayers();
             }
             
-            
             var emp_id = checkboxElem.value;
-             document.getElementById('mission_list').href='/employee_details/'+emp_id;
-            
-            for(var i=0;i<dd.length;i++){
-                var num = dd[i].employee_id.toString();
-                //alert("form 1-- "+emp_id);
-                  var d = new Date(dd[i].path_datetime);
+            document.getElementById('mission_list').href='/employee_details/'+emp_id;
+            var positioning = JSON.parse(laodPositioning());
+            var floorplan_a = JSON.parse(loadFloorPlan());
+            for(var g=0;g<floorplan_a.length;g++){
+                var floorplan_list = [];
+                var floorplan = floorplan_a[g].markers;
+                var ff = JSON.parse(floorplan);
+                floorplan_list.push(ff);
+                marker = JSON.parse(floorplan);
+            for(var i=0;i<positioning.length;i++){
+                var num = positioning[i].employee_id.toString();
+                  var d = new Date(positioning[i].path_datetime);
                   //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
                   var ddate = d.getDate();
                   var dmonth = d.getMonth()+1;
@@ -628,7 +861,7 @@ script.
                   var dhour = d.getHours();
                   var dminutes = d.getMinutes();
                   var dseconds = d.getSeconds();
-
+                 
                   if(ddate < 10){
                       ddate = "0"+ddate;
                   }
@@ -646,23 +879,18 @@ script.
                       dseconds = "0"+dseconds;
                   }
 
-
-
-                  //mhuman = JSON.parse(floorplan);
-                  //alert("floorplan_list-- "+floors);
                   var mfloors = JSON.parse(floors);
                   //alert(mfloors.floor[0].floor_id);
                   mhuman = floorplan_list;
                   for(var j=0;j<maps.length;j++){
                   for (k in mhuman[j]) {
-                      
                   var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
                   //console.log("num--- "+num);
                   //console.log("emp_id--- "+emp_id);
                   //console.log("dd["+i+"].location_id--- "+dd[i].location_id);
                   //console.log("mhuman["+k+"].popup--- "+mhuman[k].popup);
                 if(num === emp_id){
-
+                    
                       man = {
                           x: mhuman[j][k].latlngs.lat,
                           y: mhuman[j][k].latlngs.lng
@@ -670,37 +898,35 @@ script.
 
                       human1 = L.divIcon({
                           className: 'checkpoint-pin',
-                          html: '<img src="/images/man.png">',
+                          html: '<img src="/images/man.png"><p style="color:black;">'+positioning[i].employee_name+'</p>',
                           iconSize: [15, 15],
                           iconAnchor: [10, 10]
                         });
 
                     //alert(emp_id+"---"+dd[i].employee_id+"---"+mhuman[j][k].popup+"---"+dd[i].location_id);
-                    
-                    if(dd[i].employee_location === mhuman[j][k].popup){
+                   
+                    if(positioning[i].employee_location === mhuman[j][k].popup){
                         //alert(j);
-                        console.log(dd[i].employee_location+" -- "+mhuman[j][k].popup);
+                        console.log(positioning[i].employee_location+" -- "+mhuman[j][k].popup);
                         //var random = Math.floor(Math.random() * 10) + 1; 
                         //console.log("random--"+random);
                         //alert("in 1 i="+i+" k="+k);
                           var marker = L.marker([man.x, man.y], {
                             icon: human1
                           });
-
-                          markers.addLayer(marker);
+                          
+                          markers[g].bindTooltip(positioning[i].employee_name,{direction:'bottom'}).addLayer(marker);
                           pointlist.push([man.x, man.y]);
                           //console.log("pointlist11--"+pointlist);
                           //drawPolyline();
                           
                           //html += '<li><a href="#step-1"><span class="step_no">'+dd[i].employee_location+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
                           
-                          document.getElementById(mfloors.floor[j].floor_id).click();
+                          document.getElementById(mfloors.floor[g].floor_id).click();
                           //alert(mfloors.floor[i].floor_id);
-                          maps[j].addLayer(markers);
-                         
+                          maps[g].addLayer(markers[g]);
                           //document.getElementById("wizard_steps").innerHTML = html;
                         
-
                           /*L.polyline(pointlist, {
                                 color: 'red',
                                 weight: 3,
@@ -709,12 +935,110 @@ script.
                             }).addTo(maps[j]);*/
                     }
 
-                }
+                    }
 
                   }
-                  
-                  
-          }
+     
+            }
+            }
+            }
+                
+        } else {
+
+            for(var i=0;i<maps.length;i++){ 
+                
+                //document.getElementById("wizard_steps").innerHTML = '';
+                clearMap();
+                pointlist = [];
+                //markers.clearLayers();
+                
+            }
+
+        }
+      }
+
+script.
+    function showAll(checkboxElem) {
+        $('.subject-list').on('change', function() {
+            $('.subject-list').not(this).prop('checked', false);  
+        });
+       var html='';
+       var pointlist = [];
+        
+        if (checkboxElem.checked) {
+            //alert(dd.length);
+            //alert(dd[0].employee_location);
+            for(var h=0;h<dd.length;h++){ 
+                //document.getElementById("wizard_steps").innerHTML = '';
+                clearMap();
+                pointlist = [];
+                //markers.clearLayers();
+                
+            }
+            
+            
+            var emp_id = checkboxElem.value;
+            var positioning = JSON.parse(laodPositioning());
+            for(var i=0;i<positioning.length;i++){
+                var num = positioning[i].employee_id.toString();
+                var name = positioning[i].employee_name.toString();
+                var d = new Date(positioning[i].path_datetime);
+                  //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
+                var ddate = d.getDate();
+                var dmonth = d.getMonth()+1;
+                var dyear = d.getFullYear();
+                var dhour = d.getHours();
+                var dminutes = d.getMinutes();
+                var dseconds = d.getSeconds();
+
+                if(ddate < 10){
+                    ddate = "0"+ddate;
+                }
+                if(dmonth < 10){
+                    dmonth = "0"+dmonth;
+                }
+
+                if(dhour < 10){
+                    dhour = "0"+dhour;
+                }
+                if(dminutes < 10){
+                    dminutes = "0"+dminutes;
+                }
+                if(dseconds < 10){
+                    dseconds = "0"+dseconds;
+                }
+
+                var mfloors = JSON.parse(floors);
+                mhuman = floorplan_list;
+                for(var j=0;j<maps.length;j++){
+                for (k in mhuman[j]) {
+                var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
+
+                man = {
+                    x: mhuman[j][k].latlngs.lat,
+                    y: mhuman[j][k].latlngs.lng
+                  };
+
+                human1 = L.divIcon({
+                    className: 'checkpoint-pin',
+                    html: '<img src="/images/man.png"/><p style="color:black;">'+positioning[i].employee_name+'</p>',
+                    iconSize: [15, 15],
+                    iconAnchor: [10, 10]
+                  });
+
+                if(positioning[i].employee_location === mhuman[j][k].popup){
+
+                      var marker = L.marker([man.x, man.y], {
+                        icon: human1
+                      });
+
+                markers[j].addLayer(marker);
+
+                maps[j].addLayer(markers[j]);
+                }
+
+                }
+            }
             }
 
         } else {
@@ -724,7 +1048,7 @@ script.
                 //document.getElementById("wizard_steps").innerHTML = '';
                 clearMap();
                 pointlist = [];
-                markers.clearLayers();
+                //markers.clearLayers();
                 
             }
 
@@ -733,35 +1057,45 @@ script.
     
 script.
     function doalert(checkboxElem) {
-        
         $('.subject-list').on('change', function() {
             $('.subject-list').not(this).prop('checked', false);  
         });
        var html='';
        var pointlist = [];
-       var test = [];
-       var loc1 = [];
-       var loc2 = [];
-       var sorted = [];
-       var sorted_loc1 = [];
-       var sorted_loc2 = [];
         
+        var positioning = JSON.parse(loadHistory());
+        var floorplan_a = JSON.parse(loadFloorPlan());
         if (checkboxElem.checked) {
-            
-            for(var h=0;h<dd.length;h++){ 
+            clearMapPlayback();
+            /*for(var g=0;g<floorplan_a.length;g++){
                 document.getElementById("wizard_steps").innerHTML = '';
                 clearMap();
                 pointlist = [];
-                markers.clearLayers();
-                
-            }
+                //markers[h].clearLayers();
+
+        }*/
             
             var emp_id = checkboxElem.value;
             
-            for(var i=0;i<dd.length;i++){
-                var num = dd[i].employee_id.toString();
+            for(var g=0;g<floorplan_a.length;g++){
+                var test = [];
+                var loc1 = [];
+                var loc2 = [];
+                var sorted = [];
+                var sorted_loc1 = [];
+                var sorted_loc2 = [];
+       
+                var floorplan_list = [];
+                var floorplan = floorplan_a[g].markers;
+                var ff = JSON.parse(floorplan);
+                floorplan_list.push(ff);
+                marker = JSON.parse(floorplan);
+                
+                
+            for(var i=0;i<positioning.length;i++){
+                var num = positioning[i].employee_id.toString();
                 //alert("form 1-- "+emp_id);
-                  var d = new Date(dd[i].path_datetime);
+                  var d = new Date(positioning[i].path_datetime);
                   //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
                   var ddate = d.getDate();
                   var dmonth = d.getMonth()+1;
@@ -769,7 +1103,7 @@ script.
                   var dhour = d.getHours();
                   var dminutes = d.getMinutes();
                   var dseconds = d.getSeconds();
-
+                  
                   if(ddate < 10){
                       ddate = "0"+ddate;
                   }
@@ -787,7 +1121,7 @@ script.
                       dseconds = "0"+dseconds;
                   }
 
-
+                  
                   //mhuman = JSON.parse(floorplan);
                   //alert("floorplan_list-- "+floorplan_list);
                   var mfloors = JSON.parse(floors);
@@ -798,14 +1132,9 @@ script.
                   for (k in mhuman[j]) {
                       
                   var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
-                  
-                  
-                  //console.log("num--- "+num);
-                  //console.log("emp_id--- "+emp_id);
-                  //console.log("dd["+i+"].location_id--- "+dd[i].location_id);
-                  //console.log("mhuman["+k+"].popup--- "+mhuman[k].popup);
-                if(num === emp_id){
 
+                if(num === emp_id){
+                    
                       man = {
                           x: mhuman[j][k].latlngs.lat,
                           y: mhuman[j][k].latlngs.lng
@@ -814,7 +1143,7 @@ script.
                       
 
                     //alert(emp_id+"---"+dd[i].employee_id+"---"+mhuman[j][k].popup+"---"+dd[i].location_id);
-                    if(dd[i].location_id === mhuman[j][k].popup){   
+                    if(positioning[i].location_id === mhuman[j][k].popup){   
                         test.push(mhuman[j][k].popup);
                         loc1.push(mhuman[j][k].latlngs.lat);
                         loc2.push(mhuman[j][k].latlngs.lng);
@@ -823,7 +1152,7 @@ script.
                         sorted_loc1 = loc1.filter(onlyUnique);
                         sorted_loc2 = loc2.filter(onlyUnique);
                         //alert("s="+sorted+" l1="+sorted_loc1+" l2="+sorted_loc2);
-                        html += '<li><a href="#step-1"><span class="step_no">'+dd[i].location_id+'</span><span class="step_descr">'+dd[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
+                        html += '<li><a href="#step-1"><span class="step_no">'+positioning[i].location_id+'</span><span class="step_descr">'+positioning[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
                         document.getElementById(mfloors.floor[j].floor_id).click();
                         document.getElementById("wizard_steps").innerHTML = html; 
                         }
@@ -832,11 +1161,10 @@ script.
 
                   }
 
-            }
-
-            }
+            } 
+        }
             
-            for(var jk=0;jk<maps.length;jk++){
+            //for(var jk=0;jk<maps.length;jk++){
                 human1 = L.divIcon({
                           className: 'checkpoint-pin',
                           html: '<img src="/images/man.png">',
@@ -845,32 +1173,172 @@ script.
                         });
                         
             //alert("s="+sorted+" l1="+sorted_loc1+" l2="+sorted_loc2+" leh="+sorted.length);
-                  for(var g=0;g<sorted.length;g++){
-                    var marker = L.marker([sorted_loc1[g], sorted_loc2[g]], {
+                  for(var gk=0;gk<sorted.length;gk++){
+                    var marker = L.marker([sorted_loc1[gk], sorted_loc2[gk]], {
                                 icon: human1
                               });
-
-                             markers.addLayer(marker);
-                             maps[jk].addLayer(markers);
+                              
+                             markers_play[g].addLayer(marker);
+                             maps[g].addLayer(markers_play[g]);
                 }
+            //}
             }
-            
         } else {
 
             for(var i=0;i<maps.length;i++){ 
                 
                 document.getElementById("wizard_steps").innerHTML = '';
-                clearMap();
+                clearMapPlayback();
                 pointlist = [];
-                markers.clearLayers();
+                //markers.clearLayers();
                 
             }
 
         }
       }
       
-      function onlyUnique(value, index, self) { 
+    function onlyUnique(value, index, self) { 
         return self.indexOf(value) === index;
         }
+        
+script.
+    var socket = io();
+    socket.on('tracking', function(rows) {
+        var language = rows.language;
+        clearMap();
+        var employees = rows.employee;
+        var floor_plan = rows.floor_plan;
+        //var markers = [];
+        var floors = rows.floors.replace(/&quot;/g, '"');
+        for(var t=0;t<floor_plan.length;t++){
+        var floorplan_list = [];
+        //markers[t] = new L.FeatureGroup();
+        var floorplan_id = floor_plan[t].floorplan_id;
+        var floorplan = floor_plan[t].markers;
+        var emp_no = 0;
+        var emp_no_id = "no_emp"+floorplan_id;
+        
+        var ff = JSON.parse(floorplan);
+        floorplan_list.push(ff);
+        marker = JSON.parse(floorplan);
+      for(var i=0;i<employees.length;i++){
+          
+        var num = employees[i].employee_id;
+        var name = employees[i].employee_name;
+        var loc = employees[i].employee_location;
+        var d = new Date(employees[i].path_datetime);
+        
+          //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
+        var ddate = d.getDate();
+        var dmonth = d.getMonth()+1;
+        var dyear = d.getFullYear();
+        var dhour = d.getHours();
+        var dminutes = d.getMinutes();
+        var dseconds = d.getSeconds();
+        if(ddate < 10){
+            ddate = "0"+ddate;
+        }
+        if(dmonth < 10){
+            dmonth = "0"+dmonth;
+        }
+
+        if(dhour < 10){
+            dhour = "0"+dhour;
+        }
+        if(dminutes < 10){
+            dminutes = "0"+dminutes;
+        }
+        if(dseconds < 10){
+            dseconds = "0"+dseconds;
+        }
+        var mfloors = JSON.parse(floors);
+        mhuman = floorplan_list;
+        //alert(JSON.stringify(mhuman));
+        for(var j=0;j<maps.length;j++){
+        for (k in mhuman[j]) {
+        var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
+
+        man = {
+            x: mhuman[j][k].latlngs.lat,
+            y: mhuman[j][k].latlngs.lng
+          };
+
+        human1 = L.divIcon({
+            className: 'checkpoint-pin',
+            html: '<img src="/images/man.png"/><p style="color:black;">'+employees[i].employee_name+'</p>',
+            iconSize: [15, 15],
+            iconAnchor: [10, 10]
+          });
+        if(employees[i].employee_location === mhuman[j][k].popup){
+             //alert(name+"--"+loc);
+              var marker = L.marker([man.x, man.y], {
+                icon: human1
+              });
+        emp_no++;
+        markers[t].addLayer(marker);
+
+        maps[t].addLayer(markers[t]);
+        }
+
+        }
+    }
+    }
+    
+    if(language === 'en'){
+    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" employee)";
+    }
+    else{
+    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";  
+    }
+    }
+    
+        for (var i = 0; i < marker_g.length; i++ ) {
+          marker_g[i].setMap(null);
+        }
+        marker_g.length = 0;
+
+
+    for(var i=0;i<employees.length;i++){
+                var partsOfStr = employees[i].employee_gps.split(',');
+                var myLatLng = {lat: parseFloat(partsOfStr[1]), lng: parseFloat(partsOfStr[0])};
+                //alert(myLatLng);
+                marker_g[i] = new google.maps.Marker({
+                    position: myLatLng,
+                    icon: '/images/man2_1.png',
+                    map: map_g,
+                    title: 'test',
+                    label: employees[i].employee_name,
+                    });
+                
+                marker_g[i].setMap(map_g);
+            }
+    
+
+    });
+    
+script.
+    function laodPositioning()
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "/get_positioning", false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+    
+    function loadFloorPlan()
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "/get_floorplan", false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+    
+    function loadHistory()
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "/get_history", false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
  
 

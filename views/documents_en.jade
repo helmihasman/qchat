@@ -31,9 +31,15 @@ block content
                           td
                             if row.document_type === 'Note'
                                a(href='', data-toggle='modal', data-target='.bs-note-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                            else if row.document_type === '笔记'
+                               a(href='', data-toggle='modal', data-target='.bs-note-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
                             else if row.document_type === 'Photo'
                                a(href='', data-toggle='modal', data-target='.bs-photo-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                            else if row.document_type === '照片'
+                               a(href='', data-toggle='modal', data-target='.bs-photo-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
                             else if row.document_type === 'Audio'
+                               a(href='', data-toggle='modal', data-target='.bs-audio-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
+                            else if row.document_type === '音响'
                                a(href='', data-toggle='modal', data-target='.bs-audio-modal-lg-#{index+1}',style='color:blue') #{row.document_name}
                           td #{row.document_type}
                           td #{row.employee_phone_no}
@@ -44,6 +50,30 @@ block content
       
     for row, index in data
         if row.document_type === 'Note'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-note-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title Note
+                    .modal-body
+                      p
+                       textarea(rows='4', cols='50',width='auto')
+                        | #{row.document_text}
+                      p
+                        | Type : #{row.document_type}
+                      p
+                        | Employee ID : #{row.employee_phone_no}
+                      p
+                        | Time : #{row.document_time.toLocaleString()}
+                      p
+                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      p
+                        | Remark : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
+        if row.document_type === '笔记'
             .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-note-modal-lg-#{index+1}')
                 .modal-dialog.modal-sm
                   .modal-content
@@ -93,7 +123,55 @@ block content
                         | Remark : #{row.document_remark}
                     .modal-footer
                       button.btn.btn-default(type='button', data-dismiss='modal') Close
+        if row.document_type === '音响'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-audio-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title Audio
+                    .modal-body
+                      p
+                        audio(controls='')
+                            source(src='../#{row.document_audio}', type='audio/mpeg')
+                            | Your browser does not support the audio element.
+                      p
+                        | Type : #{row.document_type}
+                      p
+                        | Employee ID : #{row.employee_phone_no}
+                      p
+                        | Time : #{row.document_time.toLocaleString()}
+                      p
+                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      p
+                        | Remark : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
         if row.document_type === 'Photo'
+            .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-photo-modal-lg-#{index+1}')
+                .modal-dialog.modal-sm
+                  .modal-content
+                    .modal-header
+                      button.close(type='button', data-dismiss='modal')
+                        span(aria-hidden='true') ×
+                      h4#myModalLabel.modal-title Photo
+                    .modal-body
+                      p
+                       img(src='../#{row.document_image}',height='200px',width='auto')
+                      p
+                        | Type : #{row.document_type}
+                      p
+                        | Employee ID : #{row.employee_phone_no}
+                      p
+                        | Time : #{row.document_time.toLocaleString()}
+                      p
+                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      p
+                        | Remark : #{row.document_remark}
+                    .modal-footer
+                      button.btn.btn-default(type='button', data-dismiss='modal') Close
+        if row.document_type === '照片'
             .modal.fade(tabindex='-1', role='dialog', aria-hidden='true',class='bs-photo-modal-lg-#{index+1}')
                 .modal-dialog.modal-sm
                   .modal-content

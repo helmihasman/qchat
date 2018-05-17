@@ -60,7 +60,7 @@ block content
                                     script(type='text/javascript').
                                      var maps = [];
                                      var floorplan_list = [];
-                                     var markers = new L.FeatureGroup();
+                                     var markers_play = [];
                                      var floors = "#{floors}".replace(/&quot;/g, '"');
                                           
                                     for row, index in floor_plan
@@ -74,6 +74,7 @@ block content
                                                 var data = "#{data}".replace(/&quot;/g, '"');
                                                 var floorplan_img = "#{row.floorplan_img}";
                                                 var indexs = "#{index}";
+                                                markers_play[indexs] = new L.FeatureGroup();
                                                 
                                                 var map_string = 'image-map-dashboard'+floorplan_id;
 
@@ -140,6 +141,7 @@ block content
                                                 var data = "#{data}".replace(/&quot;/g, '"');
                                                 var floorplan_img = "#{row.floorplan_img}";
                                                 var indexs = "#{index}";
+                                                markers_play[indexs] = new L.FeatureGroup();
                                                 var map_string = 'image-map-dashboard'+floorplan_id;
 
                                                 var dd,man;
@@ -180,7 +182,6 @@ block content
                                                 // tell leaflet that the map is exactly as big as the image
                                                 maps[indexs].setMaxBounds(bounds);
 
-                                                var markers = new L.FeatureGroup();
                                                 //var humanMark1,humanMark2,humanMark3;
 
                                                 marker = JSON.parse(floorplan);

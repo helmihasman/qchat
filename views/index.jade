@@ -39,9 +39,15 @@ block content
                       a.pull-left
                         if row.document_type === "Photo"
                          img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "照片"
+                         img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Audio"
                          img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "音响"
+                         img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Note"
+                         img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "笔记"
                          img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
                       .media-body
                         a.title(href='#') #{row.document_remark}
@@ -62,9 +68,15 @@ block content
                       a.pull-left
                         if row.document_type === "Photo"
                          img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "照片"
+                         img.img-rectangle.profile_img(src='/#{row.document_image}', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Audio"
                          img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "音响"
+                         img.img-rectangle.profile_img(src='../images/play_button.png', alt='...', style='margin-left:10px', height='50', width='47')
                         else if row.document_type === "Note"
+                         img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
+                        else if row.document_type === "笔记"
                          img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
                       .media-body
                         a.title(href='#') #{row.document_remark}
