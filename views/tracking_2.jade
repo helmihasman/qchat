@@ -7,7 +7,7 @@ block content
                   .f_title
                      h3
                        img(src='images/tracking.png',height='35px',width='30px')
-                       | &nbsp;追踪
+                       | &nbsp;实时考勤
                     .clearfix
                   .f_content
                     div(role='tabpanel', data-example-id='togglable-tabs')
@@ -23,7 +23,7 @@ block content
                                   #accordion.accordion(role='tablist', aria-multiselectable='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 中国电信
+                                        h4.panel-title 员工表
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           //ul
@@ -36,7 +36,7 @@ block content
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 楼层地图
+                                  h2 显示表
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -50,7 +50,7 @@ block content
                                             | #{row.floor_name} 楼层
                                             label(id='no_emp#{row.floorplan_id}')
                                       li
-                                          a(href='#outdoor', data-toggle='tab') 户外
+                                          a(href='#outdoor', data-toggle='tab') 地图显示
                                         
                                            
                             .col-md-9.col-sm-12.col-xs-12
@@ -145,7 +145,7 @@ block content
                                                     for(var i=0;i<dd.length;i++){
                                                                 var num = dd[i].employee_id.toString();
                                                                 var name = dd[i].employee_name.toString();
-                                                                var d = new Date(dd[i].path_datetime);
+                                                                var d = new Date(dd[i].employee_time);
                                                                   //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
                                                                 var ddate = d.getDate();
                                                                 var dmonth = d.getMonth()+1;
@@ -185,7 +185,7 @@ block content
 
                                                                 human1 = L.divIcon({
                                                                     className: 'checkpoint-pin',
-                                                                    html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+'</p>',
+                                                                    html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+' ('+newdate+')</p>',
                                                                     iconSize: [15, 15],
                                                                     iconAnchor: [10, 10]
                                                                   });

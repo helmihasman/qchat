@@ -2476,7 +2476,7 @@ app.post(deployPath +'/api/v1/send_location_list',function(req,res){
            }
            else{
                company_id = rows[0].company_id;
-               con.query("SELECT beacon_id from location where company_id='"+company_id+"'",function(error,rows,fields){
+               con.query("SELECT * from location where company_id='"+company_id+"'",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query '+error);
                     res.send(error);
@@ -2657,7 +2657,8 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
     res.setHeader('Access-Control-Allow-Credentials', true);
     //var json_data = JSON.parse(req.body);
     //console.log("bodyyy="+JSON.stringify(req.body.send_text_data.emp_id));      // your JSON
-
+    //res.charset = 'utf-8';
+    //res.contentType('text');
     //res.status(200);
 
     var d = createDateAsUTC(new Date());
@@ -2698,11 +2699,13 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
     var employee_id = req.body.send_text_data.emp_id;
     var doc_location = req.body.send_text_data.location;
     var doc_remark = req.body.send_text_data.remark;
-    var remark_other = req.body.send_text_data.remark_other;
-    var doc_text = req.body.send_text_data.text;
+    var remark_other = decodeURIComponent(req.body.send_text_data.remark_other);
+    var doc_text = decodeURIComponent(req.body.send_text_data.text);
     var doc_name = employee_id + '-' + Date.now()+'-text';
     var location_code;
     var company_id;
+    doc_text = doc_text.replace(/\+/g,' ');
+    remark_other = remark_other.replace(/\+/g,' ');
     
     var remarks = doc_remark.split(" ");
     var new_remark;
@@ -2721,9 +2724,9 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
    }
     
     
-    var good = { data:"send_text",status:"good" };
+    var good = { data:"send_text",status:"good", text:doc_text};
     var bad = {data:"send_text",status:"bad" };
-    var remark = {data:"send_text",status:doc_remark };
+    var remark = {data:"send_text",status:doc_text };
     
     con.query("SELECT * FROM employee where employee_id = '"+employee_id+"'",function(error,rows,fields){
                 if(!!error){
@@ -2732,32 +2735,34 @@ app.post(deployPath +'/api/v1/send_text',function(req,res){
                 }
                 else{
                     company_id = rows[0].company_id;
+                    
+                    con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%' and company_id = '"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                        res.send(error);
+                    }
+                    else{
+                        location_code = rows[0].location_code;
+                        console.log("locationcode ="+location_code);
+                        //console.log('Successful query\n');
+                        //console.log(rows);
+                        con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_text) values ('"+doc_name+"','笔记','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+doc_text+"')",function(error,rows,fields){
+                         if(!!error){
+                             console.log('Error in the query '+error);
+                         }
+                         else{
+                             //console.log('Successful query\n');
+                             //console.log(rows);
+                             res.status(200).send(good);
+                            // res.status(200).send(remark);
+                         }
+                     }); 
+                    }
+                }); 
                 }
             }); 
     
-    con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%' and company_id = '"+company_id+"'",function(error,rows,fields){
-       if(!!error){
-           console.log('Error in the query '+error);
-           res.send(error);
-       }
-       else{
-           location_code = rows[0].location_code;
-           console.log("locationcode ="+location_code);
-           //console.log('Successful query\n');
-           //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_text) values ('"+doc_name+"','笔记','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+doc_text+"')",function(error,rows,fields){
-            if(!!error){
-                console.log('Error in the query '+error);
-            }
-            else{
-                //console.log('Successful query\n');
-                //console.log(rows);
-                res.status(200).send(good);
-               // res.status(200).send(remark);
-            }
-        }); 
-       }
-   }); 
+    
     
     
     //res.send(req.body);    // echo the result back
@@ -2847,9 +2852,10 @@ app.post(deployPath +'/api/v1/send_image', function(req, res) {
     var employee_id = req.body.send_image_data.emp_id;
     var doc_location = req.body.send_image_data.location;
     var doc_remark = req.body.send_image_data.remark;
-    var remark_other = req.body.send_image_data.remark_other;
+    var remark_other = decodeURIComponent(req.body.send_image_data.remark_other);
     var doc_name = employee_id + '_' + Date.now()+'.jpg';
     var location_code;
+    remark_other = remark_other.replace(/\+/g,' ');
     
     var remarks = doc_remark.split(" ");
     var new_remark;
@@ -2881,32 +2887,34 @@ app.post(deployPath +'/api/v1/send_image', function(req, res) {
                 }
                 else{
                     company_id = rows[0].company_id;
+                    
+                    con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%' and company_id = '"+company_id+"'",function(error,rows,fields){
+                        if(!!error){
+                            console.log('Error in the query '+error);
+                            res.send(error);
+                        }
+                        else{
+                            location_code = rows[0].location_code;
+                            console.log("locationcode ="+location_code);
+                            //console.log('Successful query\n');
+                            //console.log(rows);
+                            con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_image) values ('"+doc_name+"','照片','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
+                             if(!!error){
+                                 console.log('Error in the query '+error);
+                                 res.send(error);
+                             }
+                             else{
+                                 //console.log('Successful query\n');
+                                 //console.log(rows);
+                                 res.status(200).send(good);
+                             }
+                         }); 
+                        }
+                    });
                 }
             });
     
-    con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%' and company_id = '"+company_id+"'",function(error,rows,fields){
-       if(!!error){
-           console.log('Error in the query '+error);
-           res.send(error);
-       }
-       else{
-           location_code = rows[0].location_code;
-           console.log("locationcode ="+location_code);
-           //console.log('Successful query\n');
-           //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_image) values ('"+doc_name+"','照片','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
-            if(!!error){
-                console.log('Error in the query '+error);
-                res.send(error);
-            }
-            else{
-                //console.log('Successful query\n');
-                //console.log(rows);
-                res.status(200).send(good);
-            }
-        }); 
-       }
-   }); 
+     
     
     
 
@@ -2992,9 +3000,10 @@ app.post(deployPath +'/api/v1/send_audio', function(req, res) {
     var employee_id = req.body.send_audio_data.emp_id;
     var doc_location = req.body.send_audio_data.location;
     var doc_remark = req.body.send_audio_data.remark;
-    var remark_other = req.body.send_audio_data.remark_other;
+    var remark_other = decodeURIComponent(req.body.send_audio_data.remark_other);
     var doc_name = employee_id + '_' + Date.now()+'.mp3';
     var location_code;
+    remark_other = remark_other.replace(/\+/g,' ');
     
     var remarks = doc_remark.split(" ");
     var new_remark;
@@ -3026,32 +3035,34 @@ app.post(deployPath +'/api/v1/send_audio', function(req, res) {
                 }
                 else{
                     company_id = rows[0].company_id;
+                    
+                    con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%' and company_id='"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                        res.send(error);
+                    }
+                    else{
+                        location_code = rows[0].location_code;
+                        console.log("locationcode ="+location_code);
+                        //console.log('Successful query\n');
+                        //console.log(rows);
+                        con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_audio) values ('"+doc_name+"','音响','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
+                         if(!!error){
+                             console.log('Error in the query '+error);
+                             res.send(error);
+                         }
+                         else{
+                             //console.log('Successful query\n');
+                             //console.log(rows);
+                             res.status(200).send(good);
+                         }
+                     }); 
+                    }
+                });
                 }
             });
     
-    con.query("SELECT location_code from location where beacon_id like '%"+doc_location+"%' and company_id='"+company_id+"'",function(error,rows,fields){
-       if(!!error){
-           console.log('Error in the query '+error);
-           res.send(error);
-       }
-       else{
-           location_code = rows[0].location_code;
-           console.log("locationcode ="+location_code);
-           //console.log('Successful query\n');
-           //console.log(rows);
-           con.query("INSERT INTO document(document_name,document_type,doc_emp_id,document_time,document_location,document_remark,document_remark_other,document_audio) values ('"+doc_name+"','音响','"+employee_id+"','"+newdate+"','"+location_code+"','"+new_remark+"','"+remark_other+"','"+filepath+"')",function(error,rows,fields){
-            if(!!error){
-                console.log('Error in the query '+error);
-                res.send(error);
-            }
-            else{
-                //console.log('Successful query\n');
-                //console.log(rows);
-                res.status(200).send(good);
-            }
-        }); 
-       }
-   }); 
+     
     
     
 
@@ -3064,7 +3075,7 @@ app.get(deployPath +'/api/v1/get_location',function(req,res){
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
 
-        var requestData = {send_location_data:{emp_id:"1",location:"B0:B4:48:DC:BD:FB"}};
+        var requestData = {send_location_data:{emp_id:"99",location:"B0:B4:48:DC:BA:F9"}};
 
     request({
             url: "http://localhost:3000/api/v1/send_location",
@@ -3242,160 +3253,164 @@ app.post(deployPath +'/api/v1/send_location', function(req, res) {
                 }
                 else{
                     company_id = rows[0].company_id;
+                    //console.log("company_id=="+company_id);
+                    con.query("SELECT * from location where beacon_id like '%"+location+"%' and company_id = '"+company_id+"'",function(error,rows,fields){
+                            if(!!error){
+                                console.log('Error in the query '+error);
+                                res.send(error);
+                            }
+                            else{
+                                console.log(rows);
+                                location_code = rows[0].location_code;
+                                console.log("locationcode ="+location_code);
+                                //console.log('Successful query\n');
+                                //console.log(rows);
+
+                                 con.query("UPDATE employee set employee_location='"+location_code+"', employee_time='"+newdate+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
+                                     if(!!error){
+                                         console.log('Error in the query '+error);
+                                         res.send(error);
+                                     }
+                                     else{
+
+                                     }
+                                 }); 
+
+                                 con.query("SELECT * from history where employee_id = '"+employee_id+"' order by path_datetime desc limit 1",function(error,rows,fields){
+                                     if(!!error){
+                                         console.log('Error in the query '+error);
+                                         res.send(error);
+                                     }
+                                     else{
+                                         if(rows.length === 0){
+                                             con.query("INSERT INTO history(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
+                                                 if(!!error){
+                                                     console.log('Error in the query '+error);
+                                                     res.send(error);
+                                                 }
+                                                 else{
+
+                                                 }
+                                             }); 
+                                         }
+                                         else{
+                                             if(rows[0].location_id !== location_code){
+                                                 con.query("INSERT INTO history(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
+                                                     if(!!error){
+                                                         console.log('Error in the query '+error);
+                                                         res.send(error);
+                                                     }
+                                                     else{
+
+                                                     }
+                                                 }); 
+                                             }
+                                         }
+
+                                     }
+                                 }); 
+
+
+
+                                con.query("SELECT * from path where employee_id='"+employee_id+"' order by path_datetime desc limit 1",function(error,rows,fields){
+                                     if(!!error){
+                                         console.log('Error in the query '+error);
+                                         res.send(error);
+                                     }
+                                     else{
+                                         //console.log("rows.length11--"+rows.length);
+                                         if(rows.length !== 0){
+                                             //console.log("rows.location_id11--"+rows[0].location_id+" locatoon code=="+location_code);
+                                         if(rows[0].location_id !== location_code){
+
+                                                 con.query("INSERT INTO path(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
+                                                 if(!!error){
+                                                     console.log('Error in the query '+error);
+                                                     res.send(error);
+                                                 }
+                                                 else{
+
+                                                         con.query("UPDATE route set route_attendance='1' where route_name='"+location_code+"' and employee_id='"+employee_id+"' and day(route_datetime) ='"+d_date+"' and month(route_datetime) ='"+d_month+"' and year(route_datetime)='"+dyear+"'",function(error,rows,fields){
+                                                         if(!!error){
+                                                             console.log('Error in the query '+error);
+                                                             res.send(error);
+                                                         }
+                                                         else{
+                                                             //console.log('Successful query\n');
+                                                             //console.log(rows);
+                                                             //res.status(200).send(good);
+                                                         }
+                                                     }); 
+                                                 }
+                                             }); 
+                                         }
+                                       }
+                                       else{
+
+                                           con.query("INSERT INTO path(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
+                                                 if(!!error){
+                                                     console.log('Error in the query '+error);
+                                                     res.send(error);
+                                                 }
+                                                 else{
+
+                                                         con.query("UPDATE route set route_attendance='1' where route_name='"+location_code+"' and employee_id='"+employee_id+"' and day(route_datetime) ='"+d_date+"' and month(route_datetime) ='"+d_month+"' and year(route_datetime)='"+dyear+"'",function(error,rows,fields){
+                                                         if(!!error){
+                                                             console.log('Error in the query '+error);
+                                                             res.send(error);
+                                                         }
+                                                         else{
+                                                             //console.log('Successful query\n');
+                                                             //console.log(rows);
+                                                             //res.status(200).send(good);
+                                                         }
+                                                     }); 
+                                                 }
+                                             }); 
+
+                                       }
+                                     }
+                                 });
+
+
+                                 con.query("UPDATE employee set employee_location='"+location_code+"', employee_time='"+newdate+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
+                                     if(!!error){
+                                         console.log('Error in the query '+error);
+                                         res.send(error);
+                                     }
+                                     else{
+
+                                         con.query("SELECT * from route left join location on route.route_name = location.location_code where employee_id='"+employee_id+"' and day(route_datetime) ='"+d_date+"' and month(route_datetime) ='"+d_month+"' and year(route_datetime)='"+dyear+"' and route_attendance = '0' limit 1",function(error,rows,fields){
+                                             if(!!error){
+                                                 console.log('Error in the query '+error);
+                                                 res.send(error);
+                                             }
+                                             else{
+
+                                                 //console.log('Successful query\n');
+                                                 console.log(rows);
+                                                if(rows.length !== 0){
+                                                     var send_loc = {data:"route",route_name : rows[0].route_name,beacon_id : rows[0].beacon_id};
+                                                     res.status(200).send(send_loc);
+                                                 }
+                                                 else{
+                                                     var send_loc = {data:"route",route_name : "0",beacon_id : "0"};
+                                                     res.status(200).send(send_loc);
+                                                 }
+                                             }
+                                         }); 
+
+                                     }
+                                 }); 
+
+                            }
+
+                        });
                 }
             }); 
     
-    con.query("SELECT location_code from location where beacon_id like '%"+location+"%' and company_id = '"+company_id+"'",function(error,rows,fields){
-       if(!!error){
-           console.log('Error in the query '+error);
-           res.send(error);
-       }
-       else{
-           location_code = rows[0].location_code;
-           //console.log("locationcode ="+location_code);
-           //console.log('Successful query\n');
-           //console.log(rows);
-           
-            con.query("UPDATE employee set employee_location='"+location_code+"', employee_time='"+newdate+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
-                if(!!error){
-                    console.log('Error in the query '+error);
-                    res.send(error);
-                }
-                else{
- 
-                }
-            }); 
-            
-            con.query("SELECT * from history where employee_id = '"+employee_id+"' order by path_datetime desc limit 1",function(error,rows,fields){
-                if(!!error){
-                    console.log('Error in the query '+error);
-                    res.send(error);
-                }
-                else{
-                    if(rows.length === 0){
-                        con.query("INSERT INTO history(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
-                            if(!!error){
-                                console.log('Error in the query '+error);
-                                res.send(error);
-                            }
-                            else{
-
-                            }
-                        }); 
-                    }
-                    else{
-                        if(rows[0].location_id !== location_code){
-                            con.query("INSERT INTO history(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
-                                if(!!error){
-                                    console.log('Error in the query '+error);
-                                    res.send(error);
-                                }
-                                else{
-
-                                }
-                            }); 
-                        }
-                    }
- 
-                }
-            }); 
-            
-            
-            
-           con.query("SELECT * from path where employee_id='"+employee_id+"' order by path_datetime desc limit 1",function(error,rows,fields){
-                if(!!error){
-                    console.log('Error in the query '+error);
-                    res.send(error);
-                }
-                else{
-                    //console.log("rows.length11--"+rows.length);
-                    if(rows.length !== 0){
-                        //console.log("rows.location_id11--"+rows[0].location_id+" locatoon code=="+location_code);
-                    if(rows[0].location_id !== location_code){
-                        
-                            con.query("INSERT INTO path(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
-                            if(!!error){
-                                console.log('Error in the query '+error);
-                                res.send(error);
-                            }
-                            else{
-                                    
-                                    con.query("UPDATE route set route_attendance='1' where route_name='"+location_code+"' and employee_id='"+employee_id+"' and day(route_datetime) ='"+d_date+"' and month(route_datetime) ='"+d_month+"' and year(route_datetime)='"+dyear+"'",function(error,rows,fields){
-                                    if(!!error){
-                                        console.log('Error in the query '+error);
-                                        res.send(error);
-                                    }
-                                    else{
-                                        //console.log('Successful query\n');
-                                        //console.log(rows);
-                                        //res.status(200).send(good);
-                                    }
-                                }); 
-                            }
-                        }); 
-                    }
-                  }
-                  else{
-                      
-                      con.query("INSERT INTO path(location_id,employee_id,path_datetime) values ('"+location_code+"','"+employee_id+"','"+newdate+"')",function(error,rows,fields){
-                            if(!!error){
-                                console.log('Error in the query '+error);
-                                res.send(error);
-                            }
-                            else{
-                                
-                                    con.query("UPDATE route set route_attendance='1' where route_name='"+location_code+"' and employee_id='"+employee_id+"' and day(route_datetime) ='"+d_date+"' and month(route_datetime) ='"+d_month+"' and year(route_datetime)='"+dyear+"'",function(error,rows,fields){
-                                    if(!!error){
-                                        console.log('Error in the query '+error);
-                                        res.send(error);
-                                    }
-                                    else{
-                                        //console.log('Successful query\n');
-                                        //console.log(rows);
-                                        //res.status(200).send(good);
-                                    }
-                                }); 
-                            }
-                        }); 
-                      
-                  }
-                }
-            });
-            
-                       
-            con.query("UPDATE employee set employee_location='"+location_code+"', employee_time='"+newdate+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
-                if(!!error){
-                    console.log('Error in the query '+error);
-                    res.send(error);
-                }
-                else{
-                    
-                    con.query("SELECT * from route left join location on route.route_name = location.location_code where employee_id='"+employee_id+"' and day(route_datetime) ='"+d_date+"' and month(route_datetime) ='"+d_month+"' and year(route_datetime)='"+dyear+"' and route_attendance = '0' limit 1",function(error,rows,fields){
-                        if(!!error){
-                            console.log('Error in the query '+error);
-                            res.send(error);
-                        }
-                        else{
-                            
-                            //console.log('Successful query\n');
-                            console.log(rows);
-                           if(rows.length !== 0){
-                                var send_loc = {data:"route",route_name : rows[0].route_name,beacon_id : rows[0].beacon_id};
-                                res.status(200).send(send_loc);
-                            }
-                            else{
-                                var send_loc = {data:"route",route_name : "0",beacon_id : "0"};
-                                res.status(200).send(send_loc);
-                            }
-                        }
-                    }); 
-                    
-                }
-            }); 
-           
-       }
-
-   }); 
+    
+     
     
     
 

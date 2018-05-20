@@ -553,7 +553,7 @@ script.
                          
                         if(json.features[i].geometry.polyname === undefined){
 
-                            polyname = prompt("Enter polygon name:", "");
+                            polyname = prompt("请输入电子栏杆区域名:", "");
                             }
                             else{
                                 polyname = json.features[i].geometry.polyname;
@@ -717,7 +717,7 @@ script.
                          
                         if(json.features[i].geometry.polyname === undefined){
 
-                            polyname = prompt("Enter polygon name:", "");
+                            polyname = prompt("请输入电子栏杆区域名:", "");
                             }
                             else{
                                 polyname = json.features[i].geometry.polyname;
@@ -853,7 +853,7 @@ script.
                 marker = JSON.parse(floorplan);
             for(var i=0;i<positioning.length;i++){
                 var num = positioning[i].employee_id.toString();
-                  var d = new Date(positioning[i].path_datetime);
+                  var d = new Date(positioning[i].employee_time);
                   //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
                   var ddate = d.getDate();
                   var dmonth = d.getMonth()+1;
@@ -898,7 +898,7 @@ script.
 
                       human1 = L.divIcon({
                           className: 'checkpoint-pin',
-                          html: '<img src="/images/man.png"><p style="color:black;">'+positioning[i].employee_name+'</p>',
+                          html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+' ('+newdate+')</p>',
                           iconSize: [15, 15],
                           iconAnchor: [10, 10]
                         });
@@ -982,7 +982,7 @@ script.
             for(var i=0;i<positioning.length;i++){
                 var num = positioning[i].employee_id.toString();
                 var name = positioning[i].employee_name.toString();
-                var d = new Date(positioning[i].path_datetime);
+                var d = new Date(positioning[i].employee_time);
                   //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
                 var ddate = d.getDate();
                 var dmonth = d.getMonth()+1;
@@ -1021,7 +1021,7 @@ script.
 
                 human1 = L.divIcon({
                     className: 'checkpoint-pin',
-                    html: '<img src="/images/man.png"/><p style="color:black;">'+positioning[i].employee_name+'</p>',
+                    html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+' ('+newdate+')</p>',
                     iconSize: [15, 15],
                     iconAnchor: [10, 10]
                   });
@@ -1226,7 +1226,7 @@ script.
         var num = employees[i].employee_id;
         var name = employees[i].employee_name;
         var loc = employees[i].employee_location;
-        var d = new Date(employees[i].path_datetime);
+        var d = new Date(employees[i].employee_time);
         
           //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
         var ddate = d.getDate();
@@ -1265,7 +1265,7 @@ script.
 
         human1 = L.divIcon({
             className: 'checkpoint-pin',
-            html: '<img src="/images/man.png"/><p style="color:black;">'+employees[i].employee_name+'</p>',
+            html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+' ('+newdate+')</p>',
             iconSize: [15, 15],
             iconAnchor: [10, 10]
           });

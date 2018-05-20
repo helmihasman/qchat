@@ -153,7 +153,7 @@ block content
                                                     for(var i=0;i<dd.length;i++){
                                                                 var num = dd[i].employee_id.toString();
                                                                 var name = dd[i].employee_name.toString();
-                                                                var d = new Date(dd[i].path_datetime);
+                                                                var d = new Date(dd[i].employee_time);
                                                                   //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
                                                                 var ddate = d.getDate();
                                                                 var dmonth = d.getMonth()+1;
@@ -193,7 +193,7 @@ block content
 
                                                                 human1 = L.divIcon({
                                                                     className: 'checkpoint-pin',
-                                                                    html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+'</p>',
+                                                                    html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+' ('+newdate+')</p>',
                                                                     iconSize: [15, 15],
                                                                     iconAnchor: [10, 10]
                                                                   });
