@@ -12,14 +12,9 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/Users/helmi/NetBeansProjects/qchat/views/location.jade</file>
             <file>file:/Users/helmi/NetBeansProjects/qchat/app.js</file>
-            <file>file:/Users/helmi/NetBeansProjects/qchat/views/tracking_2.jade</file>
-            <file>file:/Users/helmi/NetBeansProjects/qchat/views/map_management_en.jade</file>
-            <file>file:/Users/helmi/NetBeansProjects/qchat/views/js.jade</file>
-            <file>file:/Users/helmi/NetBeansProjects/qchat/views/map_management.jade</file>
-            <file>file:/Users/helmi/NetBeansProjects/qchat/views/tracking_en_2.jade</file>
-            <file>file:/Users/helmi/NetBeansProjects/qchat/views/navigation_en.jade</file>
-            <file>file:/Users/helmi/NetBeansProjects/qchat/views/navigation.jade</file>
+            <file>file:/Users/helmi/NetBeansProjects/qchat/views/floor_plan_list.jade</file>
         </group>
     </open-files>
 </project-private>
