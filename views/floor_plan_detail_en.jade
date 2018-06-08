@@ -44,8 +44,8 @@ block content
                     maxZoom: mapMaxZoom,
                     zoom: mapMinZoom
                     });
-                    var width = 4500* 1.4,
-                    height = 2843* 1.1,
+                    var width = 5500* 1.4,
+                    height = 2900* 1.1,
                     url = "/"+document.getElementById("floorplan_img").value;
                     var mapBounds = new L.LatLngBounds(
                     mymap.unproject([0, height], mapMaxZoom-1),
@@ -69,8 +69,7 @@ block content
                     + "<div><input type='button' value='Delete this popup' class='marker-delete-button'/></div>"
                     ;
                     var marker_options = {
-                    riseOnHover: true,
-                    title: "Generic marker"
+                    title: ""
                     };
                     //
                     function drawMarker()
@@ -91,7 +90,7 @@ block content
                     layer = e.layer,
                     //POP UP DETAILS ASSIGN HERE
                     popUp =
-                    "<b>This is a marker</b>"
+                    ""
                     ;
                     layer.bindPopup("<div>" + popUp + "</div>" + markerPopUpButtons);
                     layer.on('popupopen', onPopUp_marker);
@@ -181,7 +180,6 @@ block content
                     var polygon_options = {
                     showArea: false,
                     shapeOptions: {
-                    stroke: true,
                     color: '#6e83f0',
                     weight: 4,
                     opacity: 0.5,

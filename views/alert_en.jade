@@ -43,7 +43,10 @@ block content
                           td #{row.document_remark}
                           td #{row.employee_phone_no}
                           td #{row.document_time.toLocaleString()}
-                          td #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                          if row.beacon_location !== null
+                            td #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                          else
+                            td #{row.document_location}
             .clearfix
       
     for row, index in data
@@ -63,8 +66,12 @@ block content
                         | Employee ID : #{row.employee_phone_no}
                       p
                         | Time : #{row.document_time.toLocaleString()}
-                      p
-                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      if row.beacon_location !== null
+                        p
+                          | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      else
+                        p
+                          | Location : #{row.document_location}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer
@@ -85,8 +92,12 @@ block content
                         | Employee ID : #{row.employee_phone_no}
                       p
                         | Time : #{row.document_time.toLocaleString()}
-                      p
-                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      if row.beacon_location !== null
+                        p
+                          | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      else
+                        p
+                          | Location : #{row.document_location}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer
@@ -109,8 +120,12 @@ block content
                         | Employee ID : #{row.employee_phone_no}
                       p
                         | Time : #{row.document_time.toLocaleString()}
-                      p
-                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      if row.beacon_location !== null
+                        p
+                          | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      else
+                        p
+                          | Location : #{row.document_location}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer
@@ -132,8 +147,12 @@ block content
                         | Employee ID : #{row.employee_phone_no}
                       p
                         | Time : #{row.document_time.toLocaleString()}
-                      p
-                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      if row.beacon_location !== null
+                        p
+                          | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      else
+                        p
+                          | Location : #{row.document_location}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer
@@ -153,8 +172,12 @@ block content
                         | Employee ID : #{row.employee_phone_no}
                       p
                         | Time : #{row.document_time.toLocaleString()}
-                      p
-                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      if row.beacon_location !== null
+                        p
+                          | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      else
+                        p
+                          | Location : #{row.document_location}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer
@@ -174,8 +197,12 @@ block content
                         | Employee ID : #{row.employee_phone_no}
                       p
                         | Time : #{row.document_time.toLocaleString()}
-                      p
-                        | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      if row.beacon_location !== null
+                        p
+                          | Location : #{row.beacon_location+', Floor '+row.beacon_level+' ('+row.location_code+')'}
+                      else
+                        p
+                          | Location : #{row.document_location}
                       p
                         | Remark : #{row.document_remark}
                     .modal-footer

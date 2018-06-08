@@ -1,0 +1,237 @@
+extends base_tracking_2
+block content 
+    .right_col(role='main', style='background-color:#49A8FF')
+        .row
+          .col-md-12
+                .f_panel
+                  .f_title
+                     h3
+                       img(src='images/tracking.png',height='35px',width='30px')
+                       | &nbsp;轨迹回放
+                    .clearfix
+                  .f_content
+                    .col-xs-12
+                        ul.nav.nav-tabs.bar_tabs
+                          li
+                            a(href='/tracking') Outdoor Tracking
+                          li
+                            a(href='/tracking_indoor') Indoor Tracking
+                          li.active
+                            a(href='/path_playback_outdoor') Outdoor Playback
+                          li
+                            a(href='/path_playback') Indoor Playback
+                    div(role='tabpanel', data-example-id='togglable-tabs')
+                          .row
+                            // form input mask
+                            .col-md-3.col-sm-12.col-xs-12
+                              .x_panel
+                                .x_title
+                                  h2 雇员列表
+                                  ul.nav.navbar-right.panel_toolbox
+                                  .clearfix
+                                .x_content
+                                  form.form-horizontal
+                                    fieldset
+                                      .control-group
+                                        .controls
+                                          label(for='start-date') Start Date:
+                                          .input-prepend.input-group
+                                            input#reservation-time.form-control(type='datetime-local', name='start-date', hint='Start Date')
+                                      .control-group
+                                        .controls
+                                          label(for='end-date') End Date:
+                                          .input-prepend.input-group
+                                            input#reservation-time.form-control(type='datetime-local', name='end-date', hint='End Date')
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title 中国电信
+                                      #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="doalert(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  button.btn.btn-primary(type='button') Submit
+                              
+                                        
+                                        
+                                      
+                            .col-md-9.col-sm-12.col-xs-12
+                              .x_panel
+                                .x_title
+                                  h2 地图
+                                  ul.nav.navbar-right.panel_toolbox
+                                  .clearfix
+                                .x_content
+                                  .tab-content
+                                    script(type='text/javascript').
+                                     var maps = [];
+                                     var floorplan_list = [];
+                                     var markers_play = [];
+                                     var floors = "#{floors}".replace(/&quot;/g, '"');
+                                          
+                                    for row, index in floor_plan
+                                        if index === 0
+                                         div.tab-pane(id='home#{row.floorplan_id}')
+                                            div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
+                                            script(type='text/javascript').
+
+                                                var floorplan_id = "#{row.floorplan_id}";
+                                                var floorplan = "#{row.markers}".replace(/&quot;/g, '"');
+                                                var data = "#{data}".replace(/&quot;/g, '"');
+                                                var floorplan_img = "#{row.floorplan_img}";
+                                                var indexs = "#{index}";
+                                                markers_play[indexs] = new L.FeatureGroup();
+                                                
+                                                var map_string = 'image-map-dashboard'+floorplan_id;
+
+                                                var dd,man;
+
+                                                maps.push(L.map(map_string, {minZoom: 0,maxZoom: 4,zoom: 0,center: [0, 0],crs: L.CRS.Simple,attributionControl: false}));
+
+                                                maps[indexs].invalidateSize();
+                                                
+                                                var ff = JSON.parse(floorplan);
+                                                floorplan_list.push(ff);
+
+                                                //alert("floorplan_list--"+JSON.stringify(floorplan_list));
+                                                if(data!=='undefined'){
+                                                dd = JSON.parse(data);
+                                                //alert(dd.length+" record(s) found");
+                                                }
+
+                                                //alert("on 2");
+                                                L.control.attribution({
+                                                  prefix: false
+                                                }).addAttribution('').addTo(maps[indexs]);
+
+                                                var w = 4500* 1.4,
+                                                h = 2843* 1.1,
+                                                //url = '/images/floor_plan.jpg';
+                                                url = '/'+floorplan_img;
+                                                //alert("on k1");
+                                                // calculate the edges of the image, in coordinate space
+                                                var southWest = maps[indexs].unproject([0, h], maps[indexs].getMaxZoom() - 1);
+                                                var northEast = maps[indexs].unproject([w, 0], maps[indexs].getMaxZoom() - 1);
+                                                var bounds = new L.LatLngBounds(southWest, northEast);
+
+                                                // add the image overlay, 
+                                                // so that it covers the entire map
+                                                L.imageOverlay(url, bounds).addTo(maps[indexs]);
+
+                                                // tell leaflet that the map is exactly as big as the image
+                                                maps[indexs].setMaxBounds(bounds);
+
+                                                //var humanMark1,humanMark2,humanMark3;
+
+                                                marker = JSON.parse(floorplan);
+                                                //console.log("marker-- "+JSON.stringify(marker));
+                                                if (marker !== null && marker.length !== 0) {
+                                                for (i in marker) {
+                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindTooltip("<div><b>" + marker[i].popup + "</b></div>",{direction:'top'});
+
+                                                maps[indexs].addLayer(marks);
+
+                                                }
+                                                } else {
+                                                marker = [];
+                                                }
+
+                                        else
+                                          div.tab-pane(id='home#{row.floorplan_id}')
+                                            div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
+                                            script(type='text/javascript').
+
+                                                var floorplan_id = "#{row.floorplan_id}";
+                                                var floorplan = "#{row.markers}".replace(/&quot;/g, '"');
+                                                //alert(floorplan);
+                                                var data = "#{data}".replace(/&quot;/g, '"');
+                                                var floorplan_img = "#{row.floorplan_img}";
+                                                var indexs = "#{index}";
+                                                markers_play[indexs] = new L.FeatureGroup();
+                                                var map_string = 'image-map-dashboard'+floorplan_id;
+
+                                                var dd,man;
+
+                                                maps.push(L.map(map_string, {minZoom: 0,maxZoom: 4,zoom: 0,center: [0, 0],crs: L.CRS.Simple,attributionControl: false}));
+
+                                                maps[indexs].invalidateSize();
+                                                
+                                                var ff = JSON.parse(floorplan);
+
+                                                floorplan_list.push(ff);
+
+                                                //alert("floorplan_list--"+JSON.stringify(floorplan_list));
+                                                if(data!=='undefined'){
+                                                dd = JSON.parse(data);
+                                                //alert(dd.length+" record(s) found");
+                                                }
+
+                                                //alert("on 2");
+                                                L.control.attribution({
+                                                  prefix: false
+                                                }).addAttribution('').addTo(maps[indexs]);
+
+                                                var w = 4500* 1.4,
+                                                h = 2843* 1.1,
+                                                //url = '/images/floor_plan.jpg';
+                                                url = '/'+floorplan_img;
+                                                //alert("on k1");
+                                                // calculate the edges of the image, in coordinate space
+                                                var southWest = maps[indexs].unproject([0, h], maps[indexs].getMaxZoom() - 1);
+                                                var northEast = maps[indexs].unproject([w, 0], maps[indexs].getMaxZoom() - 1);
+                                                var bounds = new L.LatLngBounds(southWest, northEast);
+
+                                                // add the image overlay, 
+                                                // so that it covers the entire map
+                                                L.imageOverlay(url, bounds).addTo(maps[indexs]);
+
+                                                // tell leaflet that the map is exactly as big as the image
+                                                maps[indexs].setMaxBounds(bounds);
+
+                                                //var humanMark1,humanMark2,humanMark3;
+
+                                                marker = JSON.parse(floorplan);
+                                                //console.log("marker-- "+JSON.stringify(marker));
+                                                if (marker !== null && marker.length !== 0) {
+                                                for (i in marker) {
+                                                var marks = L.marker(marker[i].latlngs, marker[i].options).bindTooltip("<div><b>" + marker[i].popup + "</b></div>",{direction:'top'});
+
+                                                maps[indexs].addLayer(marks);
+
+                                                }
+                                                } else {
+                                                marker = [];
+                                                }
+                                    div.tab-pane.active(id='outdoor')
+                                        #googleMapTracking(style='width:100%;height:400px;')
+                                    
+                          .row
+                              .col-md-12
+                                // form date pickers
+                                .x_panel
+                                  .x_title
+                                    h2 时间轴
+                                    ul.nav.navbar-right.panel_toolbox
+                                    .clearfix
+                                  .x_content(style='overflow: auto')
+                                    p
+                                      #wizard.form_wizard.wizard_horizontal
+                                        ul#wizard_steps.wizard_steps
+                                         
+                                        
+
+                                    //.well
+                                      form.form-horizontal
+                                        fieldset
+                                          .control-group(style='width: 264px')
+                                            label#Label1(style='width: 40px') Date :
+                                            input(type='date')
+                                          .x_content
+                                            .row.grid_slider
+                                              .col-md-12.col-sm-6.col-xs-12
+                                                input#range_31(type='text', value='', name='range')
+// /page content
+
+

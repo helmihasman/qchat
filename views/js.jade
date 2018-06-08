@@ -51,6 +51,7 @@ script(src='../../../gentelella/vendors/jszip/dist/jszip.min.js')
 script(src='../../../gentelella/vendors/pdfmake/build/pdfmake.min.js')
 script(src='../../../gentelella/vendors/pdfmake/build/vfs_fonts.js')
 
+
 script(src='gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js')
 
 script(type='text/javascript').
@@ -204,6 +205,8 @@ script.
     
 script.
     var marker_g = [];
+    var infowindow = [];
+    var contentString = [];
     var trackingMap = function() {
         
     //if (navigator.geolocation) {
@@ -211,8 +214,33 @@ script.
             var data = "#{data}".replace(/&quot;/g, '"');
             var company = "#{company}".replace(/&quot;/g, '"');
             data_p = JSON.parse(data);
+            //comp_p = JSON.parse(company);
+            //var mystring = comp_p[0].company_location.replace('(','');
             comp_p = JSON.parse(company);
-            var mystring = comp_p[0].company_location.replace('(','');
+            
+            map_g = new google.maps.Map(document.getElementById('googleMapTracking'), {
+                center: {
+                    //lat: position.coords.latitude,
+                    //lng: position.coords.longitude
+                    lat: 23.1253491,
+                    lng: 112.9469622
+                },
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
+            });
+            
+            var infowindow2 = new google.maps.InfoWindow({
+                    content: contentString,
+                    maxWidth: 320 
+                  });
+            var infoWindow = new google.maps.InfoWindow({maxWidth: 250});
+            
+            var marker_b = [];
+            var contentString2 = [];
+            
+            for(var pp=0;pp<comp_p.length;pp++){
+            var mystring = comp_p[pp].building_location.replace('(','');
             mystring = mystring.replace(')','');
             var splitstr = mystring.split(',');
             var latt,lonn;
@@ -231,44 +259,100 @@ script.
                 lonn = parseFloat(splitstr[1]);
             }
             
-            map_g = new google.maps.Map(document.getElementById('googleMapTracking'), {
-                center: {
-                    //lat: position.coords.latitude,
-                    //lng: position.coords.longitude
-                    lat: latt,
-                    lng: lonn
-                },
-                zoom: 10,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                mapTypeControl: false
-            });
+
+                contentString2[pp] = '<ul class="list-unstyled">'+
+                        '<li class="media event">'+
+                            '<a class="pull-left border-aero profile_thumb">'+
+                              '<i class="fa fa-building aero"></i>'+
+                            '</a>'+
+                            '<div class="media-body">'+
+                              '<a class="title" href="#">'+comp_p[pp].building_name+'</a>'+
+                              '<p><b>地址:</b> '+comp_p[pp].building_add+'</p>'+
+                            '</div>'+
+                          '</li></ul>';
+                
                 var myLatLng = {lat: parseFloat(splitstr[0]), lng: parseFloat(splitstr[1])};
-                var marker = new google.maps.Marker({
+                marker_b[pp] = new google.maps.Marker({
                     position: myLatLng,
                     icon: '/images/skyline.png',
                     map: map_g,
-                    title: 'test',
-                    label: comp_p[0].company_name,
+                    label: comp_p[pp].building_name
                     });
-                
-                marker.setMap(map_g); 
+                    
+                    google.maps.event.addListener(marker_b[pp], 'click', (function(marker, pp) {
+                    return function() {
+                        infoWindow.setContent(contentString2[pp]);
+                        infoWindow.open(map_g, marker_b[pp]);
+                    }
+                })(marker_b[pp], pp));
+               
+                marker_b[pp].setMap(map_g); 
+            }
             
-              
-
+            var contentString = [];
             for(var i=0;i<data_p.length;i++){
+                var d = new Date(data_p[i].employee_time);
+            //    d.setMinutes(d.getMinutes()+480);
+                d.setMinutes(d.getMinutes()-480);
+                var ddate = d.getDate();
+                var dmonth = d.getMonth()+1;
+                var dyear = d.getFullYear();
+                var dhour = d.getHours();
+                var dminutes = d.getMinutes();
+                var dseconds = d.getSeconds();
+
+
+                if(ddate < 10){
+                    ddate = "0"+ddate;
+                }
+                if(dmonth < 10){
+                    dmonth = "0"+dmonth;
+                }
+
+                if(dhour < 10){
+                    dhour = "0"+dhour;
+                }
+                if(dminutes < 10){
+                    dminutes = "0"+dminutes;
+                }
+                if(dseconds < 10){
+                    dseconds = "0"+dseconds;
+                }
+
+                var newdate;
+                newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
                 var partsOfStr = data_p[i].employee_gps.split(',');
                 //alert(partsOfStr);
+                contentString[i] = '<ul class="list-unstyled">'+
+                        '<li class="media event">'+
+                            '<a class="pull-left">'+
+                              '<img src="/'+data_p[i].employee_image+'" height="40" width="40">'+
+                            '</a>'+
+                            '<div class="media-body">'+
+                              '<a class="title" href="#">'+data_p[i].employee_name+'</a>'+
+                              '<p>最后的位置: '+newdate+'</p>'+
+                              '</p>'+
+                            '</div>'+
+                          '</li></ul>';
+                
                 var myLatLng = {lat: parseFloat(partsOfStr[1]), lng: parseFloat(partsOfStr[0])};
                 //alert(myLatLng);
                 marker_g[i] = new google.maps.Marker({
                     position: myLatLng,
                     icon: '/images/man2_1.png',
                     map: map_g,
-                    title: 'test',
-                    label: data_p[i].employee_name,
+                    label: data_p[i].employee_name
                     });
+
+                   google.maps.event.addListener(marker_g[i], 'click', (function(marker, i) {
+                    return function() {
+                        infoWindow.setContent(contentString[i]);
+                        infoWindow.open(map_g, marker_g[i]);
+                    }
+                })(marker_g[i], i));
                 
-                marker_g[i].setMap(map_g);    
+                marker_g[i].setMap(map_g); 
+                
             }
             //map_g.data.setControls(['Polygon']);
             
@@ -440,7 +524,7 @@ script.
 
                     //reload 
                     localStorage.setItem('geoData', JSON.stringify(data));
-                    initControls(data);  
+                    initControls(data);
                     loadPolygons(map_k);   
                 };
             }
@@ -721,8 +805,7 @@ script.
                             }
                             else{
                                 polyname = json.features[i].geometry.polyname;
-                        }
-                        
+                            }
                         
                         //json.features[i].geometry.polyname = data.features[i].geometry.polyname;
                         
@@ -743,7 +826,6 @@ script.
             
             function initControls(data)
             {
-                
                 var sel = document.getElementById('polyList');
                 sel.options.length = 0;
                 console.log("savepolygon22-- "+JSON.stringify(data));
@@ -780,7 +862,8 @@ script.
        
        for(var l=0;l<maps.length;l++){
            maps[l].eachLayer(function (layer) {
-                maps[l].removeLayer(markers[l]);
+                //maps[l].removeLayer(markers[l]);
+                maps[l].removeLayer(marks[l]);
                 markers[l].clearLayers();
 
             });
@@ -1212,6 +1295,7 @@ script.
         var floors = rows.floors.replace(/&quot;/g, '"');
         for(var t=0;t<floor_plan.length;t++){
         var floorplan_list = [];
+        
         //markers[t] = new L.FeatureGroup();
         var floorplan_id = floor_plan[t].floorplan_id;
         var floorplan = floor_plan[t].markers;
@@ -1221,20 +1305,90 @@ script.
         var ff = JSON.parse(floorplan);
         floorplan_list.push(ff);
         marker = JSON.parse(floorplan);
-      for(var i=0;i<employees.length;i++){
-          
-        var num = employees[i].employee_id;
-        var name = employees[i].employee_name;
-        var loc = employees[i].employee_location;
+      for(var i=0;i<dd.length;i++){
+                var num = dd[i].employee_id.toString();
+                var name = dd[i].employee_name.toString();
+                var d = new Date(dd[i].path_datetime);
+                  //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
+                var ddate = d.getDate();
+                var dmonth = d.getMonth()+1;
+                var dyear = d.getFullYear();
+                var dhour = d.getHours();
+                var dminutes = d.getMinutes();
+                var dseconds = d.getSeconds();
+
+                if(ddate < 10){
+                    ddate = "0"+ddate;
+                }
+                if(dmonth < 10){
+                    dmonth = "0"+dmonth;
+                }
+
+                if(dhour < 10){
+                    dhour = "0"+dhour;
+                }
+                if(dminutes < 10){
+                    dminutes = "0"+dminutes;
+                }
+                if(dseconds < 10){
+                    dseconds = "0"+dseconds;
+                }
+
+                var mfloors = JSON.parse(floors);
+                mhuman = floorplan_list;
+
+                for(var j=0;j<maps.length;j++){
+                for (k in mhuman[j]) {
+                var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
+
+                var emp_loc_no = 0;
+                if(dd[i].employee_location === mhuman[j][k].popup){
+                emp_no++;
+                emp_loc_no++;
+                if (marker !== null && marker.length !== 0) {
+                    for (h in marker) {
+                    marks[i] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" 名员工)</div>",{direction:'top'});
+
+                    maps[t].addLayer(marks[i]);
+
+                    }
+                    } else {
+                    marker = [];
+                    }
+                }
+
+                }
+            }
+            }
+    
+    if(language === 'en'){
+    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" employee)";
+    }
+    else{
+    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";  
+    }
+    }
+    
+        for (var i = 0; i < marker_g.length; i++ ) {
+          marker_g[i].setMap(null);
+        }
+        marker_g.length = 0;
+
+
+    var infoWindow = new google.maps.InfoWindow({maxWidth: 250});
+    var contentString = [];
+    for(var i=0;i<employees.length;i++){
         var d = new Date(employees[i].employee_time);
-        
-          //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
+    //    d.setMinutes(d.getMinutes()+480);
+        d.setMinutes(d.getMinutes()-480);
         var ddate = d.getDate();
         var dmonth = d.getMonth()+1;
         var dyear = d.getFullYear();
         var dhour = d.getHours();
         var dminutes = d.getMinutes();
         var dseconds = d.getSeconds();
+        
+
         if(ddate < 10){
             ddate = "0"+ddate;
         }
@@ -1251,54 +1405,22 @@ script.
         if(dseconds < 10){
             dseconds = "0"+dseconds;
         }
-        var mfloors = JSON.parse(floors);
-        mhuman = floorplan_list;
-        //alert(JSON.stringify(mhuman));
-        for(var j=0;j<maps.length;j++){
-        for (k in mhuman[j]) {
-        var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
 
-        man = {
-            x: mhuman[j][k].latlngs.lat,
-            y: mhuman[j][k].latlngs.lng
-          };
-
-        human1 = L.divIcon({
-            className: 'checkpoint-pin',
-            html: '<img src="/images/man.png"/><p style="color:black;">'+dd[i].employee_name+' ('+newdate+')</p>',
-            iconSize: [15, 15],
-            iconAnchor: [10, 10]
-          });
-        if(employees[i].employee_location === mhuman[j][k].popup){
-             //alert(name+"--"+loc);
-              var marker = L.marker([man.x, man.y], {
-                icon: human1
-              });
-        emp_no++;
-        markers[t].addLayer(marker);
-
-        maps[t].addLayer(markers[t]);
-        }
-
-        }
-    }
-    }
-    
-    if(language === 'en'){
-    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" employee)";
-    }
-    else{
-    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";  
-    }
-    }
-    
-        for (var i = 0; i < marker_g.length; i++ ) {
-          marker_g[i].setMap(null);
-        }
-        marker_g.length = 0;
-
-
-    for(var i=0;i<employees.length;i++){
+        var newdate;
+        newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+        
+                contentString[i] = '<ul class="list-unstyled">'+ 
+                        '<li class="media event">'+
+                            '<a class="pull-left">'+
+                              '<img src="/'+employees[i].employee_image+'" height="40" width="40">'+
+                            '</a>'+
+                            '<div class="media-body">'+
+                              '<a class="title" href="#">'+employees[i].employee_name+'</a>'+
+                              '<p>最后的位置: '+newdate+'</p>'+
+                              '</p>'+
+                            '</div>'+
+                          '</li></ul>';
+                
                 var partsOfStr = employees[i].employee_gps.split(',');
                 var myLatLng = {lat: parseFloat(partsOfStr[1]), lng: parseFloat(partsOfStr[0])};
                 //alert(myLatLng);
@@ -1309,6 +1431,13 @@ script.
                     title: 'test',
                     label: employees[i].employee_name,
                     });
+                    
+                    google.maps.event.addListener(marker_g[i], 'click', (function(marker, i) {
+                    return function() {
+                        infoWindow.setContent(contentString[i]);
+                        infoWindow.open(map_g, marker_g[i]);
+                    }
+                })(marker, i));
                 
                 marker_g[i].setMap(map_g);
             }
@@ -1340,5 +1469,3 @@ script.
         xmlHttp.send( null );
         return xmlHttp.responseText;
     }
- 
-

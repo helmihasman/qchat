@@ -1,0 +1,27 @@
+extends base_company
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .row.x_title
+              .col-md-12
+                h2
+                 img(src='/images/building.png',height='35px',width='30px')
+                 | &nbsp;Region Management&nbsp;&nbsp; 
+                 
+              .col-md-12
+               for row, index in data
+                form.form-horizontal.form-label-left(role='form',method='post' action='/region/edit/#{row.region_id}')
+                    .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 Region Name &nbsp; : &nbsp;
+                        .col-md-3
+                          input(type='text', name='region_name',id='region_name',style='width:400px',value='#{row.region_name}')
+                    .form-group
+                        .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
+                          button.btn.btn-primary(type='submit',id="confirm_btn") 确认
+                          button.btn.btn-success(type='button',onclick='goBack();') 取消
+    // /page content
+

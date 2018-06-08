@@ -1,0 +1,52 @@
+extends base
+block content 
+    // page content
+    .right_col(role='main',style="background:#49a8ff")
+      // top tiles
+      .row
+        .col-md-12.col-sm-12.col-xs-12
+          .dashboard_graph
+            .f_content
+                    .col-xs-12
+                        ul.nav.nav-tabs.bar_tabs
+                          li
+                            a(href='/building_management') Building Management
+                          li
+                            a(href='/region_management') Region Management
+                          li
+                            a(href='/group_management') Group Management
+                          li.active
+                            a(href='/category_management') Category Management
+            .row.f_title
+              .col-md-6
+                h3
+                  img(src='/images/building.png',height='30px',width='25px')
+                  | &nbsp;Category List&nbsp;&nbsp;
+                  a.btn.btn-primary.btn-xs.btn-flata(href='/category_add')
+                      i.fa.fa-plus
+   
+              .col-md-12
+                table#datatable.table.table-striped.table-bordered
+                    thead
+                      tr
+                        th No
+                        th Category Name
+                        th Category Description
+                        th 
+                    tbody
+                      for row, index in data
+                        tr
+                          td #{index+1}
+                          td #{row.category_name}
+                          td #{row.category_desc}
+                          td
+                            div(style='display:inline-block')
+                                a(href='/category/edit/#{row.category_id}').btn.btn-sm.btn-primary
+                                        i.fa.fa-edit
+                             div(style='display:inline-block')
+                                a(href='/category/delete/#{row.category_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                        i.fa.fa-remove
+                            
+            .clearfix
+    // /page content
+

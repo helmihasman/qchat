@@ -1,4 +1,4 @@
-extends base_tracking
+extends base_tracking_2
 block content 
     .right_col(role='main', style='background-color:#49A8FF')
         .row
@@ -7,33 +7,56 @@ block content
                   .f_title
                      h3
                        img(src='images/tracking.png',height='35px',width='30px')
-                       | &nbsp;轨迹回放
+                       | &nbsp;Path Playback
                     .clearfix
                   .f_content
+                    .col-xs-12
+                        ul.nav.nav-tabs.bar_tabs
+                          li
+                            a(href='/tracking') Outdoor Tracking
+                          li
+                            a(href='/tracking_indoor') Indoor Tracking
+                          li
+                            a(href='/path_playback_outdoor') Outdoor Playback
+                          li.active
+                            a(href='/path_playback') Indoor Playback
                     div(role='tabpanel', data-example-id='togglable-tabs')
                           .row
                             // form input mask
                             .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 雇员列表
+                                  h2 Employee List
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
+                                  form.form-horizontal
+                                    fieldset
+                                      .control-group
+                                        .controls
+                                          label(for='start-date') Start Date:
+                                          .input-prepend.input-group
+                                            input#reservation-time.form-control(type='datetime-local', name='start-date', hint='Start Date')
+                                      .control-group
+                                        .controls
+                                          label(for='end-date') End Date:
+                                          .input-prepend.input-group
+                                            input#reservation-time.form-control(type='datetime-local', name='end-date', hint='End Date')
                                   #accordion.accordion(role='tablist', aria-multiselectable='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 中国电信
+                                        h4.panel-title China Telecom
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="doalert(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  button.btn.btn-primary(type='button') Submit
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 楼层地图
+                                  h2 Level Map
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -43,16 +66,14 @@ block content
                                     ul.nav.nav-tabs.tabs-left
                                       for row, index in floor_plan
                                         li
-                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}') #{row.floor_name} 楼层
-                                      li
-                                          a(href='#outdoor', data-toggle='tab') 户外
+                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}') #{row.floor_name} Floor
                                         
                                         
                                       
                             .col-md-9.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 地图
+                                  h2 Maps
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -65,7 +86,7 @@ block content
                                           
                                     for row, index in floor_plan
                                         if index === 0
-                                         div.tab-pane(id='home#{row.floorplan_id}')
+                                         div.tab-pane.active(id='home#{row.floorplan_id}')
                                             div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
                                             script(type='text/javascript').
 
@@ -98,8 +119,8 @@ block content
                                                   prefix: false
                                                 }).addAttribution('').addTo(maps[indexs]);
 
-                                                var w = 4500* 1.4,
-                                                h = 2843* 1.1,
+                                                var w = 5500* 1.4,
+                                                h = 2900* 1.1,
                                                 //url = '/images/floor_plan.jpg';
                                                 url = '/'+floorplan_img;
                                                 //alert("on k1");
@@ -165,8 +186,8 @@ block content
                                                   prefix: false
                                                 }).addAttribution('').addTo(maps[indexs]);
 
-                                                var w = 4500* 1.4,
-                                                h = 2843* 1.1,
+                                                var w = 5500* 1.4,
+                                                h = 2900* 1.1,
                                                 //url = '/images/floor_plan.jpg';
                                                 url = '/'+floorplan_img;
                                                 //alert("on k1");
@@ -196,15 +217,14 @@ block content
                                                 } else {
                                                 marker = [];
                                                 }
-                                    div.tab-pane.active(id='outdoor')
-                                        #googleMapTracking(style='width:100%;height:400px;')
+
                                     
                           .row
                               .col-md-12
                                 // form date pickers
                                 .x_panel
                                   .x_title
-                                    h2 时间轴
+                                    h2 Timeline
                                     ul.nav.navbar-right.panel_toolbox
                                     .clearfix
                                   .x_content(style='overflow: auto')

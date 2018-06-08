@@ -51,7 +51,10 @@ block content
                          img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
                       .media-body
                         a.title(href='#') #{row.document_remark}
-                        p #{row.beacon_location+" ("+row.beacon_level+")"}
+                        if row.beacon_location !== null
+                            p #{row.beacon_location+" ("+row.beacon_level+")"}
+                        else
+                            p #{row.document_location}
                 
                 article.media.event
                   #layer3.auto-style3-dash
@@ -80,7 +83,10 @@ block content
                          img.img-rectangle.profile_img(src='../images/text_document.png', alt='...', style='margin-left:10px', height='50', width='47')
                       .media-body
                         a.title(href='#') #{row.document_remark}
-                        p #{row.beacon_location+" ("+row.beacon_level+")"}
+                        if row.beacon_location !== null
+                            p #{row.beacon_location+" ("+row.beacon_level+")"}
+                        else
+                            p #{row.document_location}
                 
                 article.media.event
                   article.media.event
