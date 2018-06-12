@@ -4,24 +4,23 @@ block content
         .row
           #modal_btn(hidden='true')
           #modal_list
+          #testtt
           .col-md-12
                 .f_panel
                   .f_title
-                     h3
-                       img(src='images/tracking.png',height='35px',width='30px')
-                       | &nbsp;实时考勤
-                    .clearfix
-                  .f_content
                     .col-xs-12
                         ul.nav.nav-tabs.bar_tabs
                           li
                             a(href='/tracking') Outdoor Tracking
                           li.active
-                            a(href='/tracking_indoor') Indoor Tracking
+                            a(href='') Indoor Tracking
                           li
                             a(href='/path_playback_outdoor') Outdoor Playback
                           li
                             a(href='/path_playback') Indoor Playback
+                    .clearfix
+                  .f_content
+                    
                     div(role='tabpanel', data-example-id='togglable-tabs')
                           .row
                             // form input mask
@@ -70,6 +69,7 @@ block content
                                      var maps = [];
                                      var markers = [];
                                      var marks = [];
+                                     var marker_count = 0;
                                      var button="",modal="";
                                      var floors = "#{floors}".replace(/&quot;/g, '"');
                                           
@@ -95,8 +95,6 @@ block content
                                                 var dd,man;
 
                                                 maps.push(L.map(map_string, {minZoom: 0,maxZoom: 4,zoom: 0,center: [0, 0],crs: L.CRS.Simple,attributionControl: false}));
-
-                                                maps[indexs].invalidateSize();
 
                                                 var ff = JSON.parse(floorplan);
                                                 floorplan_list.push(ff);
@@ -135,98 +133,107 @@ block content
 
                                                 marker = JSON.parse(floorplan);
                                                 //alert("marker-- "+JSON.stringify(marker));
+                                                for(var j=0;j<maps.length;j++){
+                                                    if (marker !== null && marker.length !== 0) {
+                                                        for (h in marker) {
+                                                        marker_count++;
+                                                        modal += '<div class="modal fade" id="myModal'+marker[h].popup+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
+                                                                        '<div class="modal-dialog" role="document">'+
+                                                                          '<div class="modal-content">'+
+                                                                            '<div class="modal-header">'+
+                                                                              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+                                                                              '<h4 class="modal-title" id="myModalLabel'+marker[h].popup+'">Employee List (0 名员工)</h4>'+
+                                                                            '</div>'+
+                                                                            '<div class="modal-body">'+
+                                                                            '<ul class="list-unstyled">'+
+                                                                            '<div id="emp'+marker[h].popup+'"></div>'+
+                                                                            '</ul>'+
+                                                                            '</div>'+
+                                                                            '<div class="modal-footer">'+
+                                                                              '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+                                                                            '</div></div></div></div>';
+
+                                                        var checkpoint = L.divIcon({
+                                                              className: 'checkpoint-pin',
+                                                              html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal'+marker[h].popup+'">',
+                                                              iconSize: [20, 20],
+                                                              iconAnchor: [18, 30]
+                                                            });
+                                                        marks[marker_count] = L.marker(marker[h].latlngs, {icon:checkpoint});
+                                                        maps[indexs].addLayer(marks[marker_count]);
+
+                                                        }
+                                                        } else {
+                                                        marker = [];
+                                                        }
+                                                        }
+                                                        document.getElementById('modal_list').innerHTML = modal;
+                                                var content = '';
+                                                var emp_loc_no = 0;
                                                 
                                                 
-                                                    for(var i=0;i<dd.length;i++){
-                                                                var num = dd[i].employee_id.toString();
-                                                                var name = dd[i].employee_name.toString();
-                                                                var d = new Date(dd[i].employee_time);
-                                                                  //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
-                                                                var ddate = d.getDate();
-                                                                var dmonth = d.getMonth()+1;
-                                                                var dyear = d.getFullYear();
-                                                                var dhour = d.getHours();
-                                                                var dminutes = d.getMinutes();
-                                                                var dseconds = d.getSeconds();
+                                                for(var i=0;i<dd.length;i++){
+                                                    var num = dd[i].employee_id.toString();
+                                                    var name = dd[i].employee_name.toString();
+                                                    var d = new Date(dd[i].employee_time);
+                                                      //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
+                                                    var ddate = d.getDate();
+                                                    var dmonth = d.getMonth()+1;
+                                                    var dyear = d.getFullYear();
+                                                    var dhour = d.getHours();
+                                                    var dminutes = d.getMinutes();
+                                                    var dseconds = d.getSeconds();
 
-                                                                if(ddate < 10){
-                                                                    ddate = "0"+ddate;
-                                                                }
-                                                                if(dmonth < 10){
-                                                                    dmonth = "0"+dmonth;
-                                                                }
+                                                    if(ddate < 10){
+                                                        ddate = "0"+ddate;
+                                                    }
+                                                    if(dmonth < 10){
+                                                        dmonth = "0"+dmonth;
+                                                    }
 
-                                                                if(dhour < 10){
-                                                                    dhour = "0"+dhour;
-                                                                }
-                                                                if(dminutes < 10){
-                                                                    dminutes = "0"+dminutes;
-                                                                }
-                                                                if(dseconds < 10){
-                                                                    dseconds = "0"+dseconds;
-                                                                }
+                                                    if(dhour < 10){
+                                                        dhour = "0"+dhour;
+                                                    }
+                                                    if(dminutes < 10){
+                                                        dminutes = "0"+dminutes;
+                                                    }
+                                                    if(dseconds < 10){
+                                                        dseconds = "0"+dseconds;
+                                                    }
+                                                    var newtime = dyear+"/"+dmonth+"/"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+                                                    var mfloors = JSON.parse(floors);
+                                                    mhuman = floorplan_list;
+                                                    for(var j=0;j<maps.length;j++){
+                                                    for (k in mhuman[j]) {
+                                                    if(dd[i].employee_location === mhuman[j][k].popup){
+                                                    emp_no++;
+                                                    emp_loc_no++;
+                                                    var emp_location = 'emp'+dd[i].employee_location;
+                                                    var emp_title = 'myModalLabel'+dd[i].employee_location;
+                                                    
+                                                    content += '<li class="media event">'+
+                                                            '<a class="pull-left">'+
+                                                            '<img src="/'+dd[i].employee_image+'" height="40" width="40">'+
+                                                          '</a>'+
+                                                          '<div class="media-body">'+
+                                                            '<a class="title" href="#">'+dd[i].employee_name+'</a>'+
+                                                            '<p>最后的位置: '+newtime+'</p>'+
+                                                            '</p></li>';
+                                                    alert(emp_location+"--"+content+"--"+emp_loc_no);
+                                                    }
+                                                    
+                                                    }
+                                                    window.onload = function () {
+                                                        alert(emp_location+"--"+content+"--"+emp_loc_no);
+                                                        document.getElementById(emp_location).innerHTML = content;
+                                                        document.getElementById(emp_title).innerHTML = 'Employee List ('+emp_loc_no+' 名员工)'; 
+                                                    }   
+                                                }
+                                                }
 
-                                                                var mfloors = JSON.parse(floors);
-                                                                mhuman = floorplan_list;
-                                                                
-                                                                for(var j=0;j<maps.length;j++){
-                                                                for (k in mhuman[j]) {
-                                                                var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
-                                                                
-                                                                //alert("pop0=="+mhuman[j][k].popup);
-                                                                var emp_loc_no = 0;
-                                                                if(dd[i].employee_location === mhuman[j][k].popup){
-                                                                emp_no++;
-                                                                emp_loc_no++;
-                                                                if (marker !== null && marker.length !== 0) {
-                                                                    for (h in marker) {
-                                                                    
-                                                                    marks[h] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" 名员工)</div>",{direction:'top'});
-                                                                    button += '<button id="btn'+num+'" data-toggle="modal" data-target="#myModal'+num+'"></button>';
-                                                                    
-                                                                    modal += '<div class="modal fade" id="myModal'+num+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
-                                                                                        '<div class="modal-dialog" role="document">'+
-                                                                                          '<div class="modal-content">'+
-                                                                                            '<div class="modal-header">'+
-                                                                                              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                                                                                              '<h4 class="modal-title" id="myModalLabel">Employee List</h4>'+
-                                                                                            '</div>'+
-                                                                                            '<div class="modal-body">'+
-                                                                                              '<ul class="list-unstyled">'+
-                                                                                                    '<li class="media event">'+
-                                                                                                        '<a class="pull-left">'+
-                                                                                                          '<img src="/'+dd[i].employee_image+'" height="40" width="40">'+
-                                                                                                        '</a>'+
-                                                                                                        '<div class="media-body">'+
-                                                                                                          '<a class="title" href="#">'+dd[i].employee_name+'</a>'+
-                                                                                                          '<p>最后的位置: '+dd[i].employee_time+'</p>'+
-                                                                                                          '</p>'+
-                                                                                                        '</div>'+
-                                                                                                      '</li></ul>'+
-                                                                                            '</div>'+
-                                                                                            '<div class="modal-footer">'+
-                                                                                              '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                                                                                            '</div></div></div></div>';
-                                                                                    
-                                                                    document.getElementById('modal_btn').innerHTML = button;
-                                                                    document.getElementById('modal_list').innerHTML = modal;
-                                                                    marks[h].on('click', function(event) {
-                                                                        
-                                                                        var btn = document.getElementById("btn"+num);
-                                                                        btn.click();
-                                                                      });
-                                                                    maps[indexs].addLayer(marks[h]);
-
-                                                                    }
-                                                                    } else {
-                                                                    marker = [];
-                                                                    }
-                                                                }
-                                                                
-                                                                }
-                                                            }
-                                                            }
-                                                            document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";
+                                                maps[indexs].invalidateSize();
+                                                document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";
+                                                
                                                           
 
                                         else
@@ -234,6 +241,7 @@ block content
                                             div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
                                             script(type='text/javascript',src='/socket.io/socket.io.js')
                                             script(type='text/javascript').
+                                                
                                                 var floorplan_list = [];
                                                 var indexs = "#{index}";
                                                 markers[indexs] = new L.FeatureGroup();
@@ -244,15 +252,11 @@ block content
                                                 var emp_no = 0;
                                                 var emp_no_id = "no_emp"+floorplan_id;
                                                 
-                                                
-                                                
                                                 var map_string = 'image-map-dashboard'+floorplan_id;
 
                                                 var dd,man;
 
                                                 maps.push(L.map(map_string, {minZoom: 0,maxZoom: 4,zoom: 0,center: [0, 0],crs: L.CRS.Simple,attributionControl: false}));
-
-                                                maps[indexs].invalidateSize();
 
                                                 var ff = JSON.parse(floorplan);
                                                 floorplan_list.push(ff);
@@ -286,6 +290,7 @@ block content
 
                                                 // tell leaflet that the map is exactly as big as the image
                                                 maps[indexs].setMaxBounds(bounds);
+                                                setTimeout(function(){ maps[indexs].invalidateSize()}, 400);
 
                                                 //var humanMark1,humanMark2,humanMark3;
 
@@ -293,91 +298,104 @@ block content
                                                 //alert("marker1-- "+JSON.stringify(marker));
                                                  
                                                 
-                                                    for(var i=0;i<dd.length;i++){
-                                                                var num = dd[i].employee_id.toString();
-                                                                var name = dd[i].employee_name.toString();
-                                                                var d = new Date(dd[i].path_datetime);
-                                                                  //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
-                                                                var ddate = d.getDate();
-                                                                var dmonth = d.getMonth()+1;
-                                                                var dyear = d.getFullYear();
-                                                                var dhour = d.getHours();
-                                                                var dminutes = d.getMinutes();
-                                                                var dseconds = d.getSeconds();
+                                                for(var i=0;i<dd.length;i++){
+                                                            var num = dd[i].employee_id.toString();
+                                                            var name = dd[i].employee_name.toString();
+                                                            var d = new Date(dd[i].path_datetime);
+                                                              //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
+                                                            var ddate = d.getDate();
+                                                            var dmonth = d.getMonth()+1;
+                                                            var dyear = d.getFullYear();
+                                                            var dhour = d.getHours();
+                                                            var dminutes = d.getMinutes();
+                                                            var dseconds = d.getSeconds();
 
-                                                                if(ddate < 10){
-                                                                    ddate = "0"+ddate;
-                                                                }
-                                                                if(dmonth < 10){
-                                                                    dmonth = "0"+dmonth;
-                                                                }
+                                                            if(ddate < 10){
+                                                                ddate = "0"+ddate;
+                                                            }
+                                                            if(dmonth < 10){
+                                                                dmonth = "0"+dmonth;
+                                                            }
 
-                                                                if(dhour < 10){
-                                                                    dhour = "0"+dhour;
-                                                                }
-                                                                if(dminutes < 10){
-                                                                    dminutes = "0"+dminutes;
-                                                                }
-                                                                if(dseconds < 10){
-                                                                    dseconds = "0"+dseconds;
-                                                                }
-                                                                
-                                                                var mfloors = JSON.parse(floors);
-                                                                mhuman = floorplan_list;
-                                                                 
-                                                                for(var j=0;j<maps.length;j++){
-                                                                for (k in mhuman[j]) {
-                                                                var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
+                                                            if(dhour < 10){
+                                                                dhour = "0"+dhour;
+                                                            }
+                                                            if(dminutes < 10){
+                                                                dminutes = "0"+dminutes;
+                                                            }
+                                                            if(dseconds < 10){
+                                                                dseconds = "0"+dseconds;
+                                                            }
 
-                                                                var emp_loc_no = 0;
-                                                                if(dd[i].employee_location === mhuman[j][k].popup){
-                                                                emp_no++;
-                                                                emp_loc_no++;
-                                                                if (marker !== null && marker.length !== 0) {
-                                                                    for (h in marker) {
-                                                                    marks[h] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" 名员工)</div>",{direction:'top'});
-                                                                    button += '<button id="btn'+num+'" data-toggle="modal" data-target="#myModal'+num+'"></button>';
-                                                                        
-                                                                    modal += '<div class="modal fade" id="myModal'+num+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
-                                                                                        '<div class="modal-dialog" role="document">'+
-                                                                                          '<div class="modal-content">'+
-                                                                                            '<div class="modal-header">'+
-                                                                                              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                                                                                              '<h4 class="modal-title" id="myModalLabel">Employee List</h4>'+
-                                                                                            '</div>'+
-                                                                                            '<div class="modal-body">'+
-                                                                                              '<ul class="list-unstyled">'+
-                                                                                                    '<li class="media event">'+
-                                                                                                        '<a class="pull-left">'+
-                                                                                                          '<img src="/'+dd[i].employee_image+'" height="40" width="40">'+
-                                                                                                        '</a>'+
-                                                                                                        '<div class="media-body">'+
-                                                                                                          '<a class="title" href="#">'+dd[i].employee_name+'</a>'+
-                                                                                                          '<p>最后的位置: '+dd[i].employee_time+'</p>'+
-                                                                                                          '</p>'+
-                                                                                                        '</div>'+
-                                                                                                      '</li></ul>'+
-                                                                                            '</div>'+
-                                                                                            '<div class="modal-footer">'+
-                                                                                              '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                                                                                            '</div></div></div></div>';
-                                                                    document.getElementById('modal_btn').innerHTML = button;
-                                                                    document.getElementById('modal_list').innerHTML = modal;
-                                                                    marks[h].on('click', function(event) {
-                                                                        
-                                                                        var btn = document.getElementById("btn"+num);
-                                                                        btn.click();
-                                                                      });
-                                                                    maps[indexs].addLayer(marks[h]);
+                                                            var mfloors = JSON.parse(floors);
+                                                            mhuman = floorplan_list;
 
-                                                                    }
-                                                                    } else {
-                                                                    marker = [];
-                                                                    }
+                                                            for(var j=0;j<maps.length;j++){
+                                                            for (k in mhuman[j]) {
+                                                            var modals = '';
+                                                            var emp_loc_no = 0;
+                                                            if(dd[i].employee_location === mhuman[j][k].popup){
+                                                            emp_no++;
+                                                            emp_loc_no++;
+                                                            if (marker !== null && marker.length !== 0) {
+                                                                for (h in marker) {
+
+                                                                modal += '<div class="modal fade" id="myModal'+dd[i].employee_location+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
+                                                                                '<div class="modal-dialog" role="document">'+
+                                                                                  '<div class="modal-content">'+
+                                                                                    '<div class="modal-header">'+
+                                                                                      '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+                                                                                      '<h4 class="modal-title" id="myModalLabel">Employee List('+emp_loc_no+' 名员工)</h4>'+
+                                                                                    '</div>'+
+                                                                                    '<div class="modal-body">'+
+                                                                                      '<ul class="list-unstyled">'+
+                                                                                            '<li class="media event">'+
+                                                                                                '<a class="pull-left">'+
+                                                                                                  '<img src="/'+dd[i].employee_image+'" height="40" width="40">'+
+                                                                                                '</a>'+
+                                                                                                '<div class="media-body">'+
+                                                                                                  '<a class="title" href="#">'+dd[i].employee_name+'</a>'+
+                                                                                                  '<p>最后的位置: '+dd[i].employee_time+'</p>'+
+                                                                                                  '</p>'+
+                                                                                                '</div>'+
+                                                                                              '</li></ul>'+
+                                                                                    '</div>'+
+                                                                                    '<div class="modal-footer">'+
+                                                                                      '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+                                                                                    '</div></div></div></div>';
                                                                 }
-
+                                                                } else {
+                                                                marker = [];
                                                                 }
                                                             }
+
                                                             }
-                                                            document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";        
-                                                                             
+                                                        }
+                                                        }
+                                                        document.getElementById('modal_list').innerHTML = modal;
+
+                                                        for(var j=0;j<maps.length;j++){
+                                                            if (marker !== null && marker.length !== 0) {
+                                                                for (h in marker) {
+                                                                marker_count++;
+                                                                var checkpoint = L.divIcon({
+                                                                      className: 'checkpoint-pin',
+                                                                      html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal'+marker[h].popup+'">',
+                                                                      iconSize: [20, 20],
+                                                                      iconAnchor: [18, 30]
+                                                                    });
+
+
+                                                                marks[marker_count] = L.marker(marker[h].latlngs, {icon:checkpoint});
+
+
+                                                                maps[indexs].addLayer(marks[marker_count]);
+
+                                                                }
+                                                                } else {
+                                                                marker = [];
+                                                                }
+                                                        }
+                                                        maps[indexs].invalidateSize();
+                                                        document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";  
+                                 

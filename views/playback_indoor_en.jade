@@ -5,21 +5,19 @@ block content
           .col-md-12
                 .f_panel
                   .f_title
-                     h3
-                       img(src='images/tracking.png',height='35px',width='30px')
-                       | &nbsp;Path Playback
-                    .clearfix
-                  .f_content
                     .col-xs-12
                         ul.nav.nav-tabs.bar_tabs
                           li
                             a(href='/tracking') Outdoor Tracking
                           li
-                            a(href='/tracking_indoor') Indoor Tracking
+                            a(href='') Indoor Tracking
                           li
                             a(href='/path_playback_outdoor') Outdoor Playback
                           li.active
                             a(href='/path_playback') Indoor Playback
+                    .clearfix
+                  .f_content
+                    
                     div(role='tabpanel', data-example-id='togglable-tabs')
                           .row
                             // form input mask
@@ -31,28 +29,32 @@ block content
                                   .clearfix
                                 .x_content
                                   form.form-horizontal
-                                    fieldset
                                       .control-group
                                         .controls
                                           label(for='start-date') Start Date:
-                                          .input-prepend.input-group
-                                            input#reservation-time.form-control(type='datetime-local', name='start-date', hint='Start Date')
+                                            #datetimepicker1.input-group.date
+                                              input.form-control(type='text',id='time1')
+                                              span.input-group-addon
+                                                span.glyphicon.glyphicon-calendar
+
                                       .control-group
                                         .controls
                                           label(for='end-date') End Date:
-                                          .input-prepend.input-group
-                                            input#reservation-time.form-control(type='datetime-local', name='end-date', hint='End Date')
+                                            #datetimepicker2.input-group.date
+                                              input.form-control(type='text',id='time2')
+                                              span.input-group-addon
+                                                span.glyphicon.glyphicon-calendar
                                   #accordion.accordion(role='tablist', aria-multiselectable='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title China Telecom
+                                        h4.panel-title 中国电信
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="doalert(this)")
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onclick='checkBoxSingle(this)')
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  button.btn.btn-primary(type='button') Submit
+                                  button.btn.btn-primary(type='button',onclick='doalert()') Submit
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
@@ -72,10 +74,6 @@ block content
                                       
                             .col-md-9.col-sm-12.col-xs-12
                               .x_panel
-                                .x_title
-                                  h2 Maps
-                                  ul.nav.navbar-right.panel_toolbox
-                                  .clearfix
                                 .x_content
                                   .tab-content
                                     script(type='text/javascript').
@@ -219,18 +217,18 @@ block content
                                                 }
 
                                     
-                          .row
-                              .col-md-12
-                                // form date pickers
-                                .x_panel
-                                  .x_title
-                                    h2 Timeline
-                                    ul.nav.navbar-right.panel_toolbox
-                                    .clearfix
-                                  .x_content(style='overflow: auto')
-                                    p
-                                      #wizard.form_wizard.wizard_horizontal
-                                        ul#wizard_steps.wizard_steps
+                                    .row
+                                        .col-md-12
+                                          // form date pickers
+                                          .x_panel
+                                            .x_title
+                                              h2 Timeline
+                                              ul.nav.navbar-right.panel_toolbox
+                                              .clearfix
+                                            .x_content(style='overflow: auto')
+                                              p
+                                                #wizard.form_wizard.wizard_horizontal
+                                                  ul#wizard_steps.wizard_steps
                                          
                                         
 

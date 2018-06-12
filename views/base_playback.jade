@@ -1,0 +1,25 @@
+doctype html
+html
+    head
+        include header.jade
+     //body.nav-md(onload='runMaps()')
+    body.nav-sm(onload='playbackMap()')
+     div.container.body
+      div.main_container
+        if session.language === 'en'
+            if session.passport.user.employee_level === '2'
+                include navigation_user_en.jade
+            else if session.passport.user.employee_level === '1'
+                include navigation_en.jade
+            else if session.passport.user.employee_level === '0'
+                include navigation_en.jade
+        else if session.language === 'cn'
+            if session.passport.user.employee_level === '2'
+                include navigation_user.jade
+            else if session.passport.user.employee_level === '1'
+                include navigation.jade
+            else if session.passport.user.employee_level === '0'
+                include navigation.jade
+        block content
+        include footer.jade
+        include js.jade

@@ -51,6 +51,12 @@ script(src='../../../gentelella/vendors/jszip/dist/jszip.min.js')
 script(src='../../../gentelella/vendors/pdfmake/build/pdfmake.min.js')
 script(src='../../../gentelella/vendors/pdfmake/build/vfs_fonts.js')
 
+//date range picker
+script(src='https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js')
+link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css')
+
+
 
 script(src='gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js')
 
@@ -121,7 +127,16 @@ script.
         }
     } );
     } );
- 
+    
+script.
+  $(function () {
+  $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+  });
+   $(function () {
+  $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+  });
+
+
 script.
  function simcard_bind(){
     document.getElementById("sim_card").readOnly = false;
@@ -208,7 +223,7 @@ script.
     var infowindow = [];
     var contentString = [];
     var trackingMap = function() {
-        
+       
     //if (navigator.geolocation) {
         //navigator.geolocation.getCurrentPosition(function(position) {
             var data = "#{data}".replace(/&quot;/g, '"');
@@ -271,7 +286,7 @@ script.
                             '</div>'+
                           '</li></ul>';
                 
-                var myLatLng = {lat: parseFloat(splitstr[0]), lng: parseFloat(splitstr[1])};
+                var myLatLng = {lat: parseFloat(splitstr[0] - 0.00575), lng: parseFloat(splitstr[1] - 0.00668)};
                 marker_b[pp] = new google.maps.Marker({
                     position: myLatLng,
                     icon: '/images/skyline.png',
@@ -335,7 +350,7 @@ script.
                             '</div>'+
                           '</li></ul>';
                 
-                var myLatLng = {lat: parseFloat(partsOfStr[1]), lng: parseFloat(partsOfStr[0])};
+                var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
                 //alert(myLatLng);
                 marker_g[i] = new google.maps.Marker({
                     position: myLatLng,
@@ -355,6 +370,170 @@ script.
                 
             }
             //map_g.data.setControls(['Polygon']);
+            
+            bindDataLayerListeners(map_g.data);
+            
+            loadPolygons();  //load saved data
+            
+            function bindDataLayerListeners(dataLayer) {
+                dataLayer.addListener('addfeature', savePolygon);
+                dataLayer.addListener('removefeature', savePolygon);
+                //dataLayer.addListener('setgeometry', savePolygon);
+            }
+
+            
+
+        //});
+        function loadPolygons() {
+                //var data = JSON.parse(localStorage.getItem('geoData'));
+                var data = JSON.parse(document.getElementById("map_string_load").value) ;
+                //alert(data);
+                map_g.data.forEach(function (f) {
+                    map_g.data.remove(f);
+                });
+                  
+                map_g.data.addGeoJson(data);
+                //alert("load polygon");
+            }
+
+            function savePolygon() {
+                //console.log("mapp11-- "+map.data);
+                //alert("save polygon1");
+                //var polyname = prompt("Enter polygon name:", "");
+                 var coord;
+                 var features = [];
+                 //map.bindPopup("<div>This is a polygon</div>" + polygonPopUpButtons);
+                map_g.data.toGeoJson(function (json) {
+                    //alert("save name here");
+                    //json.features[0].geometry.polyname = "testname";
+                    //localStorage.setItem('geoData', JSON.stringify(json));
+                    for (var i = 0; i < json.features.length; i++) {
+                        console.log(json.features[i].geometry.coordinates);
+                        coord = json.features[i].geometry.coordinates;
+                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":"Area "+(i+1)},"properties":{}});
+                    }
+                    
+                    var jsonstring = {"type":"FeatureCollection","features":features};
+                    console.log("jsonstring-- "+JSON.stringify(jsonstring));
+                    localStorage.setItem('geoData', JSON.stringify(jsonstring));
+                    
+                    initControls(jsonstring);
+                });
+            }
+            
+            function initControls(data)
+            {
+                var sel = document.getElementById('polyList');
+                sel.options.length = 0;
+                console.log("savepolygon22-- "+JSON.stringify(data));
+
+                for (var i = 0; i < data.features.length; i++) {
+                    var opt = document.createElement('option');
+                    opt.innerHTML = data.features[i].geometry.polyname;
+                    opt.value = i;
+                    sel.appendChild(opt);
+                }
+
+                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
+                document.getElementById("btnDelete").onclick = function(){
+                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
+                    data.features.splice(parseInt(selIdx), 1);   
+
+                    //reload 
+                    localStorage.setItem('geoData', JSON.stringify(data));
+                    initControls(data);  
+                    loadPolygons(map_g);   
+                };
+            }
+
+        //}
+        };
+    
+script.
+    var marker_g = [];
+    var infowindow = [];
+    var contentString = [];
+    var playbackMap = function() {
+       
+    //if (navigator.geolocation) {
+        //navigator.geolocation.getCurrentPosition(function(position) {
+            var data = "#{data}".replace(/&quot;/g, '"');
+            var company = "#{company}".replace(/&quot;/g, '"');
+            data_p = JSON.parse(data);
+            //comp_p = JSON.parse(company);
+            //var mystring = comp_p[0].company_location.replace('(','');
+            comp_p = JSON.parse(company);
+            
+            map_g = new google.maps.Map(document.getElementById('googleMapPlayback'), {
+                center: {
+                    //lat: position.coords.latitude,
+                    //lng: position.coords.longitude
+                    lat: 23.1253491,
+                    lng: 112.9469622
+                },
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
+            });
+            
+            var infowindow2 = new google.maps.InfoWindow({
+                    content: contentString,
+                    maxWidth: 320 
+                  });
+            var infoWindow = new google.maps.InfoWindow({maxWidth: 250});
+            
+            var marker_b = [];
+            var contentString2 = [];
+            
+            for(var pp=0;pp<comp_p.length;pp++){
+            var mystring = comp_p[pp].building_location.replace('(','');
+            mystring = mystring.replace(')','');
+            var splitstr = mystring.split(',');
+            var latt,lonn;
+            
+            
+            if(splitstr[0] === ''){
+                latt = 23.1253491;
+            }
+            else{
+                latt = parseFloat(splitstr[0]);
+            }
+            if(splitstr[1] === '' || splitstr[1] === undefined || splitstr[1] === 'undefined'){
+                lonn = 112.9469622;
+            }
+            else{
+                lonn = parseFloat(splitstr[1]);
+            }
+
+                contentString2[pp] = '<ul class="list-unstyled">'+
+                        '<li class="media event">'+
+                            '<a class="pull-left border-aero profile_thumb">'+
+                              '<i class="fa fa-building aero"></i>'+
+                            '</a>'+
+                            '<div class="media-body">'+
+                              '<a class="title" href="#">'+comp_p[pp].building_name+'</a>'+
+                              '<p><b>地址:</b> '+comp_p[pp].building_add+'</p>'+
+                            '</div>'+
+                          '</li></ul>';
+                
+                var myLatLng = {lat: parseFloat(splitstr[0] - 0.00575), lng: parseFloat(splitstr[1] - 0.00668)};
+                marker_b[pp] = new google.maps.Marker({
+                    position: myLatLng,
+                    icon: '/images/skyline.png',
+                    map: map_g,
+                    label: comp_p[pp].building_name
+                    });
+                    
+                    google.maps.event.addListener(marker_b[pp], 'click', (function(marker, pp) {
+                    return function() {
+                        infoWindow.setContent(contentString2[pp]);
+                        infoWindow.open(map_g, marker_b[pp]);
+                    }
+                })(marker_b[pp], pp));
+               
+                marker_b[pp].setMap(map_g); 
+            }
+            
             
             bindDataLayerListeners(map_g.data);
             
@@ -534,7 +713,6 @@ script.
 
 script.
     var runMaps2 = function() {
-       
     //if (navigator.geolocation) {
         //navigator.geolocation.getCurrentPosition(function(position) {
             var data;
@@ -879,7 +1057,8 @@ script.
                //alert("2");
                if(maps[l].hasLayer(markers_play[l])){
                 maps[l].removeLayer(markers_play[l]);
-                markers_play[l].clearLayers();
+                //markers_play[l].clearLayers();
+                maps[l].removeLayer(polylines);
                }
                 //markers_play[l].clearLayers();
                
@@ -1139,26 +1318,47 @@ script.
       }
     
 script.
-    function doalert(checkboxElem) {
+    var checkboxValue = '';
+    
+    function setCheckboxValue(val){
+        checkboxValue = val;
+    }
+    
+    function getCheckboxValue(){
+        return checkboxValue;
+    }
+    function checkBoxSingle(checkboxElem){
         $('.subject-list').on('change', function() {
-            $('.subject-list').not(this).prop('checked', false);  
+            $('.subject-list').not(this).prop('checked', false);
         });
+        
+        setCheckboxValue(checkboxElem.value);
+    }
+script.
+    function doalert() {
+     
        var html='';
        var pointlist = [];
+       var polylines;
+       
+       
+       var time1 = document.getElementById('time1').value;
+       var time2 = document.getElementById("time2").value;
+       var emp_id = getCheckboxValue();
         
-        var positioning = JSON.parse(loadHistory());
+        var positioning = JSON.parse(loadHistoryNew(time1,time2,emp_id));
         var floorplan_a = JSON.parse(loadFloorPlan());
-        if (checkboxElem.checked) {
+         
+        if (emp_id !== null) {
             clearMapPlayback();
-            /*for(var g=0;g<floorplan_a.length;g++){
+            for(var g=0;g<floorplan_a.length;g++){
                 document.getElementById("wizard_steps").innerHTML = '';
-                clearMap();
+                clearMapPlayback();
                 pointlist = [];
                 //markers[h].clearLayers();
-
-        }*/
+                }
             
-            var emp_id = checkboxElem.value;
+            var emp_id = getCheckboxValue();
             
             for(var g=0;g<floorplan_a.length;g++){
                 var test = [];
@@ -1223,8 +1423,8 @@ script.
                           y: mhuman[j][k].latlngs.lng
                         };
 
-                      
-
+                      pointlist.push([man.x, man.y]);
+                      //alert(pointlist);
                     //alert(emp_id+"---"+dd[i].employee_id+"---"+mhuman[j][k].popup+"---"+dd[i].location_id);
                     if(positioning[i].location_id === mhuman[j][k].popup){   
                         test.push(mhuman[j][k].popup);
@@ -1264,6 +1464,15 @@ script.
                              markers_play[g].addLayer(marker);
                              maps[g].addLayer(markers_play[g]);
                 }
+                
+                
+                polylines = L.polyline(pointlist, {
+                                color: 'red',
+                                weight: 3,
+                                opacity: 0.5,
+                                smoothFactor: 1
+                            });
+                polylines.addTo(maps[g]);
             //}
             }
         } else {
@@ -1273,6 +1482,7 @@ script.
                 document.getElementById("wizard_steps").innerHTML = '';
                 clearMapPlayback();
                 pointlist = [];
+                maps[i].removeLayer(polylines);
                 //markers.clearLayers();
                 
             }
@@ -1283,6 +1493,97 @@ script.
     function onlyUnique(value, index, self) { 
         return self.indexOf(value) === index;
         }
+        
+script.
+    function playbackOutdoor() {
+       var html='';
+       var pointlist = [];
+       var polylines;
+       
+       
+       var time1 = document.getElementById('time1').value;
+       var time2 = document.getElementById("time2").value;
+       var emp_id = getCheckboxValue();
+      
+        var data_p = JSON.parse(loadHistoryGps(time1,time2,emp_id));
+         
+            var contentString = [];
+            var flightPlanCoordinates = [];
+            for(var i=0;i<data_p.length;i++){
+                var d = new Date(data_p[i].employee_time);
+            //    d.setMinutes(d.getMinutes()+480);
+                d.setMinutes(d.getMinutes()-480);
+                var ddate = d.getDate();
+                var dmonth = d.getMonth()+1;
+                var dyear = d.getFullYear();
+                var dhour = d.getHours();
+                var dminutes = d.getMinutes();
+                var dseconds = d.getSeconds();
+
+
+                if(ddate < 10){
+                    ddate = "0"+ddate;
+                }
+                if(dmonth < 10){
+                    dmonth = "0"+dmonth;
+                }
+
+                if(dhour < 10){
+                    dhour = "0"+dhour;
+                }
+                if(dminutes < 10){
+                    dminutes = "0"+dminutes;
+                }
+                if(dseconds < 10){
+                    dseconds = "0"+dseconds;
+                }
+
+                var newdate;
+                newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+                var partsOfStr = data_p[i].gps_loc.split(',');
+                //alert(partsOfStr);
+                contentString[i] = '<ul class="list-unstyled">'+
+                        '<li class="media event">'+
+                            '<a class="pull-left">'+
+                              '<img src="/'+data_p[i].employee_image+'" height="40" width="40">'+
+                            '</a>'+
+                            '<div class="media-body">'+
+                              '<a class="title" href="#">'+data_p[i].employee_name+'</a>'+
+                              '<p>最后的位置: '+newdate+'</p>'+
+                              '</p>'+
+                            '</div>'+
+                          '</li></ul>';
+                
+                var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
+                flightPlanCoordinates.push(new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668)))
+                //alert(myLatLng);
+                marker_g[i] = new google.maps.Marker({
+                    position: myLatLng,
+                    icon: '/images/man2_1.png',
+                    map: map_g,
+                    label: data_p[i].employee_name
+                    });
+
+                   google.maps.event.addListener(marker_g[i], 'click', (function(marker, i) {
+                    return function() {
+                        infoWindow.setContent(contentString[i]);
+                        infoWindow.open(map_g, marker_g[i]);
+                    }
+                })(marker_g[i], i));
+                
+                marker_g[i].setMap(map_g); 
+                
+            }
+            //map_g.data.setControls(['Polygon']);
+            var flightPath = new google.maps.Polyline({
+                path: flightPlanCoordinates,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+              });
+              
+            flightPath.setMap(map_g);
+      }
         
 script.
     var socket = io();
@@ -1422,7 +1723,7 @@ script.
                           '</li></ul>';
                 
                 var partsOfStr = employees[i].employee_gps.split(',');
-                var myLatLng = {lat: parseFloat(partsOfStr[1]), lng: parseFloat(partsOfStr[0])};
+                var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
                 //alert(myLatLng);
                 marker_g[i] = new google.maps.Marker({
                     position: myLatLng,
@@ -1469,3 +1770,21 @@ script.
         xmlHttp.send( null );
         return xmlHttp.responseText;
     }
+    
+    function loadHistoryNew(time1,time2,emp_id)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "/get_history/"+time1+"/"+time2+"/"+emp_id, false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+    
+    function loadHistoryGps(time1,time2,emp_id)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "/get_playback/"+time1+"/"+time2+"/"+emp_id, false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+    
+    
