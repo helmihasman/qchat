@@ -10,18 +10,18 @@ block content
                     .col-xs-12
                         ul.nav.nav-tabs.bar_tabs
                           li.active
-                            a(href='/building_management') Building Management
+                            a(href='/building_management') 建筑管理
                           li
-                            a(href='/region_management') Region Management
+                            a(href='/region_management') 区域管理
                           li
-                            a(href='/group_management') Group Management
+                            a(href='/group_management') 集团管理
                           li
-                            a(href='/category_management') Category Management
+                            a(href='/category_management') 分类管理
             .row.f_title
               .col-md-6
                 h3
                   img(src='/images/building.png',height='30px',width='25px')
-                  | &nbsp;Building List&nbsp;&nbsp;
+                  | &nbsp;建筑物清单&nbsp;&nbsp;
                   a.btn.btn-primary.btn-xs.btn-flata(href='/building_add')
                       i.fa.fa-plus
    
@@ -29,10 +29,10 @@ block content
                 table#datatable.table.table-striped.table-bordered
                     thead
                       tr
-                        th No
-                        th Building Name
-                        th Building Address
-                        th Building Location
+                        th 数
+                        th 建筑名称
+                        th 建筑地址
+                        th 建筑位置
                         th 
                     tbody
                       for row, index in data
@@ -46,7 +46,7 @@ block content
                                 a(href='/building/edit/#{row.building_id}').btn.btn-sm.btn-primary
                                         i.fa.fa-edit
                              div(style='display:inline-block')
-                                a(href='/building/delete/#{row.building_id}',onclick="return confirm('Are you sure you want to delete?');").btn.btn-sm.btn-danger
+                                a(href='/building/delete/#{row.building_id}',onclick="return confirm('你确定你要删除？');").btn.btn-sm.btn-danger
                                         i.fa.fa-remove
                             
             .clearfix

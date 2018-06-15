@@ -51,6 +51,8 @@ script(src='../../../gentelella/vendors/jszip/dist/jszip.min.js')
 script(src='../../../gentelella/vendors/pdfmake/build/pdfmake.min.js')
 script(src='../../../gentelella/vendors/pdfmake/build/vfs_fonts.js')
 
+script(src='../../../javascripts/MovingMarker.js')
+
 //date range picker
 script(src='https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js')
@@ -132,7 +134,7 @@ script.
   $(function () {
   $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
   });
-   $(function () {
+  $(function () {
   $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
   });
 
@@ -455,8 +457,7 @@ script.
     var contentString = [];
     var playbackMap = function() {
        
-    //if (navigator.geolocation) {
-        //navigator.geolocation.getCurrentPosition(function(position) {
+    
             var data = "#{data}".replace(/&quot;/g, '"');
             var company = "#{company}".replace(/&quot;/g, '"');
             data_p = JSON.parse(data);
@@ -1334,6 +1335,10 @@ script.
         
         setCheckboxValue(checkboxElem.value);
     }
+    
+    function activaTab(tab){
+    $('.nav-tabs a:first').tab('show')
+        };
 script.
     function doalert() {
      
@@ -1348,6 +1353,11 @@ script.
         
         var positioning = JSON.parse(loadHistoryNew(time1,time2,emp_id));
         var floorplan_a = JSON.parse(loadFloorPlan());
+        
+       
+        if(positioning.length === 0){
+            alert("没有找到记录!");
+        }
          
         if (emp_id !== null) {
             clearMapPlayback();
@@ -1367,6 +1377,7 @@ script.
                 var sorted = [];
                 var sorted_loc1 = [];
                 var sorted_loc2 = [];
+                var sorted_loc_list = [];
        
                 var floorplan_list = [];
                 var floorplan = floorplan_a[g].markers;
@@ -1438,6 +1449,7 @@ script.
                         html += '<li><a href="#step-1"><span class="step_no">'+positioning[i].location_id+'</span><span class="step_descr">'+positioning[i].employee_id+'<br/><small>'+newdate+'</small></span></a></li>';
                         document.getElementById(mfloors.floor[j].floor_id).click();
                         document.getElementById("wizard_steps").innerHTML = html; 
+                        sorted_loc_list.push([mhuman[j][k].latlngs.lat, mhuman[j][k].latlngs.lng]);
                         }
 
                     }
@@ -1454,25 +1466,31 @@ script.
                           iconSize: [20, 20],
                           iconAnchor: [10, 10]
                         });
+                var myIcon = L.icon({
+                    iconUrl: '/images/man.png',
+                    iconSize: [40, 40],
+                    iconAnchor: [10, 10]
+                  });
+
                         
             //alert("s="+sorted+" l1="+sorted_loc1+" l2="+sorted_loc2+" leh="+sorted.length);
-                  for(var gk=0;gk<sorted.length;gk++){
+                  /*for(var gk=0;gk<sorted.length;gk++){
                     var marker = L.marker([sorted_loc1[gk], sorted_loc2[gk]], {
                                 icon: human1
                               });
-                              
-                             markers_play[g].addLayer(marker);
-                             maps[g].addLayer(markers_play[g]);
-                }
+                             
+                             //markers_play[g].addLayer(marker);
+                             //maps[g].addLayer(markers_play[g]);
+                }*/
                 
+                //alert(sorted_loc_list);
+                var myMovingMarker = L.Marker.movingMarker(sorted_loc_list,[5000]);
+                myMovingMarker.options.icon = myIcon;
+                myMovingMarker.addTo(maps[g]);
                 
-                polylines = L.polyline(pointlist, {
-                                color: 'red',
-                                weight: 3,
-                                opacity: 0.5,
-                                smoothFactor: 1
-                            });
-                polylines.addTo(maps[g]);
+                myMovingMarker.start();
+                L.polyline(sorted_loc_list, {color: 'red'}).addTo(maps[g]);
+                
             //}
             }
         } else {
@@ -1506,6 +1524,10 @@ script.
        var emp_id = getCheckboxValue();
       
         var data_p = JSON.parse(loadHistoryGps(time1,time2,emp_id));
+        
+        if(data_p.length === 0){
+            alert("没有找到记录!");
+        }
          
             var contentString = [];
             var flightPlanCoordinates = [];
@@ -1773,6 +1795,8 @@ script.
     
     function loadHistoryNew(time1,time2,emp_id)
     {
+        time1 = time1+":00";
+        time2 = time2+":59";
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open( "GET", "/get_history/"+time1+"/"+time2+"/"+emp_id, false ); // false for synchronous request
         xmlHttp.send( null );

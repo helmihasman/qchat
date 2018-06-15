@@ -10,17 +10,17 @@ block content
               .col-md-12
                 h2
                  img(src='/images/system_admin.png',height='35px',width='30px')
-                 | &nbsp;Group Management&nbsp;&nbsp; 
+                 | &nbsp;集团管理&nbsp;&nbsp; 
                  
               .col-md-12
                for row, index in data
                 form.form-horizontal.form-label-left(role='form',method='post' action='/group/edit/#{row.group_id}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Group Name &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 团队名字 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='group_name',id='group_name',style='width:400px',value='#{row.group_name}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Group Description &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 团体简介 &nbsp; : &nbsp;
                         .col-md-3
                           textarea(rows='4', cols='50',name='group_desc',id='group_desc',style='width:400px')
                            | #{row.group_desc}

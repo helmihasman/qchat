@@ -5,7 +5,6 @@ block content
           .col-md-12
                 .f_panel
                   .f_title
-                    .col-xs-12
                         ul.nav.nav-tabs.bar_tabs
                           li.active
                             a(href='/tracking') Outdoor Tracking
@@ -165,7 +164,7 @@ block content
                                                                 if (marker !== null && marker.length !== 0) {
                                                                     for (h in marker) {
                                                                     
-                                                                    marks[h] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" 名员工)</div>",{direction:'top'});
+                                                                    marks[h] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" employee)</div>",{direction:'top'});
 
                                                                     maps[indexs].addLayer(marks[h]);
 
@@ -286,7 +285,7 @@ block content
                                                                 emp_loc_no++;
                                                                 if (marker !== null && marker.length !== 0) {
                                                                     for (h in marker) {
-                                                                    marks[h] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" 名员工)</div>",{direction:'top'});
+                                                                    marks[h] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" employee)</div>",{direction:'top'});
 
                                                                     maps[indexs].addLayer(marks[h]);
 

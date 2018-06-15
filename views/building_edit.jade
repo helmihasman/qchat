@@ -10,22 +10,22 @@ block content
               .col-md-12
                 h2
                  img(src='/images/system_admin.png',height='35px',width='30px')
-                 | &nbsp;Building Management&nbsp;&nbsp; 
+                 | &nbsp;建筑管理&nbsp;&nbsp; 
                  
               .col-md-12
                for row, index in data
                 form.form-horizontal.form-label-left(role='form',method='post' action='/building/edit/#{row.building_id}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Building Name &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 建筑名称 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='building_name',id='building_name',style='width:400px',value='#{row.building_name}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Building Address &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 建筑地址 &nbsp; : &nbsp;
                         .col-md-3
                           textarea(rows='4', cols='50',name='building_address',id='building_address',style='width:400px')
                            | #{row.building_add}
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Location &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 位置 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='location',id='location',style='width:400px',value='#{row.building_location}')
                     .form-group

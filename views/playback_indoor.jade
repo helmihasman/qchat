@@ -8,13 +8,13 @@ block content
                     .col-xs-12
                         ul.nav.nav-tabs.bar_tabs
                           li
-                            a(href='/tracking') Outdoor Tracking
+                            a(href='/tracking') 户外追踪
                           li
-                            a(href='') Indoor Tracking
+                            a(href='') 室内跟踪
                           li
-                            a(href='/path_playback_outdoor') Outdoor Playback
+                            a(href='/path_playback_outdoor') 户外播放
                           li.active
-                            a(href='/path_playback') Indoor Playback
+                            a(href='/path_playback') 室内播放
                     .clearfix
                   .f_content
                     
@@ -31,7 +31,7 @@ block content
                                   form.form-horizontal
                                       .control-group
                                         .controls
-                                          label(for='start-date') Start Date:
+                                          label(for='start-date') 开始日期:
                                             #datetimepicker1.input-group.date
                                               input.form-control(type='text',id='time1')
                                               span.input-group-addon
@@ -39,7 +39,7 @@ block content
 
                                       .control-group
                                         .controls
-                                          label(for='end-date') End Date:
+                                          label(for='end-date') 结束日期:
                                             #datetimepicker2.input-group.date
                                               input.form-control(type='text',id='time2')
                                               span.input-group-addon
@@ -47,14 +47,44 @@ block content
                                   #accordion.accordion(role='tablist', aria-multiselectable='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 中国电信
+                                        h4.panel-title 地区
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onclick='checkBoxSingle(this)')
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  button.btn.btn-primary(type='button',onclick='doalert()') Submit
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title 建造
+                                      #collapseTwo.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title 组
+                                      #collapse3.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title 类别
+                                      #collapse4.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  button.btn.btn-primary(type='button',onclick='doalert()') 递交
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title

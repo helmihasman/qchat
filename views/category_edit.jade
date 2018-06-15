@@ -10,17 +10,17 @@ block content
               .col-md-12
                 h2
                  img(src='/images/system_admin.png',height='35px',width='30px')
-                 | &nbsp;Category Management&nbsp;&nbsp; 
+                 | &nbsp;分类管理&nbsp;&nbsp; 
                  
               .col-md-12
                for row, index in data
                 form.form-horizontal.form-label-left(role='form',method='post' action='/category/edit/#{row.category_id}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Category Name &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 分类名称 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='category_name',id='category_name',style='width:400px',value='#{row.category_name}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Category Description &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 类别描述 &nbsp; : &nbsp;
                         .col-md-3
                           textarea(rows='4', cols='50',name='category_desc',id='category_desc',style='width:400px')
                            | #{row.category_desc}

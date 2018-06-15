@@ -2168,6 +2168,7 @@ app.get(deployPath +'/tracking_indoor',isAuthenticated,function(req,res,next){
         var employee,floor_plan,company,maps;
         var floors_id = [];
         var floors;
+        var markers = [];
 
         con.query("SELECT employee_id,employee_name,employee_image, employee_phone_no, employee_location, employee_time,employee_gps from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
            if(!!error){
@@ -2226,14 +2227,23 @@ app.get(deployPath +'/tracking_indoor',isAuthenticated,function(req,res,next){
                                         floor_plan = rows;
                                         for(var i=0;i<rows.length;i++){
                                             floors_id.push({floor_id:rows[i].floorplan_id});
+                                            
+                                            var marker = JSON.parse(rows[i].markers);
+                                            for(var jk=0;jk<marker.length;jk++){
+                                                markers.push({mark:marker[jk].popup});
+                                            }
+
                                         }
                                         floors = {floor:floors_id};
+                                        console.log(markers);
+                                        
+                                        
                              //           res.render('employee_management',{title:"Employee Management",data:rows});
                                          if(req.session.language === 'en'){
-                                             res.render('tracking_en_4_indoor',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps});
+                                             res.render('tracking_en_4_indoor',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,markers:markers});
                                          }
                                          else{
-                                             res.render('tracking_4_indoor',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps});
+                                             res.render('tracking_4_indoor',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,markers:markers});
                                          }
                                     }
                                 });

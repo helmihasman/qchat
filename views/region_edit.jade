@@ -10,13 +10,13 @@ block content
               .col-md-12
                 h2
                  img(src='/images/building.png',height='35px',width='30px')
-                 | &nbsp;Region Management&nbsp;&nbsp; 
+                 | &nbsp;区域管理&nbsp;&nbsp; 
                  
               .col-md-12
                for row, index in data
                 form.form-horizontal.form-label-left(role='form',method='post' action='/region/edit/#{row.region_id}')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Region Name &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 地区名称 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='region_name',id='region_name',style='width:400px',value='#{row.region_name}')
                     .form-group

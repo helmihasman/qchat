@@ -10,20 +10,20 @@ block content
               .col-md-12
                 h2
                  img(src='/images/system_admin.png',height='35px',width='30px')
-                 | &nbsp;Building Management&nbsp;&nbsp; 
+                 | &nbsp;建筑管理&nbsp;&nbsp; 
                  
               .col-md-12
                 form.form-horizontal.form-label-left(role='form',method='post' action='/building/add')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Building Name &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 建筑名称 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='building_name',id='building_name',style='width:400px')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Building Address &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 建筑地址 &nbsp; : &nbsp;
                         .col-md-3
                           textarea(rows='4', cols='50',name='building_add',id='building_add',style='width:400px')
                     .form-group
-                        label.control-label.col-md-3.col-sm-3.col-xs-12 Location &nbsp; : &nbsp;
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 位置 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='location',id='location',style='width:400px')
                     .form-group
@@ -33,7 +33,7 @@ block content
                           
                     .form-group
                         .col-md-9.col-sm-9.col-xs-12.col-md-offset-3
-                          button.btn.btn-primary(type='submit',id="confirm_btn") Confirm
-                          button.btn.btn-success(type='button',onclick='goBack();') Cancel
+                          button.btn.btn-primary(type='submit',id="confirm_btn") 确认
+                          button.btn.btn-success(type='button',onclick='goBack();') 取消
     // /page content
 

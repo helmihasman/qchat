@@ -24,7 +24,7 @@ block content
                             .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
-                                  h2 雇员列表
+                                  h2 Employee List
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -47,12 +47,42 @@ block content
                                   #accordion.accordion(role='tablist', aria-multiselectable='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 中国电信
+                                        h4.panel-title Region
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onclick='checkBoxSingle(this)')
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title Building
+                                      #collapseTwo.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title Group
+                                      #collapse3.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title Category
+                                      #collapse4.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
                                   button.btn.btn-primary(type='button',onclick='playbackOutdoor()') Submit
                               

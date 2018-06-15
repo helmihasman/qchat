@@ -2,22 +2,20 @@ extends base_tracking_2
 block content 
     .right_col(role='main', style='background-color:#49A8FF')
         .row
-          #modal_btn(hidden='true')
-          #modal_list
-          #testtt
+          
           .col-md-12
                 .f_panel
                   .f_title
                     .col-xs-12
                         ul.nav.nav-tabs.bar_tabs
                           li
-                            a(href='/tracking') Outdoor Tracking
+                            a(href='/tracking') 户外追踪
                           li.active
-                            a(href='') Indoor Tracking
+                            a(href='') 室内跟踪
                           li
-                            a(href='/path_playback_outdoor') Outdoor Playback
+                            a(href='/path_playback_outdoor') 户外播放
                           li
-                            a(href='/path_playback') Indoor Playback
+                            a(href='/path_playback') 室内播放
                     .clearfix
                   .f_content
                     
@@ -34,12 +32,39 @@ block content
                                   #accordion.accordion(role='tablist', aria-multiselectable='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 员工表
+                                        h4.panel-title 地区
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
-                                          //ul
-                                            //input(name='showall',id='showall',value='0',class="subject-list", type='checkbox',onchange="showAll(this)")
-                                            //| &nbsp;Show All
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title 建造
+                                      #collapseTwo.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title 组
+                                      #collapse3.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
+                                          for row, index in employee
+                                            ul
+                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
+                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                    .panel
+                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
+                                        h4.panel-title 类别
+                                      #collapse4.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
+                                        .panel-body
                                           for row, index in employee
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
@@ -80,6 +105,7 @@ block content
                                             script(type='text/javascript',src='/socket.io/socket.io.js')
                                             script(type='text/javascript').
                                                 var floorplan_list = [];
+                                                var emp_bil = [];
                                                 var indexs = "#{index}";
                                                 markers[indexs] = new L.FeatureGroup();
                                                 var floorplan_id = "#{row.floorplan_id}";
@@ -133,103 +159,41 @@ block content
 
                                                 marker = JSON.parse(floorplan);
                                                 //alert("marker-- "+JSON.stringify(marker));
-                                                for(var j=0;j<maps.length;j++){
+                                                
+                                                for(var j=0;j<1;j++){
                                                     if (marker !== null && marker.length !== 0) {
                                                         for (h in marker) {
                                                         marker_count++;
-                                                        modal += '<div class="modal fade" id="myModal'+marker[h].popup+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
-                                                                        '<div class="modal-dialog" role="document">'+
-                                                                          '<div class="modal-content">'+
-                                                                            '<div class="modal-header">'+
-                                                                              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                                                                              '<h4 class="modal-title" id="myModalLabel'+marker[h].popup+'">Employee List (0 名员工)</h4>'+
-                                                                            '</div>'+
-                                                                            '<div class="modal-body">'+
-                                                                            '<ul class="list-unstyled">'+
-                                                                            '<div id="emp'+marker[h].popup+'"></div>'+
-                                                                            '</ul>'+
-                                                                            '</div>'+
-                                                                            '<div class="modal-footer">'+
-                                                                              '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                                                                            '</div></div></div></div>';
+                                                        var emp_loc_no = 0;
+                                                        for(var i=0;i<dd.length;i++){
+                                                            if(dd[i].employee_location === marker[h].popup){
+                                                            emp_no++;
+                                                            emp_loc_no++;
+                                                            emp_bil[h] = emp_loc_no;
 
+                                                            }
+                                                            
+                                                        }
+                                                                                                                
                                                         var checkpoint = L.divIcon({
                                                               className: 'checkpoint-pin',
                                                               html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal'+marker[h].popup+'">',
                                                               iconSize: [20, 20],
                                                               iconAnchor: [18, 30]
                                                             });
-                                                        marks[marker_count] = L.marker(marker[h].latlngs, {icon:checkpoint});
-                                                        maps[indexs].addLayer(marks[marker_count]);
+                                                        var bill = 0;
+                                                        if(emp_bil[h] !== undefined){
+                                                            bill = emp_bil[h];
+                                                        }
+                                                        marks[h] = L.marker(marker[h].latlngs, {icon:checkpoint}).bindTooltip("<div><b>" + marker[h].popup + "</b>("+bill+" 名员工)</div>",{direction:'top'});
+                                                        maps[indexs].addLayer(marks[h]);
+                                                        emp_loc_no = 0;
 
                                                         }
                                                         } else {
                                                         marker = [];
                                                         }
                                                         }
-                                                        document.getElementById('modal_list').innerHTML = modal;
-                                                var content = '';
-                                                var emp_loc_no = 0;
-                                                
-                                                
-                                                for(var i=0;i<dd.length;i++){
-                                                    var num = dd[i].employee_id.toString();
-                                                    var name = dd[i].employee_name.toString();
-                                                    var d = new Date(dd[i].employee_time);
-                                                      //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
-                                                    var ddate = d.getDate();
-                                                    var dmonth = d.getMonth()+1;
-                                                    var dyear = d.getFullYear();
-                                                    var dhour = d.getHours();
-                                                    var dminutes = d.getMinutes();
-                                                    var dseconds = d.getSeconds();
-
-                                                    if(ddate < 10){
-                                                        ddate = "0"+ddate;
-                                                    }
-                                                    if(dmonth < 10){
-                                                        dmonth = "0"+dmonth;
-                                                    }
-
-                                                    if(dhour < 10){
-                                                        dhour = "0"+dhour;
-                                                    }
-                                                    if(dminutes < 10){
-                                                        dminutes = "0"+dminutes;
-                                                    }
-                                                    if(dseconds < 10){
-                                                        dseconds = "0"+dseconds;
-                                                    }
-                                                    var newtime = dyear+"/"+dmonth+"/"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
-                                                    var mfloors = JSON.parse(floors);
-                                                    mhuman = floorplan_list;
-                                                    for(var j=0;j<maps.length;j++){
-                                                    for (k in mhuman[j]) {
-                                                    if(dd[i].employee_location === mhuman[j][k].popup){
-                                                    emp_no++;
-                                                    emp_loc_no++;
-                                                    var emp_location = 'emp'+dd[i].employee_location;
-                                                    var emp_title = 'myModalLabel'+dd[i].employee_location;
-                                                    
-                                                    content += '<li class="media event">'+
-                                                            '<a class="pull-left">'+
-                                                            '<img src="/'+dd[i].employee_image+'" height="40" width="40">'+
-                                                          '</a>'+
-                                                          '<div class="media-body">'+
-                                                            '<a class="title" href="#">'+dd[i].employee_name+'</a>'+
-                                                            '<p>最后的位置: '+newtime+'</p>'+
-                                                            '</p></li>';
-                                                    alert(emp_location+"--"+content+"--"+emp_loc_no);
-                                                    }
-                                                    
-                                                    }
-                                                    window.onload = function () {
-                                                        alert(emp_location+"--"+content+"--"+emp_loc_no);
-                                                        document.getElementById(emp_location).innerHTML = content;
-                                                        document.getElementById(emp_title).innerHTML = 'Employee List ('+emp_loc_no+' 名员工)'; 
-                                                    }   
-                                                }
-                                                }
 
                                                 maps[indexs].invalidateSize();
                                                 document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";
@@ -241,8 +205,8 @@ block content
                                             div(id="image-map-dashboard#{row.floorplan_id}" style='height: 400px;margin: 0 auto 10px auto;border: 1px solid #ccc;background: #808080;')
                                             script(type='text/javascript',src='/socket.io/socket.io.js')
                                             script(type='text/javascript').
-                                                
                                                 var floorplan_list = [];
+                                                var emp_bil = [];
                                                 var indexs = "#{index}";
                                                 markers[indexs] = new L.FeatureGroup();
                                                 var floorplan_id = "#{row.floorplan_id}";
@@ -251,6 +215,7 @@ block content
                                                 var floorplan_img = "#{row.floorplan_img}";
                                                 var emp_no = 0;
                                                 var emp_no_id = "no_emp"+floorplan_id;
+                                                
                                                 
                                                 var map_string = 'image-map-dashboard'+floorplan_id;
 
@@ -290,112 +255,70 @@ block content
 
                                                 // tell leaflet that the map is exactly as big as the image
                                                 maps[indexs].setMaxBounds(bounds);
-                                                setTimeout(function(){ maps[indexs].invalidateSize()}, 400);
 
                                                 //var humanMark1,humanMark2,humanMark3;
 
                                                 marker = JSON.parse(floorplan);
-                                                //alert("marker1-- "+JSON.stringify(marker));
-                                                 
+                                                //alert("marker-- "+JSON.stringify(marker));
                                                 
-                                                for(var i=0;i<dd.length;i++){
-                                                            var num = dd[i].employee_id.toString();
-                                                            var name = dd[i].employee_name.toString();
-                                                            var d = new Date(dd[i].path_datetime);
-                                                              //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
-                                                            var ddate = d.getDate();
-                                                            var dmonth = d.getMonth()+1;
-                                                            var dyear = d.getFullYear();
-                                                            var dhour = d.getHours();
-                                                            var dminutes = d.getMinutes();
-                                                            var dseconds = d.getSeconds();
-
-                                                            if(ddate < 10){
-                                                                ddate = "0"+ddate;
-                                                            }
-                                                            if(dmonth < 10){
-                                                                dmonth = "0"+dmonth;
-                                                            }
-
-                                                            if(dhour < 10){
-                                                                dhour = "0"+dhour;
-                                                            }
-                                                            if(dminutes < 10){
-                                                                dminutes = "0"+dminutes;
-                                                            }
-                                                            if(dseconds < 10){
-                                                                dseconds = "0"+dseconds;
-                                                            }
-
-                                                            var mfloors = JSON.parse(floors);
-                                                            mhuman = floorplan_list;
-
-                                                            for(var j=0;j<maps.length;j++){
-                                                            for (k in mhuman[j]) {
-                                                            var modals = '';
-                                                            var emp_loc_no = 0;
-                                                            if(dd[i].employee_location === mhuman[j][k].popup){
+                                                for(var j=0;j<1;j++){
+                                                    if (marker !== null && marker.length !== 0) {
+                                                        for (h in marker) {
+                                                        marker_count++;
+                                                        var emp_loc_no = 0;
+                                                        for(var i=0;i<dd.length;i++){
+                                                            if(dd[i].employee_location === marker[h].popup){
                                                             emp_no++;
                                                             emp_loc_no++;
-                                                            if (marker !== null && marker.length !== 0) {
-                                                                for (h in marker) {
-
-                                                                modal += '<div class="modal fade" id="myModal'+dd[i].employee_location+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
-                                                                                '<div class="modal-dialog" role="document">'+
-                                                                                  '<div class="modal-content">'+
-                                                                                    '<div class="modal-header">'+
-                                                                                      '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                                                                                      '<h4 class="modal-title" id="myModalLabel">Employee List('+emp_loc_no+' 名员工)</h4>'+
-                                                                                    '</div>'+
-                                                                                    '<div class="modal-body">'+
-                                                                                      '<ul class="list-unstyled">'+
-                                                                                            '<li class="media event">'+
-                                                                                                '<a class="pull-left">'+
-                                                                                                  '<img src="/'+dd[i].employee_image+'" height="40" width="40">'+
-                                                                                                '</a>'+
-                                                                                                '<div class="media-body">'+
-                                                                                                  '<a class="title" href="#">'+dd[i].employee_name+'</a>'+
-                                                                                                  '<p>最后的位置: '+dd[i].employee_time+'</p>'+
-                                                                                                  '</p>'+
-                                                                                                '</div>'+
-                                                                                              '</li></ul>'+
-                                                                                    '</div>'+
-                                                                                    '<div class="modal-footer">'+
-                                                                                      '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                                                                                    '</div></div></div></div>';
-                                                                }
-                                                                } else {
-                                                                marker = [];
-                                                                }
-                                                            }
+                                                            emp_bil[h] = emp_loc_no;
 
                                                             }
+                                                            
+                                                        }
+                                                                                                                
+                                                        var checkpoint = L.divIcon({
+                                                              className: 'checkpoint-pin',
+                                                              html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal'+marker[h].popup+'">',
+                                                              iconSize: [20, 20],
+                                                              iconAnchor: [18, 30]
+                                                            });
+                                                            
+                                                        var bill = 0;
+                                                        if(emp_bil[h] !== undefined){
+                                                            bill = emp_bil[h];
+                                                        }
+                                                        marks[h] = L.marker(marker[h].latlngs, {icon:checkpoint}).bindTooltip("<div><b>" + marker[h].popup + "</b>("+bill+" 名员工)</div>",{direction:'top'});
+                                                        maps[indexs].addLayer(marks[h]);
+                                                        emp_loc_no = 0;
+
+                                                        }
+                                                        } else {
+                                                        marker = [];
                                                         }
                                                         }
-                                                        document.getElementById('modal_list').innerHTML = modal;
 
-                                                        for(var j=0;j<maps.length;j++){
-                                                            if (marker !== null && marker.length !== 0) {
-                                                                for (h in marker) {
-                                                                marker_count++;
-                                                                var checkpoint = L.divIcon({
-                                                                      className: 'checkpoint-pin',
-                                                                      html: '<img src="/images/placeholder.png" data-toggle="modal" data-target="#myModal'+marker[h].popup+'">',
-                                                                      iconSize: [20, 20],
-                                                                      iconAnchor: [18, 30]
-                                                                    });
+                                                maps[indexs].invalidateSize();
+                                                document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)"; 
+              
 
-
-                                                                marks[marker_count] = L.marker(marker[h].latlngs, {icon:checkpoint});
-
-
-                                                                maps[indexs].addLayer(marks[marker_count]);
-
-                                                                }
-                                                                } else {
-                                                                marker = [];
-                                                                }
-                                                        }
-                                                        maps[indexs].invalidateSize();
-                                                        document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";  
-                                 
+            for row, index in markers
+                .modal.fade(id="myModal#{row.mark}", tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
+                    .modal-dialog(role='document')
+                      .modal-content
+                        .modal-header
+                          button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') ×
+                          h4.modal-title(id="myModalLabel#{row.mark}") 员工名单
+                        .modal-body
+                          ul.list-unstyled
+                            for rows, index in employee
+                              if rows.employee_location === row.mark
+                                li.media.event
+                                    a.pull-left
+                                      img(src="/#{rows.employee_image}", height='40', width='40')
+                                    .media-body
+                                      a.title(href='#') #{rows.employee_name}
+                                      p 最后的位置: #{rows.employee_time.toLocaleString()}
+                        .modal-footer
+                          button.btn.btn-default(type='button', data-dismiss='modal') 关闭
+                
