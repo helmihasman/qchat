@@ -1487,9 +1487,12 @@ script.
                 var myMovingMarker = L.Marker.movingMarker(sorted_loc_list,[5000]);
                 myMovingMarker.options.icon = myIcon;
                 myMovingMarker.addTo(maps[g]);
-                
                 myMovingMarker.start();
                 L.polyline(sorted_loc_list, {color: 'red'}).addTo(maps[g]);
+                
+                document.getElementById("playIndoor").onclick = function(){
+                    myMovingMarker.start();
+                };
                 
             //}
             }
@@ -1579,7 +1582,7 @@ script.
                 var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
                 flightPlanCoordinates.push(new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668)))
                 //alert(myLatLng);
-                marker_g[i] = new google.maps.Marker({
+                /*marker_g[i] = new google.maps.Marker({
                     position: myLatLng,
                     icon: '/images/man2_1.png',
                     map: map_g,
@@ -1593,21 +1596,48 @@ script.
                     }
                 })(marker_g[i], i));
                 
-                marker_g[i].setMap(map_g); 
+                marker_g[i].setMap(map_g); */
                 
             }
             //map_g.data.setControls(['Polygon']);
+            
+            var lineSymbol = {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 5,
+                strokeColor: '#393'
+              };
+        
             var flightPath = new google.maps.Polyline({
                 path: flightPlanCoordinates,
-                strokeColor: "#FF0000",
-                strokeOpacity: 1.0,
-                strokeWeight: 2
+                icons: [{
+                    icon: lineSymbol,
+                    offset: '0%'
+                  }],
+                map: map_g
               });
               
-            flightPath.setMap(map_g);
+            //flightPath.setMap(map_g);
+            
+            document.getElementById("playButton").onclick = function(){
+                animateCircle(flightPath);
+                };
+            
+            
       }
         
 script.
+    function animateCircle(line) {
+          var count = 0;
+          window.setInterval(function() {
+            count = (count + 1) % 200;
+
+            var icons = line.get('icons');
+            icons[0].offset = (count / 2) + '%';
+            line.set('icons', icons);
+        }, 100);
+        
+      }
+      
     var socket = io();
     socket.on('tracking', function(rows) {
         var language = rows.language;

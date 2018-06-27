@@ -179,7 +179,7 @@ var con = mysql.createConnection({
  
 app.post(deployPath +"/login", passport.authenticate('local_qchat', {
     
-    successRedirect: deployPath +'/',
+    successRedirect: deployPath +'/tracking',
 
     failureRedirect: deployPath +'/login',
 

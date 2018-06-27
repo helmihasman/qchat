@@ -10,11 +10,13 @@ block content
                           li
                             a(href='/tracking') 户外追踪
                           li
-                            a(href='') 室内跟踪
+                            a(href='/tracking') 室内跟踪
                           li.active
                             a(href='/path_playback_outdoor') 户外播放
                           li
                             a(href='/path_playback') 室内播放
+                          li
+                            a(href='/geofencing') 地理围栏
                     .clearfix
                   .f_content
                     
@@ -25,6 +27,7 @@ block content
                               .x_panel
                                 .x_title
                                   h2 雇员列表
+                                   button#playButton.fa.fa-play
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -91,6 +94,7 @@ block content
                               .x_panel
                                 .x_content
                                   .tab-content
+                                    
                                     input(type='text', name='map_string_load',id='map_string_load',hidden,value='#{maps[0].map_string}')
                                     input(type='text', name='map_string',id='map_string',hidden,value='#{maps[0].map_string}')
                                     #panel-content
