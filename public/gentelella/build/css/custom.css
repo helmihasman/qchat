@@ -3,7 +3,7 @@
   background: #303030; }
 
 .nav-sm .container.body .col-md-3.left_col {
-  width: 70px;
+  width: 0px;
   padding: 0;
   z-index: 9999;
   position: absolute; }
@@ -21,7 +21,7 @@
 
 .nav-sm .container.body .right_col {
   padding: 10px 20px;
-  margin-left: 70px;
+  margin-left: 0px;
   z-index: 2; }
 
 .nav-sm .navbar.nav_title {
@@ -41,7 +41,7 @@
 
 .nav-sm .main_container .top_nav {
   display: block;
-  margin-left: 70px;
+  margin-left: 0px;
   z-index: 2; }
 
 .nav-sm .nav.side-menu li a {
@@ -335,7 +335,7 @@ body {
 
 .main_container .top_nav {
   display: block;
-  margin-left: 230px; }
+  margin-left: 0px; }
 
 .no-padding {
   padding: 0 !important; }
@@ -669,7 +669,7 @@ footer {
   footer {
     margin-left: 230px; } }
 .nav-sm footer {
-  margin-left: 70px; }
+  margin-left: 0px; }
 
 .footer_fixed footer {
   position: fixed;

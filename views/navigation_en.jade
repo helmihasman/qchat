@@ -6,10 +6,34 @@
         a#menu_toggle
           i.fa.fa-bars
       img(alt='', height='40', src='../images/word.png')
-      ul.nav.navbar-nav.navbar-right(style='height: 61px;width:243px; margin-left:0px')
-        li
+      ul.nav.navbar-nav.navbar-right(style='height: 61px;width:450px; margin-left:0px')
+        
+        li.dropdown(role='presentation')
+          a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
+            i.fa.fa-cog(alt='', title='Notification',onclick='notify_click()')
+            //span#notification-badge.badge.bg-red #{session.sum}
+          ul#menu1.dropdown-menu.msg_list(role='menu',style='width:200px')
+            li
               a(href='/profile/#{session.passport.user.employee_id}')
-                i.fa.fa-cog(alt='', title='Setting')
+                span.image
+                  img(src='../images/attendance.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;User Settings
+            li
+              a(href='/language/en')
+                i.fa.fa-language(alt='', title='Home')
+                span
+                  | &nbsp;&nbsp;EN
+            li
+              a(href='/language/cn')
+                i.fa.fa-language(alt='', title='Home')
+                span
+                  | &nbsp;&nbsp;中文
+            li
+              a(href='/logout')
+                i.fa.fa-power-off(alt='', title='Logout')
+                span
+                  | &nbsp;&nbsp;Logout
         li.dropdown(role='presentation')
           a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
             i.fa.fa-bell-o(alt='', title='Notification',onclick='notify_click()')
@@ -45,9 +69,67 @@
                   | Alert
                 span.time #{session.alert}
         li
-          a(href='/')
-            i.fa.fa-home(alt='', title='Home')
+          a(href='/tracking')
+            i.fa.fa-map-marker(alt='', title='Tracking')
+        li.dropdown(role='presentation')
+          a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
+            i.fa.fa-folder-open(alt='', title='Notification',onclick='notify_click()')
+            //span#notification-badge.badge.bg-red #{session.sum}
+          ul#menu1.dropdown-menu.msg_list(role='menu',style='width:200px')
+            li
+              a(href='/attendance')
+                span.image
+                  img(src='../images/attendance.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Attendance
+            li
+              a(href='/documents')
+                span.image
+                  img(src='../images/documents.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Documents
+            li
+              a(href='/alert')
+                span.image
+                  img(src='../images/alert.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Alerts
+        li.dropdown(role='presentation')
+          a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
+            i.fa.fa-user(alt='', title='Notification',onclick='notify_click()')
+            //span#notification-badge.badge.bg-red #{session.sum}
+          ul#menu1.dropdown-menu.msg_list(role='menu',style='width:200px')
+            li
+              a(href='/employee_management')
+                span.image
+                  img(src='../images/system_admin.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Employee Management
+            li
+              a(href='/route_management')
+                span.image
+                  img(src='../images/path_playback.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Route Management
+            li
+              a(href='/location')
+                span.image
+                  img(src='../images/tracking.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Location Management
+            li
+              a(href='/map_management')
+                span.image
+                  img(src='../images/map.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Map Management
+            li
+              a(href='/building_management')
+                span.image
+                  img(src='../images/building.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Settings
         li
-          a(href='language/en') EN
-        li
-          a(href='language/cn') 中文
+            a(href='/')
+              i.fa.fa-home(alt='', title='Home')    
+

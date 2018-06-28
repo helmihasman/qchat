@@ -3,29 +3,29 @@ html
     head
         include header.jade
      //body.nav-md(onload='runMaps()')
-    body.nav-md(onload='runMaps2()')
+    body.nav-sm(onload='runMaps2()')
      div.container.body
       div.main_container
         if session.language === 'en'
             if session.passport.user.employee_level === '2'
                 include navigation_user_en.jade
-                include sidebar_user_en.jade
+                //include sidebar_user_en.jade
             else if session.passport.user.employee_level === '1'
                 include navigation_en.jade
-                include sidebar_en.jade
+                //include sidebar_en.jade
             else if session.passport.user.employee_level === '0'
                 include navigation_en.jade
-                include sidebar_en.jade
+                //include sidebar_en.jade
         else if session.language === 'cn'
             if session.passport.user.employee_level === '2'
                 include navigation_user.jade
-                include sidebar_user.jade
+                //include sidebar_user.jade
             else if session.passport.user.employee_level === '1'
                 include navigation.jade
-                include sidebar.jade
+                //include sidebar.jade
             else if session.passport.user.employee_level === '0'
                 include navigation.jade
-                include sidebar.jade
+                //include sidebar.jade
         block content
         include footer.jade
         include js.jade

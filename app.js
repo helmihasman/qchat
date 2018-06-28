@@ -198,7 +198,7 @@ app.post(deployPath +"/login", passport.authenticate('local_qchat', {
 app.get(deployPath +'/language/:lan',isAuthenticated,function(req,res,next){
      var language = req.params.lan;
      req.session.language = language;
-     res.redirect('/');
+     res.redirect('/tracking');
     
    
 });
@@ -206,7 +206,7 @@ app.get(deployPath +'/language/:lan',isAuthenticated,function(req,res,next){
 app.get(deployPath +'/language/:lan',isAuthenticated,function(req,res,next){
      var language = req.params.lan;
      req.session.language = language;
-     res.redirect('/');
+     res.redirect('/tracking');
     
    
 });
