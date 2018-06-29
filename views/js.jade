@@ -1342,6 +1342,7 @@ script.
 script.
     function doalert() {
      
+       
        var html='';
        var pointlist = [];
        var polylines;
@@ -1491,7 +1492,9 @@ script.
                 L.polyline(sorted_loc_list, {color: 'red'}).addTo(maps[g]);
                 
                 document.getElementById("playIndoor").onclick = function(){
+                    alert("in 1");
                     myMovingMarker.start();
+                    alert("in 2");
                 };
                 
             //}
@@ -1600,7 +1603,8 @@ script.
                 
             }
             //map_g.data.setControls(['Polygon']);
-            
+            map_g.setZoom(10);
+            map_g.setCenter(flightPlanCoordinates[0]);
             var lineSymbol = {
                 path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
                 scale: 5,
@@ -1628,12 +1632,18 @@ script.
 script.
     function animateCircle(line) {
           var count = 0;
-          window.setInterval(function() {
+          var inter = setInterval(function() {
             count = (count + 1) % 200;
 
             var icons = line.get('icons');
-            icons[0].offset = (count / 2) + '%';
-            line.set('icons', icons);
+            var off = (count / 2) + '%';
+            if(off !== '0%'){
+                icons[0].offset = off;
+                line.set('icons', icons);
+            }
+            else{
+                clearInterval(inter);
+            }
         }, 100);
         
       }

@@ -14,10 +14,9 @@
           ul#menu1.dropdown-menu.msg_list(role='menu',style='width:200px')
             li
               a(href='/profile/#{session.passport.user.employee_id}')
-                span.image
-                  img(src='../images/attendance.png', alt='Profile Image')
+                i.fa.fa-user(alt='', title='Home')
                 span
-                  | &nbsp;&nbsp;User Settings
+                  | &nbsp;&nbsp;用户设置
             li
               a(href='/language/en')
                 i.fa.fa-language(alt='', title='Home')
