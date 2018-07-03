@@ -1051,39 +1051,85 @@ script.
     }
     
     function clearMapPlayback() {
+        //alert("nnn");
        for(var l=0;l<maps.length;l++){
-           maps[l].eachLayer(function (layer) {
+           //alert("kkk");
+          /* maps[l].eachLayer(function (layer) {
+               //alert("ll");
                //alert("1");
                //alert(maps[l].hasLayer(markers_play[l]));
                //alert("2");
-               if(maps[l].hasLayer(markers_play[l])){
-                maps[l].removeLayer(markers_play[l]);
+               /*maps[l].removeLayer();
+               if(maps[l].hasLayer(polylinesPlayback)){
+                   alert("has layer");
+                //maps[l].removeLayer(polylinesPlayback);
                 //markers_play[l].clearLayers();
-                maps[l].removeLayer(polylines);
+                //maps[l].removeLayer(polylinesPlayback);
+               }
+               else{
+                   alert("no layer");
                }
                 //markers_play[l].clearLayers();
-               
-               
+               //maps[l].removeLayer(polylinesPlayback); 
+               //maps[l].removeLayer(myMovingMarker);
+               alert(objToString(layer._map));
              
-            });
+            });*/
             
-        /*for(i in maps[l]._layers) {
-            if(maps[l]._layers[i]._path !== undefined) {
-                try {
-                    //alert("clean2 ");
-                    maps[l].removeLayer(maps[l]._layers[i]);
+        for(i in maps[l]._layers) {
+            //maps[l].removeLayer(myMovingMarker); 
+            //alert("maptoadd--"+maps[l]._layers[i].options.format);
+            //alert("map--"+maps[l]._layers[i]);
+            /*if(maps[l]._layers[i]._url !== undefined) {
+               try {
+                alert(objToString(maps[l]._layers[i]._icon);
                 }
-                catch(e) {
-                    console.log("problem with " + e + maps[l]._layers[i]);
+                catch(e){
+                    
                 }
-            }
-        }*/
+            }*/
+                
+               
+                //alert("af path");
+                if (maps[l]._layers[i]._durations == 5000 || maps[l]._layers[i]._path !== undefined) {
+                    try {
+                        //alert(objToString(maps[l]._layers[i]._durations));
+                        maps[l].removeLayer(maps[l]._layers[i]);
+                        
+                    } catch (e) {
+                        alert("problem with " + e + map._layers[i]);
+                    }
+                }
+                //alert("af dur");
+                
+                /*if (maps[l]._layers[i].options.format == undefined) {
+                    try {
+                        alert(objToString(maps[l]._layers[i]._durations));
+                        maps[l].removeLayer(maps[l]._layers[i]);
+                    } catch (e) {
+                        console.log("problem with " + e + map._layers[i]);
+                    }
+                }*/
+            
+            //maps[l].removeLayer(myMovingMarker);
+            
+        }
       }
     }
     
 script.
     function refresh() {
        window.location.reload();
+    }
+    
+    function objToString (obj) {
+    var str = '';
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            str += p + '::' + obj[p] + '\n';
+        }
+    }
+    return str;
     }
 
 script.
@@ -1340,13 +1386,14 @@ script.
     $('.nav-tabs a:first').tab('show')
         };
 script.
+    var myMovingMarker = {};
     function doalert() {
      
-       
+       //alert("1");
        var html='';
        var pointlist = [];
        var polylines;
-       
+       var polylinesPlayback;
        
        var time1 = document.getElementById('time1').value;
        var time2 = document.getElementById("time2").value;
@@ -1355,22 +1402,25 @@ script.
         var positioning = JSON.parse(loadHistoryNew(time1,time2,emp_id));
         var floorplan_a = JSON.parse(loadFloorPlan());
         
-       
+       //alert("2");
         if(positioning.length === 0){
             alert("没有找到记录!");
         }
          
         if (emp_id !== null) {
+            //alert("31");
             clearMapPlayback();
+            //alert("331");
             for(var g=0;g<floorplan_a.length;g++){
                 document.getElementById("wizard_steps").innerHTML = '';
+                //alert("41");
                 clearMapPlayback();
                 pointlist = [];
                 //markers[h].clearLayers();
                 }
             
-            var emp_id = getCheckboxValue();
             
+            //alert("5");
             for(var g=0;g<floorplan_a.length;g++){
                 var test = [];
                 var loc1 = [];
@@ -1385,11 +1435,11 @@ script.
                 var ff = JSON.parse(floorplan);
                 floorplan_list.push(ff);
                 marker = JSON.parse(floorplan);
-                
+                //alert("6");
                 
             for(var i=0;i<positioning.length;i++){
                 var num = positioning[i].employee_id.toString();
-                //alert("form 1-- "+emp_id);
+                //alert("7");
                   var d = new Date(positioning[i].path_datetime);
                   //d.setMinutes(d.getMinutes()+d.getTimezoneOffset());
                   var ddate = d.getDate();
@@ -1485,24 +1535,34 @@ script.
                 }*/
                 
                 //alert(sorted_loc_list);
-                var myMovingMarker = L.Marker.movingMarker(sorted_loc_list,[5000]);
+                //alert("8");
+                myMovingMarker = L.Marker.movingMarker(sorted_loc_list,[5000]);
                 myMovingMarker.options.icon = myIcon;
                 myMovingMarker.addTo(maps[g]);
                 myMovingMarker.start();
-                L.polyline(sorted_loc_list, {color: 'red'}).addTo(maps[g]);
-                
-                document.getElementById("playIndoor").onclick = function(){
-                    alert("in 1");
+                polylinesPlayback = L.polyline(sorted_loc_list, {color: 'red'});
+                polylinesPlayback.addTo(maps[g]);
+                 
+                //alert("9");
+                //document.getElementById("playIndoor").onclick = clickIndoor(myMovingMarker);
+                document.getElementById('playIndoor').addEventListener('click', function() {
+                    this.myMovingMarker.start();
+                    this.L.Marker.MovingMarker.clearLayers(this, maps[g]);
+                    //this.L.Marker.MovingMarker = null;
+                    }, false);
+                /*document.getElementById("playIndoor").onclick = function(myMovingMarker){
+                    alert(myMovingMarker);
                     myMovingMarker.start();
                     alert("in 2");
-                };
+                };*/
+                
                 
             //}
             }
         } else {
 
             for(var i=0;i<maps.length;i++){ 
-                
+                //alert("10");
                 document.getElementById("wizard_steps").innerHTML = '';
                 clearMapPlayback();
                 pointlist = [];
@@ -1516,6 +1576,27 @@ script.
       
     function onlyUnique(value, index, self) { 
         return self.indexOf(value) === index;
+        }
+        
+    function clickIndoor(sorted_loc_list,maps) {
+        
+        var myIcon = L.icon({
+                    iconUrl: '/images/man.png',
+                    iconSize: [40, 40],
+                    iconAnchor: [10, 10]
+                  });
+        alert("1");
+        var myMovingMarker = L.Marker.movingMarker(sorted_loc_list,[5000]);
+        alert("2");
+        myMovingMarker.options.icon = myIcon;
+        alert("3");
+        myMovingMarker.addTo(maps);
+        alert("4");
+        myMovingMarker.start();
+        alert("5");
+        L.polyline(sorted_loc_list, {color: 'red'}).addTo(maps);
+        alert("6");
+       
         }
         
 script.
