@@ -14,7 +14,7 @@ html
                 include navigation_en.jade
                 //include sidebar_en.jade
             else if session.passport.user.employee_level === '0'
-                include navigation_en.jade
+                include navigation_admin_en.jade
                 //include sidebar_admin_en.jade
         else if session.language === 'cn'
             if session.passport.user.employee_level === '2'
@@ -24,7 +24,7 @@ html
                 include navigation.jade
                 //include sidebar.jade
             else if session.passport.user.employee_level === '0'
-                include navigation.jade
+                include navigation_admin.jade
                 //include sidebar_admin.jade
 
         block content

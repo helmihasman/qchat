@@ -6,20 +6,34 @@
         a#menu_toggle
           i.fa.fa-bars
       img(alt='', height='40', src='../images/word.png')
-      ul.nav.navbar-nav.navbar-right(style='height: 61px;width:243px; margin-left:0px')
-        if session.passport.user.company_id === "0"
-            li
-              a(href='/company_management')
-                i.fa.fa-cog(alt='', title='Setting')
-        else
+      ul.nav.navbar-nav.navbar-right(style='height: 61px;width:450px; margin-left:0px')
+        
+        li.dropdown(role='presentation')
+          a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
+            i.fa.fa-cog(alt='', title='Notification',onclick='notify_click()')
+            //span#notification-badge.badge.bg-red #{session.sum}
+          ul#menu1.dropdown-menu.msg_list(role='menu',style='width:200px')
             li
               a(href='/profile/#{session.passport.user.employee_id}')
-                i.fa.fa-cog(alt='', title='Setting')
-        
+                i.fa.fa-user(alt='', title='Home')
+                span
+                  | &nbsp;&nbsp;User Settings
+            li
+              a(href='/language/en')
+                i.fa.fa-language(alt='', title='Home')
+                span
+                  | &nbsp;&nbsp;EN
+            li
+              a(href='/language/cn')
+                i.fa.fa-language(alt='', title='Home')
+                span
+                  | &nbsp;&nbsp;中文
+            li
+              a(href='/logout')
+                i.fa.fa-power-off(alt='', title='Logout')
+                span
+                  | &nbsp;&nbsp;Logout
         li
-          a(href='/')
-            i.fa.fa-home(alt='', title='Home')
-        li
-          a(href='language/en') EN
-        li
-          a(href='language/cn') 中文
+            a(href='/')
+              i.fa.fa-home(alt='', title='Home')    
+

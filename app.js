@@ -725,13 +725,25 @@ app.get(deployPath +'/building_management',isAuthenticated,function(req,res,next
 
 app.get(deployPath +'/building_add',isAuthenticated,function(req,res,next){
     
-   if(req.session.language === 'en'){
-       res.render('building_add_en',{title:"Add Building"});
-   }
-   else{
-       res.render('building_add',{title:"Add Building"});
-   }
-
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * from region where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            if(req.session.language === 'en'){
+                res.render('building_add_en',{title:"Add Building",data:rows});
+            }
+            else{
+                res.render('building_add',{title:"Add Building",data:rows});
+            }
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   }); 
+    
 });
 
 app.post(deployPath +'/building/add',isAuthenticated,function(req,res,next){
@@ -739,11 +751,11 @@ app.post(deployPath +'/building/add',isAuthenticated,function(req,res,next){
     v_building_name = req.sanitize( 'building_name' ); 
     v_building_add = req.sanitize( 'building_add' );
     v_location = req.sanitize( 'location' );
+    v_region = req.sanitize( 'region' );
     console.log("v_building_add---"+v_building_add);
     var company_id = req.session.passport.user.company_id;
-    v_building_add = v_building_add.toString().replace(/(\r\n\t|\n|\r\t)/gm,"");
     
-    con.query("INSERT INTO building(building_name,building_add,building_location,company_id) values ('"+v_building_name+"','"+v_building_add+"','"+v_location+"','"+company_id+"')",function(error,rows,fields){
+    con.query("INSERT INTO building(building_name,building_add,building_location,company_id,region_id) values ('"+v_building_name+"','"+v_building_add+"','"+v_location+"','"+company_id+"','"+v_region+"')",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query routeadd='+error);
                 }
@@ -781,19 +793,33 @@ app.get(deployPath +'/building/delete/:id',isAuthenticated,function(req,res,next
 
 app.get(deployPath +'/building/edit/:id',isAuthenticated,function(req,res,next){
     var building_id = req.params.id;
-    con.query("SELECT * FROM building where building_id='"+building_id+"'",function(error,rows,fields){
+    var building;
+    var company_id = req.session.passport.user.company_id;
+    con.query("SELECT * FROM building left join region on building.region_id = region.region_id where building.building_id='"+building_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
        else{
            //console.log('Successful query\n');
            //console.log(rows);
-            if(req.session.language === 'en'){
-                res.render('building_edit_en',{title:"Building",data:rows});
-            }
-            else{
-                res.render('building_edit',{title:"Building",data:rows});
-            }
+           building = rows;
+           con.query("SELECT * from region where company_id='"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                    }
+                    else{
+                        //console.log('Successful query\n');
+                        //console.log(rows);
+                         if(req.session.language === 'en'){
+                                res.render('building_edit_en',{title:"Building",data:building,region:rows});
+                            }
+                            else{
+                                res.render('building_edit',{title:"Building",data:building,region:rows});
+                            }
+             //           res.render('employee_management',{title:"Employee Management",data:rows});
+                    }
+                }); 
+            
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
    }); 
@@ -803,10 +829,11 @@ app.get(deployPath +'/building/edit/:id',isAuthenticated,function(req,res,next){
 app.post(deployPath +'/building/edit/:id',isAuthenticated,function(req,res,next){
     var building_id = req.params.id;
     v_building_name = req.sanitize( 'building_name' ); 
-    v_building_address = req.sanitize( 'building_address' );
+    v_building_address = req.sanitize( 'building_add' );
     v_location = req.sanitize( 'location' );
+    v_region = req.sanitize( 'region' );
     
-    con.query("UPDATE building set building_name='"+v_building_name+"',building_add='"+v_building_address+"',building_location='"+v_location+"' where building_id='"+building_id+"'",function(error,rows,fields){
+    con.query("UPDATE building set building_name='"+v_building_name+"',building_add='"+v_building_address+"',building_location='"+v_location+"',region_id='"+v_region+"' where building_id='"+building_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -4358,7 +4385,7 @@ app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
                             }
                             else{
                                     
-                                    con.query("UPDATE employee set employee_gps='"+location+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
+                                    con.query("UPDATE employee set employee_gps='"+location+"',employee_time='"+newdate+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
                                     if(!!error){
                                         console.log('Error in the query '+error);
                                         res.send(error);
@@ -4382,7 +4409,7 @@ app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
                             }
                             else{
                                 
-                                    con.query("UPDATE employee set employee_gps='"+location+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
+                                    con.query("UPDATE employee set employee_gps='"+location+"',employee_time='"+newdate+"' where employee_id='"+employee_id+"'",function(error,rows,fields){
                                     if(!!error){
                                         console.log('Error in the query '+error);
                                         res.send(error);

@@ -24,6 +24,14 @@ block content
                         .col-md-3
                           input(type='text',name='building_add',id='building_add',style='width:400px',value='#{row.building_add}')
                     .form-group
+                        label.control-label.col-md-3.col-sm-3.col-xs-12 地区 &nbsp; : &nbsp;
+                        .col-md-3
+                          select(id="region",name="region").col-sm-12
+                            option(value="#{row.region_id}") #{row.region_name}
+                            option(value="") ----------------------
+                            for row, index in region
+                              option(value="#{row.region_id}") #{row.region_name}
+                    .form-group
                         label.control-label.col-md-3.col-sm-3.col-xs-12 位置 &nbsp; : &nbsp;
                         .col-md-3
                           input(type='text', name='location',id='location',style='width:400px',value='#{row.building_location}')

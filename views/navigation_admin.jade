@@ -32,6 +32,25 @@
                 i.fa.fa-power-off(alt='', title='Logout')
                 span
                   | &nbsp;&nbsp;登出
+ 
+        li.dropdown(role='presentation')
+          a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
+            i.fa.fa-user(alt='', title='Notification',onclick='notify_click()')
+            //span#notification-badge.badge.bg-red #{session.sum}
+          ul#menu1.dropdown-menu.msg_list(role='menu',style='width:200px')
+            li
+              a(href='/employee_management')
+                span.image
+                  img(src='../images/system_admin.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;雇员管理
+            li
+              a(href='/company_management')
+                span.image
+                  img(src='../images/building.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;公司管理
+      
         li
             a(href='/')
               i.fa.fa-home(alt='', title='Home')

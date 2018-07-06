@@ -7,6 +7,7 @@
           i.fa.fa-bars
       img(alt='', height='40', src='../images/word.png')
       ul.nav.navbar-nav.navbar-right(style='height: 61px;width:450px; margin-left:0px')
+        
         li.dropdown(role='presentation')
           a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
             i.fa.fa-cog(alt='', title='Notification',onclick='notify_click()')
@@ -16,7 +17,7 @@
               a(href='/profile/#{session.passport.user.employee_id}')
                 i.fa.fa-user(alt='', title='Home')
                 span
-                  | &nbsp;&nbsp;用户设置
+                  | &nbsp;&nbsp;User Settings
             li
               a(href='/language/en')
                 i.fa.fa-language(alt='', title='Home')
@@ -31,7 +32,26 @@
               a(href='/logout')
                 i.fa.fa-power-off(alt='', title='Logout')
                 span
-                  | &nbsp;&nbsp;登出
+                  | &nbsp;&nbsp;Logout
+        li.dropdown(role='presentation')
+          a.dropdown-toggle.info-number(href='javascript:;', data-toggle='dropdown', aria-expanded='false', style='left: 0px; top: 0px')
+            i.fa.fa-user(alt='', title='Notification',onclick='notify_click()')
+            //span#notification-badge.badge.bg-red #{session.sum}
+          ul#menu1.dropdown-menu.msg_list(role='menu',style='width:200px')
+            li
+              a(href='/employee_management')
+                span.image
+                  img(src='../images/system_admin.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Employee Management
+            li
+              a(href='/company_management')
+                span.image
+                  img(src='../images/building.png', alt='Profile Image')
+                span
+                  | &nbsp;&nbsp;Company Management
+            
         li
             a(href='/')
-              i.fa.fa-home(alt='', title='Home')
+              i.fa.fa-home(alt='', title='Home')    
+
