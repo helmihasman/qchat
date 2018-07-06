@@ -22,8 +22,7 @@ block content
                     .form-group
                         label.control-label.col-md-3.col-sm-3.col-xs-12 建筑地址 &nbsp; : &nbsp;
                         .col-md-3
-                          textarea(rows='4', cols='50',name='building_address',id='building_address',style='width:400px')
-                           | #{row.building_add}
+                          input(type='text',name='building_add',id='building_add',style='width:400px',value='#{row.building_add}')
                     .form-group
                         label.control-label.col-md-3.col-sm-3.col-xs-12 位置 &nbsp; : &nbsp;
                         .col-md-3

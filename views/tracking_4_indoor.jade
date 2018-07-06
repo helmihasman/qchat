@@ -10,8 +10,7 @@ block content
                         ul.nav.nav-tabs.bar_tabs
                           li
                             a(href='/tracking') 户外追踪
-                          li.active
-                            a(href='/tracking') 室内跟踪
+                          
                           li
                             a(href='/path_playback_outdoor') 户外播放
                           li
@@ -25,6 +24,31 @@ block content
                           .row
                             // form input mask
                             .col-md-2.col-sm-12.col-xs-12
+                              .x_panel
+                                  a(href='javascript:goBack();')<-- 回到上一页
+                                
+                                    
+                              .x_panel
+                                .x_title
+                                  h2 显示表
+                                  ul.nav.navbar-right.panel_toolbox
+                                  .clearfix
+                                .x_content
+                                  .col-xs-12
+                                    // required for floating
+                                    // Nav tabs
+                                    ul.nav.nav-tabs.tabs-left
+                                      for row, index in floor_plan
+                                        if index === 0
+                                            li.active
+                                              a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}')
+                                                | #{row.floor_name} 楼层
+                                                label(id='no_emp#{row.floorplan_id}')
+                                        else
+                                            li
+                                              a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}')
+                                                | #{row.floor_name} 楼层
+                                                label(id='no_emp#{row.floorplan_id}')
                               .x_panel
                                 .x_title
                                   h2 雇员列表
@@ -72,21 +96,7 @@ block content
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
                                 .col-md-3.col-sm-12.col-xs-12
-                              .x_panel
-                                .x_title
-                                  h2 显示表
-                                  ul.nav.navbar-right.panel_toolbox
-                                  .clearfix
-                                .x_content
-                                  .col-xs-12
-                                    // required for floating
-                                    // Nav tabs
-                                    ul.nav.nav-tabs.tabs-left
-                                      for row, index in floor_plan
-                                        li
-                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}')
-                                            | #{row.floor_name} 楼层
-                                            label(id='no_emp#{row.floorplan_id}')
+                              
                                         
                                            
                             .col-md-10.col-sm-12.col-xs-12

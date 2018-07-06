@@ -739,8 +739,9 @@ app.post(deployPath +'/building/add',isAuthenticated,function(req,res,next){
     v_building_name = req.sanitize( 'building_name' ); 
     v_building_add = req.sanitize( 'building_add' );
     v_location = req.sanitize( 'location' );
+    console.log("v_building_add---"+v_building_add);
     var company_id = req.session.passport.user.company_id;
-    
+    v_building_add = v_building_add.toString().replace(/(\r\n\t|\n|\r\t)/gm,"");
     
     con.query("INSERT INTO building(building_name,building_add,building_location,company_id) values ('"+v_building_name+"','"+v_building_add+"','"+v_location+"','"+company_id+"')",function(error,rows,fields){
                 if(!!error){
@@ -1987,6 +1988,15 @@ app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
 //----------------------------PROFILE----------------------------
 
 app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
+    
+    var employee_level = req.session.passport.user.employee_level;
+    
+    if(employee_level === '0'){
+        res.redirect('/');
+    }
+    else if(employee_level === '2'){
+        res.redirect('/');
+    }
 
     var company_id = req.session.passport.user.company_id;
 
@@ -2087,6 +2097,7 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
                                         }
                                         floors = {floor:floors_id};
                              //           res.render('employee_management',{title:"Employee Management",data:rows});
+                                        //console.log(building);
                                          if(req.session.language === 'en'){
                                              res.render('tracking_en_4',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building});
                                          }
