@@ -482,6 +482,7 @@ app.get(deployPath +'/employee_management',isAuthenticated,function(req,res,next
 app.get(deployPath +'/employee_add',isAuthenticated,function(req,res,next){
     
     var company_id = req.session.passport.user.company_id;
+    var company;
     
     if(company_id === "0" || company_id === 0){
         
@@ -512,12 +513,25 @@ app.get(deployPath +'/employee_add',isAuthenticated,function(req,res,next){
            else{
                //console.log('Successful query\n');
                //console.log(rows);
-                if(req.session.language === 'en'){
-                    res.render('employee_add_en',{title:"Add Employee",data:rows});
-                }
-                else{
-                    res.render('employee_add',{title:"Add Employee",data:rows});
-                }
+               company = rows;
+               con.query("SELECT * FROM category where company_id ='"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                    }
+                    else{
+                        //console.log('Successful query\n');
+                        //console.log(rows);
+                         if(req.session.language === 'en'){
+                             res.render('employee_add_en',{title:"Add Employee",data:company,category:rows});
+                         }
+                         else{
+                             res.render('employee_add',{title:"Add Employee",data:company,category:rows});
+                         }
+             //           res.render('employee_management',{title:"Employee Management",data:rows});
+                    }
+                }); 
+       
+                
     //           res.render('employee_management',{title:"Employee Management",data:rows});
            }
        }); 
@@ -537,9 +551,10 @@ app.post(deployPath +'/employee/add',isAuthenticated,function(req,res,next){
     v_employee_password = req.sanitize( 'employee_password' );
     v_employee_level = req.sanitize( 'employee_level' );
     v_company_id = req.sanitize( 'company_id' );
+    v_category_id = req.sanitize( 'category_id' );
     
     
-    con.query("INSERT INTO employee(employee_name,employee_phone_no,employee_email,employee_motto,employee_address,employee_password,employee_level,company_id) values ('"+v_employee_name+"','"+v_employee_phone_no+"','"+v_employee_email+"','"+v_employee_motto+"','"+v_employee_address+"','"+v_employee_password+"','"+v_employee_level+"','"+v_company_id+"')",function(error,rows,fields){
+    con.query("INSERT INTO employee(employee_name,employee_phone_no,employee_email,employee_motto,employee_address,employee_password,employee_level,company_id,category_id) values ('"+v_employee_name+"','"+v_employee_phone_no+"','"+v_employee_email+"','"+v_employee_motto+"','"+v_employee_address+"','"+v_employee_password+"','"+v_employee_level+"','"+v_company_id+"','"+v_category_id+"')",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query routeadd='+error);
                 }
@@ -988,12 +1003,25 @@ app.get(deployPath +'/group_management',isAuthenticated,function(req,res,next){
 
 app.get(deployPath +'/group_add',isAuthenticated,function(req,res,next){
     
-   if(req.session.language === 'en'){
-       res.render('group_add_en',{title:"Add Group"});
-   }
-   else{
-       res.render('group_add',{title:"Add Group"});
-   }
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * from building where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            if(req.session.language === 'en'){
+                res.render('group_add_en',{title:"Add Group",data:rows});
+            }
+            else{
+                res.render('group_add',{title:"Add Group",data:rows});
+            }
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   });
+
 
 });
 
@@ -1001,10 +1029,11 @@ app.post(deployPath +'/group/add',isAuthenticated,function(req,res,next){
     
     v_group_name = req.sanitize( 'group_name' );
     v_group_desc = req.sanitize( 'group_desc' );
+    v_building = req.sanitize( 'building' );
     var company_id = req.session.passport.user.company_id;
     
     
-    con.query("INSERT INTO group_table(group_name,group_desc,company_id) values ('"+v_group_name+"','"+v_group_desc+"','"+company_id+"')",function(error,rows,fields){
+    con.query("INSERT INTO group_table(group_name,group_desc,company_id,building_id) values ('"+v_group_name+"','"+v_group_desc+"','"+company_id+"','"+v_building+"')",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query routeadd='+error);
                 }
@@ -1039,20 +1068,34 @@ app.get(deployPath +'/group/delete/:id',isAuthenticated,function(req,res,next){
 });
 
 app.get(deployPath +'/group/edit/:id',isAuthenticated,function(req,res,next){
+    var company_id = req.session.passport.user.company_id;
     var group_id = req.params.id;
-    con.query("SELECT * FROM group_table where group_id='"+group_id+"'",function(error,rows,fields){
+    var group;
+    con.query("SELECT * FROM group_table left join building on group_table.building_id = building.building_id where group_id='"+group_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
        else{
            //console.log('Successful query\n');
            //console.log(rows);
-            if(req.session.language === 'en'){
-                res.render('group_edit_en',{title:"Group",data:rows});
-            }
-            else{
-                res.render('group_edit',{title:"Group",data:rows});
-            }
+           group= rows;
+           con.query("SELECT * from building where company_id='"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                    }
+                    else{
+                        //console.log('Successful query\n');
+                        //console.log(rows);
+                         if(req.session.language === 'en'){
+                                res.render('group_edit_en',{title:"Group",data:group,building:rows});
+                            }
+                            else{
+                                res.render('group_edit',{title:"Group",data:group,building:rows});
+                            }
+             //           res.render('employee_management',{title:"Employee Management",data:rows});
+                    }
+                });
+            
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
    }); 
@@ -1106,12 +1149,26 @@ app.get(deployPath +'/category_management',isAuthenticated,function(req,res,next
 
 app.get(deployPath +'/category_add',isAuthenticated,function(req,res,next){
     
-   if(req.session.language === 'en'){
-       res.render('category_add_en',{title:"Add Category"});
-   }
-   else{
-       res.render('category_add',{title:"Add Category"});
-   }
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * from group_table where company_id='"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            if(req.session.language === 'en'){
+                res.render('category_add_en',{title:"Add Category",data:rows});
+            }
+            else{
+                res.render('category_add',{title:"Add Category",data:rows});
+            }
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   });
+    
+   
 
 });
 
@@ -1119,10 +1176,11 @@ app.post(deployPath +'/category/add',isAuthenticated,function(req,res,next){
     
     v_category_name = req.sanitize( 'category_name' );
     v_category_desc = req.sanitize( 'category_desc' );
+    v_group = req.sanitize( 'group' );
     var company_id = req.session.passport.user.company_id;
     
     
-    con.query("INSERT INTO category(category_name,category_desc,company_id) values ('"+v_category_name+"','"+v_category_desc+"','"+company_id+"')",function(error,rows,fields){
+    con.query("INSERT INTO category(category_name,category_desc,company_id,group_id) values ('"+v_category_name+"','"+v_category_desc+"','"+company_id+"','"+v_group+"')",function(error,rows,fields){
                 if(!!error){
                     console.log('Error in the query routeadd='+error);
                 }
@@ -1157,20 +1215,33 @@ app.get(deployPath +'/category/delete/:id',isAuthenticated,function(req,res,next
 });
 
 app.get(deployPath +'/category/edit/:id',isAuthenticated,function(req,res,next){
+    var company_id = req.session.passport.user.company_id;
     var category_id = req.params.id;
-    con.query("SELECT * FROM category where category_id='"+category_id+"'",function(error,rows,fields){
+    var category;
+    con.query("SELECT * FROM category left join group_table on category.group_id = group_table.group_id where category_id='"+category_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
        else{
            //console.log('Successful query\n');
            //console.log(rows);
-            if(req.session.language === 'en'){
-                res.render('category_edit_en',{title:"Category",data:rows});
-            }
-            else{
-                res.render('category_edit',{title:"Category",data:rows});
-            }
+           category=rows;
+           con.query("SELECT * from group_table where company_id='"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                    }
+                    else{
+                        //console.log('Successful query\n');
+                        //console.log(rows);
+                         if(req.session.language === 'en'){
+                                res.render('category_edit_en',{title:"Category",data:category,group:rows});
+                            }
+                            else{
+                                res.render('category_edit',{title:"Category",data:category,group:rows});
+                            }
+             //           res.render('employee_management',{title:"Employee Management",data:rows});
+                    }
+                });
 //           res.render('employee_management',{title:"Employee Management",data:rows});
        }
    }); 
@@ -1181,9 +1252,10 @@ app.post(deployPath +'/category/edit/:id',isAuthenticated,function(req,res,next)
     var category_id = req.params.id;
     v_category_name = req.sanitize( 'category_name' );
     v_category_desc = req.sanitize( 'category_desc' );
+    v_group = req.sanitize( 'group' );
     
     
-    con.query("UPDATE category set category_name='"+v_category_name+"',category_desc='"+v_category_desc+"' where category_id='"+category_id+"'",function(error,rows,fields){
+    con.query("UPDATE category set category_name='"+v_category_name+"',category_desc='"+v_category_desc+"',group_id='"+v_group+"' where category_id='"+category_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -1930,25 +2002,40 @@ app.get(deployPath +'/login',function(req,res,next){
 
 app.get(deployPath +'/profile/:users_id',isAuthenticated,function(req,res){
     var users_id = req.params.users_id;
-   con.query("SELECT * FROM employee WHERE employee_id = ?",[users_id],function(error,rows,fields){
+    var company_id = req.session.passport.user.company_id;
+    var user;
+    con.query("SELECT * FROM employee left join category on employee.category_id = category.category_id WHERE employee_id = ?",[users_id],function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
        else{
            //console.log('Successful query\n');
            //console.log(rows);
-           if(req.session.language === 'en'){
-               res.render('profile_en',{title:"Profile",data:rows});
-           }
-           else{
-               res.render('profile',{title:"Profile",data:rows});
-           }
+           user = rows;
+           con.query("SELECT * FROM category where company_id = '"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                    }
+                    else{
+                        //console.log('Successful query\n');
+                        //console.log(rows);
+                        if(req.session.language === 'en'){
+                            res.render('profile_en',{title:"Profile",data:user,category:rows});
+                        }
+                        else{
+                            res.render('profile',{title:"Profile",data:user,category:rows});
+                        }
+
+                    }
+                }); 
+           
            
        }
    }); 
 });
 
 app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
+    console.log("in heeee");
 //        var users_id = req.params.users_id;
         v_emp_id = req.sanitize( 'emp_id' );
         v_name = req.sanitize( 'name' ); 
@@ -1956,27 +2043,14 @@ app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
         v_sim_card = req.sanitize( 'sim_card' );
         v_email = req.sanitize( 'email' ).escape();
         v_password = req.sanitize( 'password' ).escape();
+        v_category = req.sanitize( 'category' );
+        console.log("v_category---"+v_category);
  
-        var users_info = {
-            employee_name: v_name,
-            employee_motto: v_motto,
-            employee_phone_no: v_sim_card,
-            employee_email : v_email,
-            employee_password : v_password
-        };
-   con.query("Update employee SET ? WHERE employee_id ="+v_emp_id,users_info,function(error,rows,fields){
+        
+   con.query("Update employee SET employee_name = '"+v_name+"',employee_motto = '"+v_motto+"',employee_phone_no = '"+v_sim_card+"',employee_email = '"+v_email+"',employee_password = '"+v_password+"',category_id = '"+v_category+"' where employee_id = '"+v_emp_id+"'",function(error,rows,fields){
             if(error)
                 {
-                    var errors_detail  = ("Error Insert : %s ",error );   
-                    //req.flash('msg_error', errors_detail); 
-                    res.render(deployPath +'/profile', 
-                    { 
-                        name: req.param('name'), 
-                        motto: req.param('motto'),
-                        sim_card: req.param('sim_card'),
-                        email: req.param('email'),
-                        password: req.param('password')
-                    });
+                    console.log('Error in the query '+error);
                 }else{
                     //req.flash('msg_info', 'Update profile success'); 
                     res.redirect(deployPath +'/profile/'+v_emp_id);
@@ -2167,9 +2241,10 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
     
 });
 
-app.get(deployPath +'/tracking_indoor',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/tracking_indoor/:id',isAuthenticated,function(req,res,next){
 
     var company_id = req.session.passport.user.company_id;
+    var building_id = req.params.id;
 
         var d = createDateAsUTC(new Date());
     //    d.setMinutes(d.getMinutes()+480);
@@ -2257,7 +2332,7 @@ app.get(deployPath +'/tracking_indoor',isAuthenticated,function(req,res,next){
                                 }
                                 
                                 
-                                con.query("SELECT * FROM floor_plan where company_id='"+company_id+"'",function(error,rows,fields){
+                                con.query("SELECT * FROM floor_plan where building_id='"+building_id+"' ",function(error,rows,fields){
                                     if(!!error){
                                         console.log('Error in the query'+error);
                                     }
@@ -3059,12 +3134,26 @@ app.get(deployPath +'/floor_plan_list',isAuthenticated,function(req,res,next){
 });
 
 app.get(deployPath +'/floor_plan',isAuthenticated,function(req,res,next){
-    if(req.session.language === 'en'){
-        res.render('floor_plan_en',{title:"Floor Plan"});
-    }
-    else{
-        res.render('floor_plan',{title:"Floor Plan"});
-    }
+    
+    var company_id = req.session.passport.user.company_id;
+    
+    con.query("SELECT * FROM building where company_id = '"+company_id+"'",function(error,rows,fields){
+       if(!!error){
+           console.log('Error in the query '+error);
+       }
+       else{
+           //console.log('Successful query\n');
+           //console.log(rows);
+            if(req.session.language === 'en'){
+                res.render(deployPath +'floor_plan_en',{title:"Floor Plan",data:rows});
+            }
+            else{
+                res.render(deployPath +'floor_plan',{title:"Floor Plan",data:rows});
+            }
+//           res.render('employee_management',{title:"Employee Management",data:rows});
+       }
+   }); 
+   
     
 });
 
@@ -3073,6 +3162,7 @@ app.post(deployPath +'/floor_plan/add',isAuthenticated,function(req,res,next){
     upload(req,res,function(err) {
         //console.log("get select from body ="+req.body.dept_code);
         v_floor_name = req.sanitize( 'floor_name' ).escape(); 
+        v_building = req.sanitize( 'building' ); 
        
         //console.log("v_floor_name-- "+v_floor_name);
         if(err) {
@@ -3085,7 +3175,7 @@ app.post(deployPath +'/floor_plan/add',isAuthenticated,function(req,res,next){
         //console.log("filepath-- "+filepath);
         //console.log("INSERT INTO floor_plan(floorplan_img,floor_name) VALUES ('"+filepath+"','"+v_floor_name+"')");
         
-        con.query("INSERT INTO floor_plan(floorplan_img,floor_name,company_id) VALUES ('uploads/"+filepath+"','"+v_floor_name+"','"+company_id+"')",function(error,rows,fields){
+        con.query("INSERT INTO floor_plan(floorplan_img,floor_name,company_id,building_id) VALUES ('uploads/"+filepath+"','"+v_floor_name+"','"+company_id+"','"+v_building+"')",function(error,rows,fields){
             if(error)
                 {
                     var errors_detail  = ("Error Insert : %s ",error ); 
