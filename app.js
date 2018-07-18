@@ -27,7 +27,6 @@ var users = require('./routes/users');
 
 var app = express();
 
-var mysql = require("mysql");
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -168,14 +167,19 @@ app.use(methodOverride(function(req, res){
 //});
 
 //Qchat compose production
-var con = mysql.createConnection({
+var con = mysql.createPool({
     host: "sl-us-south-1-portal.19.dblayer.com",
     user: "admin",
     password: "XPONHULHEZMIPZZH",
     database: "compose",
-    port:37139
+    port:37139,
+    connectionLimit : 100,
+    waitForConnections : true,
+    queueLimit :0,
+    debug    :  false,
+    wait_timeout : 28800,
+    connect_timeout :10
 });
-
  
 app.post(deployPath +"/login", passport.authenticate('local_qchat', {
     
@@ -3071,13 +3075,13 @@ app.get(deployPath +'/path_playback_outdoor',isAuthenticated,function(req,res,ne
                                     maps = rows;
                                 }
                             
-                            con.query("SELECT * from history_gps left join employee on history_gps.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"'",function(error,rows,fields){
+                            con.query("SELECT * from history_gps left join employee on history_gps.employee_id = employee.employee_id left join company on employee.company_id = company.company_id where company.company_id = '"+company_id+"' and history_gps.gps_loc != '4.9E-324,4.9E-324'",function(error,rows,fields){
                                 if(!!error){
                                     console.log('Error in the query '+error);
                                 }
                                 else{
-                         //           console.log('Successful query\n');
-                         //           console.log(rows);
+                                    console.log('Successful query\n');
+                                    console.log(rows);
                                      if(req.session.language === 'en'){
                                          res.render('playback_outdoor_en',{title:"Path Playback",data:JSON.stringify(rows),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps});
                                      }
@@ -3300,7 +3304,7 @@ app.get(deployPath +'/get_playback/:time1/:time2/:emp_id',isAuthenticated,functi
     var emp_id = req.params.emp_id;
     
         console.log("SELECT * FROM history_gps left join employee on history_gps.employee_id = employee.employee_id where path_datetime >= '"+time1+"' AND path_datetime <= '"+time2+"' AND history_gps.employee_id = '"+emp_id+"'");
-        con.query("SELECT * FROM history_gps left join employee on history_gps.employee_id = employee.employee_id where path_datetime >= '"+time1+"' AND path_datetime <= '"+time2+"' AND history_gps.employee_id = '"+emp_id+"'",function(error,rows,fields){
+        con.query("SELECT * FROM history_gps left join employee on history_gps.employee_id = employee.employee_id where path_datetime >= '"+time1+"' AND path_datetime <= '"+time2+"' AND history_gps.employee_id = '"+emp_id+"' and history_gps.gps_loc != '4.9E-324,4.9E-324'",function(error,rows,fields){
            if(!!error){
                console.log('Error in the query '+error);
            }
