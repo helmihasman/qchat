@@ -55,7 +55,8 @@ block content
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #tree_indoor
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
                                         h4.panel-title 地区
@@ -65,7 +66,7 @@ block content
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
                                         h4.panel-title 建造
@@ -75,7 +76,7 @@ block content
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
                                         h4.panel-title 组
@@ -85,7 +86,7 @@ block content
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden='true')
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
                                         h4.panel-title 类别

@@ -53,6 +53,9 @@ script(src='../../../gentelella/vendors/pdfmake/build/vfs_fonts.js')
 
 script(src='../../../javascripts/MovingMarker.js')
 
+script(src='../../../javascripts/bootstrap-treeview.js')
+
+
 //date range picker
 script(src='https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js')
@@ -76,6 +79,101 @@ script(type='text/javascript').
   function select_month(selectObject) {
     $("#att_btn").click();
     }
+    
+script(type='text/javascript').
+    function getTree(){
+        var tree = [
+            {
+              text: "Parent 1",
+              state: {
+                selected: true
+              },
+              nodes: [
+                {
+                  text: "Child 1",
+                  nodes: [
+                    {
+                      text: "Granhod 1"
+                      
+                       
+                    },
+                    {
+                      text: "Grandchild 2"
+                    }
+                  ]
+                },
+                {
+                  text: "Child 2"
+                }
+              ]
+            },
+            {
+              text: "Parent 2"
+              
+            },
+            {
+              text: "Parent 3"
+            },
+            {
+              text: "Parent 4"
+            },
+            {
+              text: "Parent 5"
+            }
+          ];
+          
+    var data = "#{sidelist}".replace(/&quot;/g, '"');
+    var jsontree = JSON.parse(data);
+    return jsontree;
+    }
+    $('#tree').treeview({
+        data: getTree(),
+        showCheckbox: true,
+        onNodeChecked: function(event, node) {
+            
+            if(node.type == 'employee'){
+            var partsOfStr = node.emp_gps.split(',');
+            var newgps = new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668))
+            map_g.setZoom(10);
+            map_g.setCenter(newgps);
+            }
+            else if(node.type == 'building'){
+                var mystring = node.building_gps.replace('(','');
+                mystring = mystring.replace(')','');
+                var partsOfStr = mystring.split(',');
+                var newgps = new google.maps.LatLng(parseFloat(partsOfStr[0] - 0.00575), parseFloat(partsOfStr[1] - 0.00668))
+                map_g.setZoom(10);
+                map_g.setCenter(newgps);
+            }
+            //alert(node.emp_gps+" is checked");
+            $('#tree').treeview('uncheckNode', [ nodeId, { silent: true } ]);
+          },
+          onNodeUnchecked: function (event, node) {
+            //alert(node.emp_id+" is unchecked");
+          }
+    });
+    
+script(type='text/javascript').
+    function getTreeIndoor(){
+     
+    var data = "#{sidelist}".replace(/&quot;/g, '"');
+    var jsontree = JSON.parse(data);
+    return jsontree;
+    }
+    $('#tree_indoor').treeview({
+        data: getTreeIndoor(),
+        showCheckbox: true,
+        onNodeChecked: function(event, node) {
+
+            //alert(node.emp_gps+" is checked");
+            $('#tree_indoor').treeview('uncheckNode', [ nodeId, { silent: true } ]);
+          },
+          onNodeUnchecked: function (event, node) {
+            //alert(node.emp_id+" is unchecked");
+          }
+    });
+    
+    
   
 
 script.
@@ -1642,17 +1740,17 @@ script.
                     iconSize: [40, 40],
                     iconAnchor: [10, 10]
                   });
-        alert("1");
+        //alert("1");
         var myMovingMarker = L.Marker.movingMarker(sorted_loc_list,[5000]);
-        alert("2");
+        //alert("2");
         myMovingMarker.options.icon = myIcon;
-        alert("3");
+        //alert("3");
         myMovingMarker.addTo(maps);
-        alert("4");
+        //alert("4");
         myMovingMarker.start();
-        alert("5");
+        //alert("5");
         L.polyline(sorted_loc_list, {color: 'red'}).addTo(maps);
-        alert("6");
+        //alert("6");
        
         }
         
@@ -1788,11 +1886,14 @@ script.
       
     var socket = io();
     socket.on('tracking', function(rows) {
+        
         var language = rows.language;
-        clearMap();
+        
+        //clearMap();
         var employees = rows.employee;
         var floor_plan = rows.floor_plan;
         //var markers = [];
+        
         var floors = rows.floors.replace(/&quot;/g, '"');
         for(var t=0;t<floor_plan.length;t++){
         var floorplan_list = [];
@@ -1807,6 +1908,7 @@ script.
         floorplan_list.push(ff);
         marker = JSON.parse(floorplan);
       for(var i=0;i<dd.length;i++){
+          
                 var num = dd[i].employee_id.toString();
                 var name = dd[i].employee_name.toString();
                 var d = new Date(dd[i].path_datetime);
@@ -1841,7 +1943,7 @@ script.
                 for(var j=0;j<maps.length;j++){
                 for (k in mhuman[j]) {
                 var newdate = ddate+"/"+dmonth+"/"+dyear+" "+dhour+":"+dminutes+":"+dseconds;
-
+                
                 var emp_loc_no = 0;
                 if(dd[i].employee_location === mhuman[j][k].popup){
                 emp_no++;
@@ -1863,19 +1965,19 @@ script.
             }
     
     if(language === 'en'){
-    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" employee)";
+    //document.getElementById(emp_no_id).innerHTML = "("+emp_no+" employee)";
     }
     else{
-    document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";  
+    //document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";  
     }
     }
-    
+        //alert("in 3");
         for (var i = 0; i < marker_g.length; i++ ) {
           marker_g[i].setMap(null);
         }
         marker_g.length = 0;
 
-
+        //alert("in 4");
     var infoWindow = new google.maps.InfoWindow({maxWidth: 250});
     var contentString = [];
     for(var i=0;i<employees.length;i++){
@@ -1909,7 +2011,7 @@ script.
 
         var newdate;
         newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
-        
+                
                 contentString[i] = '<ul class="list-unstyled">'+ 
                         '<li class="media event">'+
                             '<a class="pull-left">'+
@@ -1929,7 +2031,6 @@ script.
                     position: myLatLng,
                     icon: '/images/man2_1.png',
                     map: map_g,
-                    title: 'test',
                     label: employees[i].employee_name,
                     });
                     
@@ -1942,7 +2043,7 @@ script.
                 
                 marker_g[i].setMap(map_g);
             }
-    
+    //alert("last her");
 
     });
     
