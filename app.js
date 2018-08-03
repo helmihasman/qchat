@@ -2270,10 +2270,10 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
                                                                 for(var j=0;j<category.length;j++){
                                                                     
                                                                     for(var k=0;k<employee.length;k++){
-                                                                        console.log("jjj=="+category[j].category_id);
-                                                                        console.log("kkk=="+employee[k].category_id);
+                                                                        //console.log("jjj=="+category[j].category_id);
+                                                                        //console.log("kkk=="+employee[k].category_id);
                                                                         if(category[j].category_id == employee[k].category_id){
-                                                                            console.log("insideee");
+                                                                            //console.log("insideee");
                                                                             employee_list.push({employee_id:employee[k].employee_id,employee_name:employee[k].employee_name});
                                                                             employee_list_a.push({text:employee[k].employee_name,emp_id:employee[k].employee_id,emp_gps:employee[k].employee_gps,type:'employee'});
                                                                         }
@@ -2289,10 +2289,10 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
                                                                     category_list_b = [];
                                                                     category_list_temp_a = [];
                                                                     for(var k=0;k<category_list.length;k++){
-                                                                        console.log("jjj2=="+group[j].group_id);
-                                                                        console.log("kkk2=="+category_list[k].group_id);
+                                                                        //console.log("jjj2=="+group[j].group_id);
+                                                                        //console.log("kkk2=="+category_list[k].group_id);
                                                                         if(group[j].group_id == category_list[k].group_id){
-                                                                            console.log("insideee2");
+                                                                            //console.log("insideee2");
                                                                             category_list_b.push({category:category_list[k]});
                                                                             category_list_temp_a.push(category_list_a[k]);
                                                                         }
@@ -2308,10 +2308,10 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
                                                                     group_list_b = [];
                                                                     group_list_temp_a = [];
                                                                     for(var k=0;k<group_list.length;k++){
-                                                                        console.log("jjj3=="+building[j].building_id);
-                                                                        console.log("kkk3=="+group_list[k].building_id);
+                                                                        //console.log("jjj3=="+building[j].building_id);
+                                                                        //console.log("kkk3=="+group_list[k].building_id);
                                                                         if(building[j].building_id == group_list[k].building_id){
-                                                                            console.log("insideee3");
+                                                                            //console.log("insideee3");
                                                                             group_list_b.push({group:group_list[k]});
                                                                             group_list_temp_a.push(group_list_a[k]);
                                                                         }
@@ -2327,10 +2327,10 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
                                                                     building_list_b = [];
                                                                     building_list_temp_a = [];
                                                                     for(var k=0;k<building_list.length;k++){
-                                                                        console.log("jjj4=="+region[j].region_id);
-                                                                        console.log("kkk4=="+building_list[k].region_id);
+                                                                        //console.log("jjj4=="+region[j].region_id);
+                                                                        //console.log("kkk4=="+building_list[k].region_id);
                                                                         if(region[j].region_id == building_list[k].region_id){
-                                                                            console.log("insideee4");
+                                                                            //console.log("insideee4");
                                                                             building_list_b.push({building:building_list[k]});
                                                                             building_list_temp_a.push(building_list_a[k]);
                                                                         }
@@ -2342,7 +2342,7 @@ app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
                                                                     
                                                                 }
                                                                 
-                                                                console.log(JSON.stringify(region_list_a));
+                                                                //console.log(JSON.stringify(region_list_a));
                                                                 
                                                                 
                                                                 if(req.session.language === 'en'){
@@ -3125,6 +3125,24 @@ app.get(deployPath +'/mapmap',isAuthenticated,function(req,res,next){
 app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     
     var company_id = req.session.passport.user.company_id;
+    var group,category,building,history;
+    
+    var building_list = [];
+    var building_list_b = [];
+    var group_list = [];
+    var group_list_b = [];
+    var category_list = [];
+    var category_list_b = [];
+    var employee_list = [];
+
+
+    var building_list_a = [];
+    var building_list_temp_a = [];
+    var group_list_a = [];
+    var group_list_temp_a = [];
+    var category_list_a = [];
+    var category_list_temp_a = [];
+    var employee_list_a = [];
     
     var d = createDateAsUTC(new Date());
 //    d.setMinutes(d.getMinutes()+480);
@@ -3162,7 +3180,7 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
     var floors_id = [];
     var floors;
     
-    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
+    con.query("SELECT employee_id,employee_name,employee_image,category_id, employee_phone_no, employee_location, employee_time,employee_gps from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -3202,12 +3220,99 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
                         else{
                  //           console.log('Successful query\n');
                  //           console.log(rows);
-                             if(req.session.language === 'en'){
-                                 res.render('playback_indoor_en',{title:"Path Playback",data:JSON.stringify(rows),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors)});
-                             }
-                             else{
-                                 res.render('playback_indoor',{title:"Path Playback",data:JSON.stringify(rows),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors)});
-                             }
+                            history = rows;
+                 
+                            con.query("SELECT * FROM group_table where company_id='"+company_id+"'",function(error,rows,fields){
+                                             if(!!error){
+                                                 console.log('Error in the query '+error);
+                                             }
+                                             else{
+                                                     group = rows;
+                                                     con.query("SELECT * FROM category where company_id='"+company_id+"'",function(error,rows,fields){
+                                                        if(!!error){
+                                                            console.log('Error in the query '+error);
+                                                        }
+                                                        else{
+                                                                category = rows;
+                                                                
+                                                                con.query("SELECT * from building",function(error,rows,fields){
+                                                                        if(!!error){
+                                                                            console.log('Error in the query '+error);
+                                                                        }
+                                                                        else{
+                                                                              building = rows;
+                                                                              
+                                                                              for(var j=0;j<category.length;j++){
+                                                                    
+                                                                                    for(var k=0;k<employee.length;k++){
+                                                                                        
+                                                                                        if(category[j].category_id == employee[k].category_id){
+                                                                                            
+                                                                                            employee_list.push({employee_id:employee[k].employee_id,employee_name:employee[k].employee_name});
+                                                                                            employee_list_a.push({text:employee[k].employee_name,emp_id:employee[k].employee_id,emp_gps:employee[k].employee_gps,type:'employee'});
+                                                                                        }
+
+                                                                                    }
+                                                                                    category_list.push({category_id:category[j].category_id,group_id:category[j].group_id,employees:employee_list});
+                                                                                    category_list_a.push({text:category[j].category_name,nodes:employee_list_a});
+                                                                                    employee_list = [];
+                                                                                    employee_list_a = [];
+                                                                                }
+
+                                                                                for(var j=0;j<group.length;j++){
+                                                                                    category_list_b = [];
+                                                                                    category_list_temp_a = [];
+                                                                                    for(var k=0;k<category_list.length;k++){
+                                                                                        
+                                                                                        if(group[j].group_id == category_list[k].group_id){
+                                                                                            
+                                                                                            category_list_b.push({category:category_list[k]});
+                                                                                            category_list_temp_a.push(category_list_a[k]);
+                                                                                        }
+
+
+                                                                                    }
+                                                                                    group_list.push({group_name:group[j].group_name,group_id:group[j].group_id,building_id:group[j].building_id,categories:category_list_b});
+                                                                                    group_list_a.push({text:group[j].group_name,nodes:category_list_temp_a});
+
+                                                                                }
+
+                                                                                for(var j=0;j<building.length;j++){
+                                                                                    group_list_b = [];
+                                                                                    group_list_temp_a = [];
+                                                                                    for(var k=0;k<group_list.length;k++){
+                                                                                        
+                                                                                        if(building[j].building_id == group_list[k].building_id){
+                                                                                            
+                                                                                            group_list_b.push({group:group_list[k]});
+                                                                                            group_list_temp_a.push(group_list_a[k]);
+                                                                                        }
+
+
+                                                                                    }
+                                                                                    building_list.push({building_name:building[j].building_name,building_id:building[j].building_id,region_id:building[j].region_id,group_list:group_list_b});
+                                                                                    building_list_a.push({text:building[j].building_name,nodes:group_list_temp_a,type:'building',building_gps:building[j].building_location});
+
+                                                                                }
+
+                                                                                if(req.session.language === 'en'){
+                                                                                        res.render('playback_indoor_en',{title:"Path Playback",data:JSON.stringify(history),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),sidelist:JSON.stringify(building_list_a)});
+                                                                                    }
+                                                                                    else{
+                                                                                        res.render('playback_indoor',{title:"Path Playback",data:JSON.stringify(history),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),sidelist:JSON.stringify(building_list_a)});
+                                                                                    }
+
+                                                                       }
+                                                                    });
+                                                                
+                                                                
+
+                                                       }
+                                                    });
+
+                                            }
+                                         });
+                             
 
                         }
                     });
@@ -3266,11 +3371,29 @@ app.get(deployPath +'/path_playback_outdoor',isAuthenticated,function(req,res,ne
     var newdate;
     newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
     
-    var employee,floor_plan,company;
+    var employee,floor_plan,company,maps,region,group,category;
     var floors_id = [];
     var floors,maps;
+
+    var region_list = [];
+    var building_list = [];
+    var building_list_b = [];
+    var group_list = [];
+    var group_list_b = [];
+    var category_list = [];
+    var category_list_b = [];
+    var employee_list = [];
+
+    var region_list_a = [];
+    var building_list_a = [];
+    var building_list_temp_a = [];
+    var group_list_a = [];
+    var group_list_temp_a = [];
+    var category_list_a = [];
+    var category_list_temp_a = [];
+    var employee_list_a = [];
     
-    con.query("SELECT employee_id,employee_name, employee_phone_no, employee_location, employee_time from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
+    con.query("SELECT employee_id,employee_name,employee_image,category_id, employee_phone_no, employee_location, employee_time,employee_gps from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
        if(!!error){
            console.log('Error in the query '+error);
        }
@@ -3299,6 +3422,7 @@ app.get(deployPath +'/path_playback_outdoor',isAuthenticated,function(req,res,ne
                  //           console.log('Successful query\n');
                  //           console.log(rows);
                             company = rows;
+                            building = rows;
                             
                             con.query("SELECT * from map where company_id='"+company_id+"'",function(error,rows,fields){
                             if(!!error){
@@ -3336,13 +3460,137 @@ app.get(deployPath +'/path_playback_outdoor',isAuthenticated,function(req,res,ne
                                 }
                                 else{
                                     console.log('Successful query\n');
-                                    console.log(rows);
-                                     if(req.session.language === 'en'){
-                                         res.render('playback_outdoor_en',{title:"Path Playback",data:JSON.stringify(rows),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps});
-                                     }
-                                     else{
-                                         res.render('playback_outdoor',{title:"Path Playback",data:JSON.stringify(rows),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps});
-                                     }
+                                    //console.log(rows);
+                                    data = rows;
+                                    
+                                    con.query("SELECT * FROM region where company_id='"+company_id+"'",function(error,rows,fields){
+                                            if(!!error){
+                                                console.log('Error in the query'+error);
+                                            }
+                                            else{
+                                                region = rows;
+                                                
+                                                con.query("SELECT * FROM group_table where company_id='"+company_id+"'",function(error,rows,fields){
+                                                    if(!!error){
+                                                        console.log('Error in the query'+error);
+                                                    }
+                                                    else{
+                                                        group = rows;
+                                                        
+                                                        con.query("SELECT * FROM category where company_id='"+company_id+"'",function(error,rows,fields){
+                                                            if(!!error){
+                                                                console.log('Error in the query'+error);
+                                                            }
+                                                            else{
+                                                                category = rows;
+                                                                
+                                                                
+                                                                /*for(var j=0;j<region.length;j++){
+                                                                    for(var k=0;k<building.length;k++){
+                                                                        console.log("jjj=="+region[j].region_id);
+                                                                        console.log("kkk=="+building[k].region_id);
+                                                                        if(region[j].region_id == building[k].region_id){
+                                                                            console.log("insideee");
+                                                                            region_list.push(building_list);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    
+                                                                }*/
+                                                                
+                                                                for(var j=0;j<category.length;j++){
+                                                                    
+                                                                    for(var k=0;k<employee.length;k++){
+                                                                        //console.log("jjj=="+category[j].category_id);
+                                                                        //console.log("kkk=="+employee[k].category_id);
+                                                                        if(category[j].category_id == employee[k].category_id){
+                                                                            //console.log("insideee");
+                                                                            employee_list.push({employee_id:employee[k].employee_id,employee_name:employee[k].employee_name});
+                                                                            employee_list_a.push({text:employee[k].employee_name,emp_id:employee[k].employee_id,emp_gps:employee[k].employee_gps,type:'employee'});
+                                                                        }
+                                                                       
+                                                                    }
+                                                                    category_list.push({category_id:category[j].category_id,group_id:category[j].group_id,employees:employee_list});
+                                                                    category_list_a.push({text:category[j].category_name,nodes:employee_list_a});
+                                                                    employee_list = [];
+                                                                    employee_list_a = [];
+                                                                }
+                                                                
+                                                                for(var j=0;j<group.length;j++){
+                                                                    category_list_b = [];
+                                                                    category_list_temp_a = [];
+                                                                    for(var k=0;k<category_list.length;k++){
+                                                                        //console.log("jjj2=="+group[j].group_id);
+                                                                        //console.log("kkk2=="+category_list[k].group_id);
+                                                                        if(group[j].group_id == category_list[k].group_id){
+                                                                            //console.log("insideee2");
+                                                                            category_list_b.push({category:category_list[k]});
+                                                                            category_list_temp_a.push(category_list_a[k]);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    group_list.push({group_name:group[j].group_name,group_id:group[j].group_id,building_id:group[j].building_id,categories:category_list_b});
+                                                                    group_list_a.push({text:group[j].group_name,nodes:category_list_temp_a});
+                                                                    
+                                                                }
+                                                                
+                                                                for(var j=0;j<building.length;j++){
+                                                                    group_list_b = [];
+                                                                    group_list_temp_a = [];
+                                                                    for(var k=0;k<group_list.length;k++){
+                                                                        //console.log("jjj3=="+building[j].building_id);
+                                                                        //console.log("kkk3=="+group_list[k].building_id);
+                                                                        if(building[j].building_id == group_list[k].building_id){
+                                                                            //console.log("insideee3");
+                                                                            group_list_b.push({group:group_list[k]});
+                                                                            group_list_temp_a.push(group_list_a[k]);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    building_list.push({building_name:building[j].building_name,building_id:building[j].building_id,region_id:building[j].region_id,group_list:group_list_b});
+                                                                    building_list_a.push({text:building[j].building_name,nodes:group_list_temp_a,type:'building',building_gps:building[j].building_location});
+                                                                    
+                                                                }
+                                                                
+                                                                for(var j=0;j<region.length;j++){
+                                                                    building_list_b = [];
+                                                                    building_list_temp_a = [];
+                                                                    for(var k=0;k<building_list.length;k++){
+                                                                        //console.log("jjj4=="+region[j].region_id);
+                                                                        //console.log("kkk4=="+building_list[k].region_id);
+                                                                        if(region[j].region_id == building_list[k].region_id){
+                                                                            //console.log("insideee4");
+                                                                            building_list_b.push({building:building_list[k]});
+                                                                            building_list_temp_a.push(building_list_a[k]);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    region_list.push({region_name:region[j].region_name,region_id:region[j].region_id,group_list:building_list_b});
+                                                                    region_list_a.push({text:region[j].region_name,nodes:building_list_temp_a});
+                                                                    
+                                                                }
+                                                                
+                                                                //console.log(JSON.stringify(region_list_a));
+                                                                
+                                                                
+                                                                if(req.session.language === 'en'){
+                                                                        res.render('playback_outdoor_en',{title:"Path Playback",data:JSON.stringify(data),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building,region:region,group:group,category:category,sidelist:JSON.stringify(region_list_a)});
+                                                                    }
+                                                                    else{
+                                                                        res.render('playback_outdoor',{title:"Path Playback",data:JSON.stringify(data),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building,region:region,group:group,category:category,sidelist:JSON.stringify(region_list_a)});
+                                                                    }
+                                                            }
+                                                        });
+                                                
+                                                    }
+                                                });
+                                                
+                                            }
+                                        });
 
                                 }
                             });
@@ -3582,7 +3830,7 @@ app.get(deployPath +'/get_history/:time1/:time2/:emp_id',isAuthenticated,functio
     var time2 = req.params.time2;
     var emp_id = req.params.emp_id;
 
-
+        console.log("SELECT * FROM history left join employee on history.employee_id = employee.employee_id where path_datetime >= '"+time1+"' AND path_datetime <= '"+time2+"' AND history.employee_id = '"+emp_id+"'");
         con.query("SELECT * FROM history left join employee on history.employee_id = employee.employee_id where path_datetime >= '"+time1+"' AND path_datetime <= '"+time2+"' AND history.employee_id = '"+emp_id+"'",function(error,rows,fields){
            if(!!error){
                console.log('Error in the query '+error);

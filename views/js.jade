@@ -128,10 +128,9 @@ script(type='text/javascript').
     }
     $('#tree').treeview({
         data: getTree(),
-        showCheckbox: true,
         onNodeChecked: function(event, node) {
             
-            if(node.type == 'employee'){
+            /*if(node.type == 'employee'){
             var partsOfStr = node.emp_gps.split(',');
             var newgps = new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668))
             map_g.setZoom(10);
@@ -146,7 +145,36 @@ script(type='text/javascript').
                 map_g.setCenter(newgps);
             }
             //alert(node.emp_gps+" is checked");
-            $('#tree').treeview('uncheckNode', [ nodeId, { silent: true } ]);
+            $('#tree').treeview('uncheckNode', [ nodeId, { silent: true } ]);*/
+          },
+          onNodeUnchecked: function (event, node) {
+            //alert(node.emp_id+" is unchecked");
+          },
+           onNodeSelected: function(event, data) {
+            // Your logic goes here
+            if(data.type == 'employee'){
+            var partsOfStr = data.emp_gps.split(',');
+            var newgps = new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668))
+            map_g.setZoom(10);
+            map_g.setCenter(newgps);
+            }
+            else if(data.type == 'building'){
+                var mystring = data.building_gps.replace('(','');
+                mystring = mystring.replace(')','');
+                var partsOfStr = mystring.split(',');
+                var newgps = new google.maps.LatLng(parseFloat(partsOfStr[0] - 0.00575), parseFloat(partsOfStr[1] - 0.00668))
+                map_g.setZoom(10);
+                map_g.setCenter(newgps);
+            }
+            }
+    });
+    
+    $('#tree_outdoor').treeview({
+        data: getTree(),
+        onNodeSelected: function(event, data) {
+            
+            //alert(node.emp_gps+" is checked");
+            
           },
           onNodeUnchecked: function (event, node) {
             //alert(node.emp_id+" is unchecked");
@@ -162,11 +190,21 @@ script(type='text/javascript').
     }
     $('#tree_indoor').treeview({
         data: getTreeIndoor(),
-        showCheckbox: true,
-        onNodeChecked: function(event, node) {
+        onNodeSelected: function(event, data) {
 
             //alert(node.emp_gps+" is checked");
-            $('#tree_indoor').treeview('uncheckNode', [ nodeId, { silent: true } ]);
+           
+          },
+          onNodeUnchecked: function (event, node) {
+            //alert(node.emp_id+" is unchecked");
+          }
+    });
+    $('#tree_indoor_playback').treeview({
+        data: getTreeIndoor(),
+        onNodeSelected: function(event, data) {
+
+            //alert(node.emp_gps+" is checked");
+           
           },
           onNodeUnchecked: function (event, node) {
             //alert(node.emp_id+" is unchecked");
@@ -440,6 +478,7 @@ script.
                             '<div class="media-body">'+
                               '<a class="title" href="#">'+comp_p[pp].building_name+'</a>'+
                               '<p><b>地址:</b> '+comp_p[pp].building_add+'</p>'+
+                              '<br><a href="/tracking_indoor/'+comp_p[pp].building_id+'" class="btn btn-success btn-sm">显示详细资料</a>'+
                             '</div>'+
                           '</li></ul>';
                 
@@ -1552,7 +1591,11 @@ script.
        
        var time1 = document.getElementById('time1').value;
        var time2 = document.getElementById("time2").value;
-       var emp_id = getCheckboxValue();
+       //var emp_id = getCheckboxValue();
+       var checks = $('#tree_indoor_playback').treeview('getSelected', '1');
+       //alert("sss--"+JSON.stringify(checks));
+       //alert(checks[0].emp_id);
+       var emp_id = checks[0].emp_id.toString();
         
         var positioning = JSON.parse(loadHistoryNew(time1,time2,emp_id));
         var floorplan_a = JSON.parse(loadFloorPlan());
@@ -1759,11 +1802,14 @@ script.
        var html='';
        var pointlist = [];
        var polylines;
-       
+       var checks = $('#tree_outdoor').treeview('getSelected', '1');
+       //alert(JSON.stringify(checks));
+       //alert(checks[0].emp_id);
        
        var time1 = document.getElementById('time1').value;
        var time2 = document.getElementById("time2").value;
-       var emp_id = getCheckboxValue();
+       //var emp_id = getCheckboxValue();
+       var emp_id = checks[0].emp_id;
       
         var data_p = JSON.parse(loadHistoryGps(time1,time2,emp_id));
         
@@ -1948,7 +1994,7 @@ script.
                 if(dd[i].employee_location === mhuman[j][k].popup){
                 emp_no++;
                 emp_loc_no++;
-                if (marker !== null && marker.length !== 0) {
+                /*if (marker !== null && marker.length !== 0) {
                     for (h in marker) {
                     marks[i] = L.marker(marker[h].latlngs, marker[h].options).bindTooltip("<div><b>" + marker[h].popup + "</b>("+emp_loc_no+" 名员工)</div>",{direction:'top'});
 
@@ -1957,7 +2003,7 @@ script.
                     }
                     } else {
                     marker = [];
-                    }
+                    }*/
                 }
 
                 }

@@ -8,7 +8,7 @@ block content
                     .col-xs-12
                         ul.nav.nav-tabs.bar_tabs
                           li
-                            a(href='/tracking') Outdoor Tracking
+                            a(href='/tracking') Real Time Tracking
                           
                           li.active
                             a(href='/path_playback_outdoor') Outdoor Playback
@@ -26,73 +26,84 @@ block content
                               .x_panel
                                 .x_title
                                   h2 Employee List
-                                   button#playButton.fa.fa-play
+                                   
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
-                                  form.form-horizontal
-                                      .control-group
-                                        .controls
-                                          label(for='start-date') Start Date:
-                                            #datetimepicker1.input-group.date
-                                              input.form-control(type='text',id='time1')
-                                              span.input-group-addon
-                                                span.glyphicon.glyphicon-calendar
-
-                                      .control-group
-                                        .controls
-                                          label(for='end-date') End Date:
-                                            #datetimepicker2.input-group.date
-                                              input.form-control(type='text',id='time2')
-                                              span.input-group-addon
-                                                span.glyphicon.glyphicon-calendar
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #tree_outdoor
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Region
+                                        h4.panel-title 地区
                                       #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Building
+                                        h4.panel-title 建造
                                       #collapseTwo.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Group
+                                        h4.panel-title 组
                                       #collapse3.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
+                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
                                     .panel
                                       a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Category
+                                        h4.panel-title 类别
                                       #collapse4.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
                                         .panel-body
                                           for row, index in employee
                                             ul
                                               input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
                                               | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  button.btn.btn-primary(type='button',onclick='playbackOutdoor()') Submit
-                              
-          
+                                  
+
+
                             .col-md-10.col-sm-12.col-xs-12
                                     input(type='text', name='map_string_load',id='map_string_load',hidden,value='#{maps[0].map_string}')
                                     input(type='text', name='map_string',id='map_string',hidden,value='#{maps[0].map_string}')
                                     #panel-content
+                                    form.form-horizontal
+                                    table
+                                        tr
+                                            td
+                                                label &nbsp;Start Date:&nbsp;
+                                            td
+                                                #datetimepicker1.input-group.date.col-md-12
+                                                    input.form-control(type='text',id='time1')
+                                                    span.input-group-addon
+                                                      span.glyphicon.glyphicon-calendar
+                                        
+                                            td
+                                                label &nbsp;&nbsp;End Date:&nbsp;
+                                            td
+                                                #datetimepicker2.input-group.date.col-md-12
+                                                  input.form-control(type='text',id='time2')
+                                                  span.input-group-addon
+                                                    span.glyphicon.glyphicon-calendar
+                                                
+                                            td
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                button.btn.btn-primary(type='button',onclick='playbackOutdoor()') Submit
+                                            td
+                                                button.btn.btn-info#playButton.fa.fa-play
+                                                
+
                                         #controls(hidden)
                                           select#polyList
                                           button#btnDelete Delete
@@ -104,7 +115,7 @@ block content
                                 // form date pickers
                                 .x_panel
                                   .x_title
-                                    h2 时间轴
+                                    h2 Timeline
                                     ul.nav.navbar-right.panel_toolbox
                                     .clearfix
                                   .x_content(style='overflow: auto')
