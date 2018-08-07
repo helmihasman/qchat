@@ -10,7 +10,6 @@ block content
                         ul.nav.nav-tabs.bar_tabs
                           li
                             a(href='/tracking') Real Time Tracking
-                          
                           li
                             a(href='/path_playback_outdoor') Outdoor Playback
                           li
@@ -25,56 +24,12 @@ block content
                             // form input mask
                             .col-md-2.col-sm-12.col-xs-12
                               .x_panel
-                                .x_title
-                                  h2 Employee List
-                                  ul.nav.navbar-right.panel_toolbox
-                                  .clearfix
-                                .x_content
-                                  #tree_indoor
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Region
-                                      #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Building
-                                      #collapseTwo.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Group
-                                      #collapse3.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Category
-                                      #collapse4.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="tracking(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                .col-md-3.col-sm-12.col-xs-12
+                                  a(href='javascript:goBack();')<-- Back
+                                
+                                    
                               .x_panel
                                 .x_title
-                                  h2 显示表
+                                  h2 Floors
                                   ul.nav.navbar-right.panel_toolbox
                                   .clearfix
                                 .x_content
@@ -83,12 +38,19 @@ block content
                                     // Nav tabs
                                     ul.nav.nav-tabs.tabs-left
                                       for row, index in floor_plan
-                                        li
-                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}')
-                                            | #{row.floor_name} Floors
-                                            label(id='no_emp#{row.floorplan_id}')
-                                        
-                                           
+                                        if index === 0
+                                            li.active
+                                              a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}')
+                                                | Floor #{row.floor_name} 
+                                                label(id='no_emp#{row.floorplan_id}')
+                                        else
+                                            li
+                                              a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}')
+                                                | Floor #{row.floor_name}
+                                                label(id='no_emp#{row.floorplan_id}')
+                              
+                               #tree_indoor
+                
                             .col-md-10.col-sm-12.col-xs-12
                                 .x_content
                                   .tab-content
@@ -198,7 +160,7 @@ block content
                                                         }
 
                                                 maps[indexs].invalidateSize();
-                                                document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)";
+                                                document.getElementById(emp_no_id).innerHTML = "("+emp_no+" employee)";
                                                 
                                                           
 
@@ -300,7 +262,7 @@ block content
                                                         }
 
                                                 maps[indexs].invalidateSize();
-                                                document.getElementById(emp_no_id).innerHTML = "("+emp_no+" 名员工)"; 
+                                                document.getElementById(emp_no_id).innerHTML = "("+emp_no+" employee)"; 
               
 
             for row, index in markers
@@ -310,7 +272,7 @@ block content
                         .modal-header
                           button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') ×
-                          h4.modal-title(id="myModalLabel#{row.mark}") 员工名单
+                          h4.modal-title(id="myModalLabel#{row.mark}") Employee List
                         .modal-body
                           ul.list-unstyled
                             for rows, index in employee
@@ -320,7 +282,7 @@ block content
                                       img(src="/#{rows.employee_image}", height='40', width='40')
                                     .media-body
                                       a.title(href='#') #{rows.employee_name}
-                                      p Last detected: #{rows.employee_time.toLocaleString()}
+                                      p Last Detected: #{rows.employee_time.toLocaleString()}
                         .modal-footer
-                          button.btn.btn-default(type='button', data-dismiss='modal') 关闭
+                          button.btn.btn-default(type='button', data-dismiss='modal') Close
                 

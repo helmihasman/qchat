@@ -23,71 +23,9 @@ block content
                           .row
                             // form input mask
                             .col-md-2.col-sm-12.col-xs-12
-                              .x_panel
-                                .x_title
-                                  h2 Employee List
-                                    button#playIndoor.fa.fa-play
-                                  ul.nav.navbar-right.panel_toolbox
-                                  .clearfix
-                                .x_content
-                                  form.form-horizontal
-                                      .control-group
-                                        .controls
-                                          label(for='start-date') Start Date:
-                                            #datetimepicker1.input-group.date
-                                              input.form-control(type='text',id='time1')
-                                              span.input-group-addon
-                                                span.glyphicon.glyphicon-calendar
-
-                                      .control-group
-                                        .controls
-                                          label(for='end-date') End Date:
-                                            #datetimepicker2.input-group.date
-                                              input.form-control(type='text',id='time2')
-                                              span.input-group-addon
-                                                span.glyphicon.glyphicon-calendar
-                                  #tree_indoor_playback
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Region
-                                      #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Building
-                                      #collapseTwo.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Group
-                                      #collapse3.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true')
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title Category
-                                      #collapse4.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  button.btn.btn-primary(type='button',onclick='doalert()') Submit
+                              #tree_indoor_playback
+                                  
+                                  
                                 .col-md-3.col-sm-12.col-xs-12
                               .x_panel
                                 .x_title
@@ -101,13 +39,36 @@ block content
                                     ul.nav.nav-tabs.tabs-left
                                       for row, index in floor_plan
                                         li
-                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}') #{row.floor_name} Floor
+                                          a(href='#home#{row.floorplan_id}', data-toggle='tab',id='#{row.floorplan_id}') Floor #{row.floor_name}
                                         
                                         
                                       
                             .col-md-10.col-sm-12.col-xs-12
                               .x_panel
                                 .x_content
+                                  form.form-horizontal
+                                    table
+                                        tr
+                                            td
+                                                label &nbsp;Start Date:&nbsp;
+                                            td
+                                                #datetimepicker1.input-group.date.col-md-12
+                                                    input.form-control(type='text',id='time1')
+                                                    span.input-group-addon
+                                                      span.glyphicon.glyphicon-calendar
+                                        
+                                            td
+                                                label &nbsp;&nbsp;End Date:&nbsp;
+                                            td
+                                                #datetimepicker2.input-group.date.col-md-12
+                                                  input.form-control(type='text',id='time2')
+                                                  span.input-group-addon
+                                                    span.glyphicon.glyphicon-calendar
+                                                
+                                            td  &nbsp;&nbsp;&nbsp;&nbsp;
+                                                button.btn.btn-primary(type='button',onclick='doalert()') Submit
+                                            td
+                                                button.btn.btn-info#playIndoor.fa.fa-play
                                   .tab-content
                                     script(type='text/javascript').
                                      var maps = [];

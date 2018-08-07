@@ -11,6 +11,16 @@ var session = require("express-session")({
     resave: true,
     saveUninitialized: true
 });
+
+// Enable CORS
+var allowCrossDomain = function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Credentials", "true");
+    next();
+};
+
 var expressValidator = require('express-validator');
 var methodOverride = require('method-override');
 var fs = require('fs');
@@ -43,6 +53,9 @@ app.use(function(req, res, next){
   next();
 });
 
+var global_user_id = '';
+var global_language = '';
+var global_company_id = '';
 
 // Variable deployPath is set in web.config and must match
 // the path of app.js in virtual directory.
@@ -62,6 +75,7 @@ app.all(deployPath + "/api", function(req, res) {
   res.end("<h2>REST API Handler found.</h2>");
 });
 
+app.use(allowCrossDomain);
 
 // Default handler
 //app.get(deployPath + "/", function(req, res) {
@@ -2048,7 +2062,7 @@ app.get(deployPath +'/profile/:users_id',isAuthenticated,function(req,res){
 });
 
 app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
-    console.log("in heeee");
+    //console.log("in heeee");
 //        var users_id = req.params.users_id;
         v_emp_id = req.sanitize( 'emp_id' );
         v_name = req.sanitize( 'name' ); 
@@ -2057,7 +2071,7 @@ app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
         v_email = req.sanitize( 'email' ).escape();
         v_password = req.sanitize( 'password' ).escape();
         v_category = req.sanitize( 'category' );
-        console.log("v_category---"+v_category);
+        //console.log("v_category---"+v_category);
  
         
    con.query("Update employee SET employee_name = '"+v_name+"',employee_motto = '"+v_motto+"',employee_phone_no = '"+v_sim_card+"',employee_email = '"+v_email+"',employee_password = '"+v_password+"',category_id = '"+v_category+"' where employee_id = '"+v_emp_id+"'",function(error,rows,fields){
@@ -2066,7 +2080,8 @@ app.post(deployPath +'/profile/update',isAuthenticated,function(req,res){
                     console.log('Error in the query '+error);
                 }else{
                     //req.flash('msg_info', 'Update profile success'); 
-                    res.redirect(deployPath +'/profile/'+v_emp_id);
+                    //res.redirect(deployPath +'/profile/'+v_emp_id);
+                    res.redirect(deployPath +'/employee_management');
                 }     
    }); 
 });
@@ -3235,7 +3250,7 @@ app.get(deployPath +'/path_playback',isAuthenticated,function(req,res,next){
                                                         else{
                                                                 category = rows;
                                                                 
-                                                                con.query("SELECT * from building",function(error,rows,fields){
+                                                                con.query("SELECT * from building where company_id='"+company_id+"'",function(error,rows,fields){
                                                                         if(!!error){
                                                                             console.log('Error in the query '+error);
                                                                         }
@@ -5159,13 +5174,16 @@ io.use(sharedsession(session, {
 }));
 
 io.on('connection', function (socket) {
+    //console.log("goobal use id --"+global_user_id);
+    //console.log("goobal comp id --"+global_company_id);
     //console.log('connnenenne1----');
     setInterval(function(){ 
-        //console.log('connnenenne----');
-        //var company_id = '1';
-    if(socket.handshake.session.passport.user !== null || socket.handshake.session.passport.user !== undefined){
+       // console.log('connnenenne----');
         //console.log(socket.handshake.session.passport.user);
-        var company_id = socket.handshake.session.passport.user.company_id;
+        //var company_id = '1';
+    if(global_user_id !== null || global_user_id !== undefined){
+        //console.log(socket.handshake.session.passport.user);
+        var company_id = global_company_id;
         var language = socket.handshake.session.language;
         //console.log("language---"+language);
         var d = createDateAsUTC(new Date());
@@ -5294,6 +5312,9 @@ passport.use('local_qchat', new LocalStrategy({
          }
         // console.log("rowwww = "+JSON.stringify(rows[0]));
         req.session.language = "cn";
+        //global_language = 'cn';
+        global_user_id = rows[0].employee_id;
+        global_company_id = rows[0].company_id;
         return done(null, rows[0]);
 
       });

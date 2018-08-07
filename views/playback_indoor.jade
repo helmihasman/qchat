@@ -23,55 +23,10 @@ block content
                           .row
                             // form input mask
                             .col-md-2.col-sm-12.col-xs-12
-                              .x_panel
-                                .x_title
-                                  h2 雇员列表
-                                  ul.nav.navbar-right.panel_toolbox
-                                  .clearfix
-                                .x_content
-                                  #tree_indoor_playback
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 地区
-                                      #collapseOne.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapseTwo', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 建造
-                                      #collapseTwo.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse3', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 组
-                                      #collapse3.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
-                                  #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
-                                    .panel
-                                      a#headingOne.panel-heading(role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse4', aria-expanded='true', aria-controls='collapseOne')
-                                        h4.panel-title 类别
-                                      #collapse4.panel-collapse.collapse.in(role='tabpanel', aria-labelledby='headingOne')
-                                        .panel-body
-                                          for row, index in employee
-                                            ul
-                                              input(name='checkbox#{row.employee_id}',id='checkbox#{row.employee_id}',value='#{row.employee_id}',class="subject-list", type='checkbox',onchange="checkBoxSingle(this)")
-                                              | &nbsp;#{row.employee_name+" ("+row.employee_phone_no+")"}
+                              #tree_indoor_playback
                                   
-                                .col-md-3.col-sm-12.col-xs-12
+                                  
+                                
                               .x_panel
                                 .x_title
                                   h2 楼层地图
@@ -110,8 +65,7 @@ block content
                                                   span.input-group-addon
                                                     span.glyphicon.glyphicon-calendar
                                                 
-                                            td
-                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                            td  &nbsp;&nbsp;&nbsp;&nbsp;
                                                 button.btn.btn-primary(type='button',onclick='doalert()') 递交
                                             td
                                                 button.btn.btn-info#playIndoor.fa.fa-play
