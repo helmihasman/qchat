@@ -3629,6 +3629,301 @@ app.get(deployPath +'/path_playback_outdoor',isAuthenticated,function(req,res,ne
 
 });
 
+app.get(deployPath +'/tracking_baidu',isAuthenticated,function(req,res,next){
+    
+    var employee_level = req.session.passport.user.employee_level;
+    
+    if(employee_level === '0'){
+        res.redirect('/');
+    }
+    else if(employee_level === '2'){
+        res.redirect('/');
+    }
+
+    var company_id = req.session.passport.user.company_id;
+
+        var d = createDateAsUTC(new Date());
+    //    d.setMinutes(d.getMinutes()+480);
+        d.setMinutes(d.getMinutes()-480);
+        var ddate = d.getDate();
+        var dmonth = d.getMonth()+1;
+        var dyear = d.getFullYear();
+        var dhour = d.getHours();
+        var dminutes = d.getMinutes();
+        var dseconds = d.getSeconds();
+        var d_date = d.getDate();
+        var d_month = d.getMonth()+1;;
+
+        if(ddate < 10){
+            ddate = "0"+ddate;
+        }
+        if(dmonth < 10){
+            dmonth = "0"+dmonth;
+        }
+
+        if(dhour < 10){
+            dhour = "0"+dhour;
+        }
+        if(dminutes < 10){
+            dminutes = "0"+dminutes;
+        }
+        if(dseconds < 10){
+            dseconds = "0"+dseconds;
+        }
+
+        var newdate;
+        newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+
+        var employee,floor_plan,company,maps,region,group,category;
+        var floors_id = [];
+        var region_list = [];
+        var building_list = [];
+        var building_list_b = [];
+        var group_list = [];
+        var group_list_b = [];
+        var category_list = [];
+        var category_list_b = [];
+        var employee_list = [];
+        
+        var region_list_a = [];
+        var building_list_a = [];
+        var building_list_temp_a = [];
+        var group_list_a = [];
+        var group_list_temp_a = [];
+        var category_list_a = [];
+        var category_list_temp_a = [];
+        var employee_list_a = [];
+        
+        var floors,building;
+
+        con.query("SELECT employee_id,employee_name,employee_image,category_id, employee_phone_no, employee_location, employee_time,employee_gps from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query '+error);
+           }
+           else{
+    //           console.log('Successful query\n');
+    //           console.log(rows);
+               employee = rows;
+               
+               con.query("SELECT * from building where company_id = '"+company_id+"'",function(error,rows,fields){
+                    if(!!error){
+                        console.log('Error in the query '+error);
+                    }
+                    else{
+             //           console.log('Successful query\n');
+             //           console.log(rows);
+                        company = rows;
+                        building = rows;
+                        
+                        con.query("SELECT * from map where company_id='"+company_id+"'",function(error,rows,fields){
+                            if(!!error){
+                                console.log('Error in the query '+error);
+                            }
+                            else{
+                                if(rows.length === 0){
+
+                                    con.query("INSERT INTO map(map_string,company_id) values ('','"+company_id+"')",function(error,rows,fields){
+                                     if(!!error){
+                                         console.log('Error in the query '+error);
+                                     }
+                                     else{
+                                         con.query("SELECT * from map where company_id='"+company_id+"'",function(error,rows,fields){
+                                             if(!!error){
+                                                 console.log('Error in the query '+error);
+                                             }
+                                             else{
+                                                   maps = rows;
+
+                                            }
+                                         });
+
+                                    }
+                                 });
+
+                                }
+                                else{
+                                    maps = rows;
+                                }
+                                
+                                
+                                con.query("SELECT * FROM floor_plan where company_id='"+company_id+"'",function(error,rows,fields){
+                                    if(!!error){
+                                        console.log('Error in the query'+error);
+                                    }
+                                    else{
+                                        floor_plan = rows;
+                                        for(var i=0;i<rows.length;i++){
+                                            floors_id.push({floor_id:rows[i].floorplan_id});
+                                        }
+                                        floors = {floor:floors_id};
+                             //           res.render('employee_management',{title:"Employee Management",data:rows});
+                                        //console.log(building);
+                                        
+                                        con.query("SELECT * FROM region where company_id='"+company_id+"'",function(error,rows,fields){
+                                            if(!!error){
+                                                console.log('Error in the query'+error);
+                                            }
+                                            else{
+                                                region = rows;
+                                                
+                                                con.query("SELECT * FROM group_table where company_id='"+company_id+"'",function(error,rows,fields){
+                                                    if(!!error){
+                                                        console.log('Error in the query'+error);
+                                                    }
+                                                    else{
+                                                        group = rows;
+                                                        
+                                                        con.query("SELECT * FROM category where company_id='"+company_id+"'",function(error,rows,fields){
+                                                            if(!!error){
+                                                                console.log('Error in the query'+error);
+                                                            }
+                                                            else{
+                                                                category = rows;
+                                                                
+                                                                
+                                                                /*for(var j=0;j<region.length;j++){
+                                                                    for(var k=0;k<building.length;k++){
+                                                                        console.log("jjj=="+region[j].region_id);
+                                                                        console.log("kkk=="+building[k].region_id);
+                                                                        if(region[j].region_id == building[k].region_id){
+                                                                            console.log("insideee");
+                                                                            region_list.push(building_list);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    
+                                                                }*/
+                                                                
+                                                                for(var j=0;j<category.length;j++){
+                                                                    
+                                                                    for(var k=0;k<employee.length;k++){
+                                                                        //console.log("jjj=="+category[j].category_id);
+                                                                        //console.log("kkk=="+employee[k].category_id);
+                                                                        if(category[j].category_id == employee[k].category_id){
+                                                                            //console.log("insideee");
+                                                                            employee_list.push({employee_id:employee[k].employee_id,employee_name:employee[k].employee_name});
+                                                                            employee_list_a.push({text:employee[k].employee_name,emp_id:employee[k].employee_id,emp_gps:employee[k].employee_gps,type:'employee'});
+                                                                        }
+                                                                       
+                                                                    }
+                                                                    category_list.push({category_id:category[j].category_id,group_id:category[j].group_id,employees:employee_list});
+                                                                    category_list_a.push({text:category[j].category_name,nodes:employee_list_a});
+                                                                    employee_list = [];
+                                                                    employee_list_a = [];
+                                                                }
+                                                                
+                                                                for(var j=0;j<group.length;j++){
+                                                                    category_list_b = [];
+                                                                    category_list_temp_a = [];
+                                                                    for(var k=0;k<category_list.length;k++){
+                                                                        //console.log("jjj2=="+group[j].group_id);
+                                                                        //console.log("kkk2=="+category_list[k].group_id);
+                                                                        if(group[j].group_id == category_list[k].group_id){
+                                                                            //console.log("insideee2");
+                                                                            category_list_b.push({category:category_list[k]});
+                                                                            category_list_temp_a.push(category_list_a[k]);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    group_list.push({group_name:group[j].group_name,group_id:group[j].group_id,building_id:group[j].building_id,categories:category_list_b});
+                                                                    group_list_a.push({text:group[j].group_name,nodes:category_list_temp_a});
+                                                                    
+                                                                }
+                                                                
+                                                                for(var j=0;j<building.length;j++){
+                                                                    group_list_b = [];
+                                                                    group_list_temp_a = [];
+                                                                    for(var k=0;k<group_list.length;k++){
+                                                                        //console.log("jjj3=="+building[j].building_id);
+                                                                        //console.log("kkk3=="+group_list[k].building_id);
+                                                                        if(building[j].building_id == group_list[k].building_id){
+                                                                            //console.log("insideee3");
+                                                                            group_list_b.push({group:group_list[k]});
+                                                                            group_list_temp_a.push(group_list_a[k]);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    building_list.push({building_name:building[j].building_name,building_id:building[j].building_id,region_id:building[j].region_id,group_list:group_list_b});
+                                                                    building_list_a.push({text:building[j].building_name,nodes:group_list_temp_a,type:'building',building_gps:building[j].building_location});
+                                                                    
+                                                                }
+                                                                
+                                                                for(var j=0;j<region.length;j++){
+                                                                    building_list_b = [];
+                                                                    building_list_temp_a = [];
+                                                                    for(var k=0;k<building_list.length;k++){
+                                                                        //console.log("jjj4=="+region[j].region_id);
+                                                                        //console.log("kkk4=="+building_list[k].region_id);
+                                                                        if(region[j].region_id == building_list[k].region_id){
+                                                                            //console.log("insideee4");
+                                                                            building_list_b.push({building:building_list[k]});
+                                                                            building_list_temp_a.push(building_list_a[k]);
+                                                                        }
+                                                                        
+                                                                        
+                                                                    }
+                                                                    region_list.push({region_name:region[j].region_name,region_id:region[j].region_id,group_list:building_list_b});
+                                                                    region_list_a.push({text:region[j].region_name,nodes:building_list_temp_a});
+                                                                    
+                                                                }
+                                                                
+                                                                //console.log(JSON.stringify(region_list_a));
+                                                                
+                                                                
+                                                                if(req.session.language === 'en'){
+                                                                    res.render('tracking_baidu',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building,region:region,group:group,category:category,sidelist:JSON.stringify(region_list_a)});
+                                                                }
+                                                                else{
+                                                                    res.render('tracking_baidu',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building,region:region,group:group,category:category,sidelist:JSON.stringify(region_list_a)});
+                                                                }
+                                                            }
+                                                        });
+                                                
+                                                    }
+                                                });
+                                                
+                                            }
+                                        });
+
+                                    }
+                                });
+
+                           }
+                        });
+                        
+                        
+                    }
+                });
+                
+                
+           }
+       });
+       
+//       con.query("SELECT * from company where company_id = '"+company_id+"'",function(error,rows,fields){
+//           if(!!error){
+//               console.log('Error in the query '+error);
+//           }
+//           else{
+//    //           console.log('Successful query\n');
+//    //           console.log(rows);
+//               company = rows;
+//           }
+//       });
+
+        
+
+       
+       
+   
+       //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
+
+       
+    
+});
+
 //----------------------------FLOOR PLAN----------------------------
 
 app.get(deployPath +'/floor_plan_list',isAuthenticated,function(req,res,next){

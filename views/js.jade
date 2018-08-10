@@ -154,17 +154,22 @@ script(type='text/javascript').
             // Your logic goes here
             if(data.type == 'employee'){
             var partsOfStr = data.emp_gps.split(',');
-            var newgps = new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668))
-            map_g.setZoom(10);
-            map_g.setCenter(newgps);
+            //var newgps = new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668))
+            
+            //map_g.setZoom(10);
+            //map_g.setCenter(newgps);
+
+            map_baidu.panTo(new BMap.Point(parseFloat(partsOfStr[1]), parseFloat(partsOfStr[0])));
             }
             else if(data.type == 'building'){
                 var mystring = data.building_gps.replace('(','');
                 mystring = mystring.replace(')','');
                 var partsOfStr = mystring.split(',');
-                var newgps = new google.maps.LatLng(parseFloat(partsOfStr[0] - 0.00575), parseFloat(partsOfStr[1] - 0.00668))
-                map_g.setZoom(10);
-                map_g.setCenter(newgps);
+                //var newgps = new google.maps.LatLng(parseFloat(partsOfStr[0] - 0.00575), parseFloat(partsOfStr[1] - 0.00668))
+                //map_g.setZoom(10);
+                //map_g.setCenter(newgps);
+                
+                map_baidu.panTo(new BMap.Point(parseFloat(partsOfStr[1]), parseFloat(partsOfStr[0])));
             }
             }
     });
@@ -428,7 +433,7 @@ script.
             //var mystring = comp_p[0].company_location.replace('(','');
             comp_p = JSON.parse(company);
             
-            map_g = new google.maps.Map(document.getElementById('googleMapTracking'), {
+            /*map_g = new google.maps.Map(document.getElementById('googleMapTracking'), {
                 center: {
                     //lat: position.coords.latitude,
                     //lng: position.coords.longitude
@@ -438,7 +443,19 @@ script.
                 zoom: 10,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: false
-            });
+            });*/
+                
+            //baidu
+            map_baidu = new BMap.Map("allmap");    // 创建Map实例
+            map_baidu.centerAndZoom(new BMap.Point(112.9469622, 23.1253491), 11);  // 初始化地图,设置中心点坐标和地图级别
+            //添加地图类型控件
+            map_baidu.addControl(new BMap.MapTypeControl({
+            mapTypes:[
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+            ]}));
+            map_baidu.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+            map_baidu.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放    
             
             var infowindow2 = new google.maps.InfoWindow({
                     content: contentString,
@@ -450,54 +467,66 @@ script.
             var contentString2 = [];
             
             for(var pp=0;pp<comp_p.length;pp++){
-            var mystring = comp_p[pp].building_location.replace('(','');
-            mystring = mystring.replace(')','');
-            var splitstr = mystring.split(',');
-            var latt,lonn;
-            
-            
-            if(splitstr[0] === ''){
-                latt = 23.1253491;
-            }
-            else{
-                latt = parseFloat(splitstr[0]);
-            }
-            if(splitstr[1] === '' || splitstr[1] === undefined || splitstr[1] === 'undefined'){
-                lonn = 112.9469622;
-            }
-            else{
-                lonn = parseFloat(splitstr[1]);
-            }
-            
+                var mystring = comp_p[pp].building_location.replace('(','');
+                mystring = mystring.replace(')','');
+                var splitstr = mystring.split(',');
+                var latt,lonn;
 
-                contentString2[pp] = '<ul class="list-unstyled">'+
-                        '<li class="media event">'+
-                            '<a class="pull-left border-aero profile_thumb">'+
-                              '<i class="fa fa-building aero"></i>'+
-                            '</a>'+
-                            '<div class="media-body">'+
-                              '<a class="title" href="#">'+comp_p[pp].building_name+'</a>'+
-                              '<p><b>地址:</b> '+comp_p[pp].building_add+'</p>'+
-                              '<br><a href="/tracking_indoor/'+comp_p[pp].building_id+'" class="btn btn-success btn-sm">显示详细资料</a>'+
-                            '</div>'+
-                          '</li></ul>';
+
+                if(splitstr[0] === ''){
+                    latt = 23.1253491;
+                }
+                else{
+                    latt = parseFloat(splitstr[0]);
+                }
+                if(splitstr[1] === '' || splitstr[1] === undefined || splitstr[1] === 'undefined'){
+                    lonn = 112.9469622;
+                }
+                else{
+                    lonn = parseFloat(splitstr[1]);
+                }
+
                 
-                var myLatLng = {lat: parseFloat(splitstr[0] - 0.00575), lng: parseFloat(splitstr[1] - 0.00668)};
-                marker_b[pp] = new google.maps.Marker({
-                    position: myLatLng,
-                    icon: '/images/skyline.png',
-                    map: map_g,
-                    label: comp_p[pp].building_name
-                    });
-                    
-                    google.maps.event.addListener(marker_b[pp], 'click', (function(marker, pp) {
-                    return function() {
-                        infoWindow.setContent(contentString2[pp]);
-                        infoWindow.open(map_g, marker_b[pp]);
-                    }
-                })(marker_b[pp], pp));
-               
-                marker_b[pp].setMap(map_g); 
+                    contentString2[pp] = '<ul class="list-unstyled">'+
+                            '<li class="media event">'+
+                                '<a class="pull-left border-aero profile_thumb">'+
+                                  '<i class="fa fa-building aero"></i>'+
+                                '</a>'+
+                                '<div class="media-body">'+
+                                  '<a class="title" href="#">'+comp_p[pp].building_name+'</a>'+
+                                  '<p><b>地址:</b> '+comp_p[pp].building_add+'</p>'+
+                                  '<br><a href="/tracking_indoor/'+comp_p[pp].building_id+'" class="btn btn-success btn-sm">显示详细资料</a>'+
+                                '</div>'+
+                              '</li></ul>';
+
+                    /*var myLatLng = {lat: parseFloat(splitstr[0] - 0.00575), lng: parseFloat(splitstr[1] - 0.00668)};
+                    marker_b[pp] = new google.maps.Marker({
+                        position: myLatLng,
+                        icon: '/images/skyline.png',
+                        map: map_g,
+                        label: comp_p[pp].building_name
+                        });
+
+                        google.maps.event.addListener(marker_b[pp], 'click', (function(marker, pp) {
+                        return function() {
+                            infoWindow.setContent(contentString2[pp]);
+                            infoWindow.open(map_g, marker_b[pp]);
+                        }
+                    })(marker_b[pp], pp));*/
+
+                    //marker_b[pp].setMap(map_g); 
+                   
+                //baidu
+                var pt = new BMap.Point(parseFloat(splitstr[1]), parseFloat(splitstr[0]));
+                var myIcon = new BMap.Icon("/images/skyline.png", new BMap.Size(300,157));
+                var marker2 = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
+                map_baidu.addOverlay(marker2); 
+                var label = new BMap.Label(comp_p[pp].building_name,{offset:new BMap.Size(20,10)});
+                label.setStyle({ borderColor: "#999", border:"0" });
+                marker2.setLabel(label);
+                
+                
+              
             }
             
             var contentString = [];
@@ -548,7 +577,7 @@ script.
                 
                 var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
                 //alert(myLatLng);
-                marker_g[i] = new google.maps.Marker({
+               /* marker_g[i] = new google.maps.Marker({
                     position: myLatLng,
                     icon: '/images/man2_1.png',
                     map: map_g,
@@ -562,7 +591,15 @@ script.
                     }
                 })(marker_g[i], i));
                 
-                marker_g[i].setMap(map_g); 
+                marker_g[i].setMap(map_g); */
+                
+                var pt = new BMap.Point(parseFloat(partsOfStr[1]), parseFloat(partsOfStr[0]));
+                var myIcon = new BMap.Icon("/images/man2_1.png", new BMap.Size(300,157));
+                var marker2 = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
+                map_baidu.addOverlay(marker2); 
+                var label = new BMap.Label(data_p[i].employee_name,{offset:new BMap.Size(20,10)});
+                label.setStyle({ borderColor: "#999", border:"0" });
+                marker2.setLabel(label);
                 
             }
             //map_g.data.setControls(['Polygon']);
@@ -2135,5 +2172,21 @@ script.
         xmlHttp.send( null );
         return xmlHttp.responseText;
     }
+    
+script(type='text/javascript').
+  // 百度地图API功能
+  //lat: 23.1253491,
+  //lng: 112.9469622
+  /*map_baidu = new BMap.Map("allmap");    // 创建Map实例
+  map_baidu.centerAndZoom(new BMap.Point(112.9469622, 23.1253491), 11);  // 初始化地图,设置中心点坐标和地图级别
+  //添加地图类型控件
+  map_baidu.addControl(new BMap.MapTypeControl({
+  mapTypes:[
+  BMAP_NORMAL_MAP,
+  BMAP_HYBRID_MAP
+  ]}));
+  map_baidu.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+  map_baidu.enableScrollWheelZoom(true);   */  //开启鼠标滚轮缩放
+
     
     
