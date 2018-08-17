@@ -1,0 +1,56 @@
+extends base_tracking_2
+block content 
+    .right_col(role='main', style='background-color:#49A8FF')
+        .row
+          .col-md-12
+                .f_panel
+                  .f_title
+                        ul.nav.nav-tabs.bar_tabs
+                          li.active
+                            a(href='/tracking') Real Time Tracking
+                          li
+                            a(href='/path_playback_outdoor') Outdoor Playback
+                          li
+                            a(href='/path_playback') Indoor Playback
+                          li
+                            a(href='/geofencing') Geofencing
+                    .clearfix
+                  .f_content
+                    
+                    div(role='tabpanel', data-example-id='togglable-tabs')
+                          .row
+                            // form input mask
+                            .col-md-2.col-sm-12.col-xs-12
+                                    #tree
+                                    for row, index in building
+                                      #accordion.accordion(role='tablist', aria-multiselectable='true',hidden)
+                                          .panel
+                                              a.panel-heading.collapsed(id='acc#{row.building_id}',role='tab', data-toggle='collapse', data-parent='#accordion', href='#collapse#{row.building_id}', aria-expanded='false', aria-controls='collapse#{row.building_id}')
+                                                h4.panel-title #{row.building_name}
+                                              panel-collapse.collapse.collapse(id='collapse#{row.building_id}',role='tabpanel', aria-labelledby='headingOne')
+                                                .panel-body
+                                                    ul.list-unstyled
+                                                        li.media.event
+                                                          a.pull-left.border-aero.profile_thumb
+                                                            i.fa.fa-building.aero
+                                                          .media-body
+                                                            a.title(href='#')
+                                                            p Addres : #{row.building_add}
+                                                            
+                                                    a.btn.btn-success.btn-sm(href='/tracking_indoor/#{row.building_id}') Show details
+                                                            
+                                                              
+                                .col-md-3.col-sm-12.col-xs-12
+             
+                            .col-md-10.col-sm-12.col-xs-12
+                                .x_content
+                                  .tab-content                       
+                                    div.tab-pane.active(id='outdoor')
+                                        input(type='text', name='map_string_load',id='map_string_load',hidden,value='#{maps[0].map_string}')
+                                        input(type='text', name='map_string',id='map_string',hidden,value='#{maps[0].map_string}')
+                                        #panel-content
+                                            #controls(hidden)
+                                              select#polyList
+                                              button#btnDelete Delete
+                                              button(type='button',onclick="refresh();") Save
+                                        #allmap(style='width:100%;height:700px;')

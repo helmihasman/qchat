@@ -8,6 +8,7 @@
   "dependencies": {
     "bcrypt-nodejs": "latest",
     "body-parser": "~1.15.1",
+    "compression": "^1.7.3",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
     "express": "~4.13.4",
@@ -24,6 +25,7 @@
     "mysql": "^2.13.0",
     "nano": "*",
     "node-gcm": "^0.14.0",
+    "node-http2": "^4.0.1",
     "passport": "~0.1.18",
     "passport-local": "~0.1.6",
     "request": "*",

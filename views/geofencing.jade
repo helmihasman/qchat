@@ -28,13 +28,16 @@ block content
                                 input(type='text', name='map_string_load',id='map_string_load',hidden,value='#{data[0].map_string}')
                                 input(type='text', name='map_string',id='map_string',hidden,value='#{data[0].map_string}')
                                 button.btn(type='submit',id="confirm_btn",hidden)
-                            #panel-content
+                            #panel-content(hidden)
                                 #controls
                                   | 点选 
                                   select#polyList
                                   button#btnDelete 删除
                                   button(type='button',onclick="refresh();") 保存
-                            #googleMap(style='width:100%;height:700px;')
+                            #baidu_geo(style='width:100%;height:700px;')
+                            #map(style='height:100%;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;')
+                            #result
+
 
     // /page content
 

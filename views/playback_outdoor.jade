@@ -53,13 +53,15 @@ block content
                                                 button.btn.btn-primary(type='button',onclick='playbackOutdoor()') 递交
                                             td
                                                 button.btn.btn-info#playButton.fa.fa-play
+                                                button.btn.btn-info#pauseButton.fa.fa-pause
+                                                button.btn.btn-info#stopButton.fa.fa-stop
                                                 
 
                                         #controls(hidden)
                                           select#polyList
                                           button#btnDelete Delete
                                           button(type='button',onclick="refresh();") Save
-                                    #googleMapPlayback(style='width:100%;height:700px;')
+                                    #allmap_playback(style='width:100%;height:700px;')
                                     
                           .row
                               .col-md-12

@@ -12,6 +12,9 @@ var session = require("express-session")({
     saveUninitialized: true
 });
 
+var compression = require('compression');
+
+
 // Enable CORS
 var allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -76,6 +79,8 @@ app.all(deployPath + "/api", function(req, res) {
 });
 
 app.use(allowCrossDomain);
+app.use(compression()); //use compression
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Default handler
 //app.get(deployPath + "/", function(req, res) {
@@ -2116,7 +2121,7 @@ app.post(deployPath +'/profile/pic',isAuthenticated,function(req,res){
 
 //----------------------------PROFILE----------------------------
 
-app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/tracking_old',isAuthenticated,function(req,res,next){
     
     var employee_level = req.session.passport.user.employee_level;
     
@@ -3629,7 +3634,7 @@ app.get(deployPath +'/path_playback_outdoor',isAuthenticated,function(req,res,ne
 
 });
 
-app.get(deployPath +'/tracking_baidu',isAuthenticated,function(req,res,next){
+app.get(deployPath +'/tracking',isAuthenticated,function(req,res,next){
     
     var employee_level = req.session.passport.user.employee_level;
     
@@ -3874,7 +3879,7 @@ app.get(deployPath +'/tracking_baidu',isAuthenticated,function(req,res,next){
                                                                 
                                                                 
                                                                 if(req.session.language === 'en'){
-                                                                    res.render('tracking_baidu',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building,region:region,group:group,category:category,sidelist:JSON.stringify(region_list_a)});
+                                                                    res.render('tracking_baidu_en',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building,region:region,group:group,category:category,sidelist:JSON.stringify(region_list_a)});
                                                                 }
                                                                 else{
                                                                     res.render('tracking_baidu',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),maps:maps,building:building,region:region,group:group,category:category,sidelist:JSON.stringify(region_list_a)});
@@ -4131,7 +4136,6 @@ app.get(deployPath +'/get_playback/:time1/:time2/:emp_id',isAuthenticated,functi
     
     
 });
-
 
 app.get(deployPath +'/get_history/:time1/:time2/:emp_id',isAuthenticated,function(req,res,next){
     
@@ -5448,13 +5452,12 @@ app.get(deployPath +'/api/v1/save_remarks', function(req, res,next) {
   
 });
  //----------------------------REST API-------------------------------------
- 
+
 app.get('/logout', function (req, res){
   req.session.destroy(function (err) {
     res.redirect('/'); 
   });
 });
-
 
 //setInterval(function(){ 
 //       con.query('SELECT * FROM company',function(err,rows){
@@ -5473,7 +5476,7 @@ io.on('connection', function (socket) {
     //console.log("goobal comp id --"+global_company_id);
     //console.log('connnenenne1----');
     setInterval(function(){ 
-       // console.log('connnenenne----');
+        //console.log('connnenenne----');
         //console.log(socket.handshake.session.passport.user);
         //var company_id = '1';
     if(global_user_id !== null || global_user_id !== undefined){
@@ -5560,6 +5563,102 @@ io.on('connection', function (socket) {
        });
    }
        }, 30000);
+
+
+ });
+ 
+io.on('connection', function (socket) {
+    //console.log("goobal use id --"+global_user_id);
+    //console.log("goobal comp id --"+global_company_id);
+    //console.log('connnenenne2----');
+    setInterval(function(){ 
+        //console.log('connnenenne22----');
+        //console.log(socket.handshake.session.passport.user);
+        //var company_id = '1';
+    if(global_user_id !== null || global_user_id !== undefined){
+        //console.log(socket.handshake.session.passport.user);
+        var company_id = global_company_id;
+        var language = socket.handshake.session.language;
+        //console.log("language---"+language);
+        var d = createDateAsUTC(new Date());
+    //    d.setMinutes(d.getMinutes()+480);
+        d.setMinutes(d.getMinutes()-480);
+        var ddate = d.getDate();
+        var dmonth = d.getMonth()+1;
+        var dyear = d.getFullYear();
+        var dhour = d.getHours();
+        var dminutes = d.getMinutes();
+        var dseconds = d.getSeconds();
+        
+
+        if(ddate < 10){
+            ddate = "0"+ddate;
+        }
+        if(dmonth < 10){
+            dmonth = "0"+dmonth;
+        }
+
+        if(dhour < 10){
+            dhour = "0"+dhour;
+        }
+        if(dminutes < 10){
+            dminutes = "0"+dminutes;
+        }
+        if(dseconds < 10){
+            dseconds = "0"+dseconds;
+        }
+
+        var newdate;
+        newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+
+        var employee="",floor_plan="",company="";
+        var floors_id = [];
+        var floors = "";
+
+        con.query("SELECT employee_id,employee_name,employee_image, employee_phone_no, employee_location, employee_time,employee_gps from employee left join company on employee.company_id = company.company_id where employee_level = '2' and company.company_id = '"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query '+error);
+           }
+           else{
+    //           console.log('Successful query\n');
+               //console.log(rows);
+               employee = rows;
+           }
+       });
+       
+       con.query("SELECT * from company where company_id = '"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query '+error);
+           }
+           else{
+    //           console.log('Successful query\n');
+    //           console.log(rows);
+               company = rows;
+           }
+       });
+
+       //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
+
+       con.query("SELECT * FROM floor_plan where company_id='"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query'+error);
+           }
+           else{
+               floor_plan = rows;
+               for(var i=0;i<rows.length;i++){
+                   floors_id.push({floor_id:rows[i].floorplan_id});
+               }
+               floors = {floor:floors_id};
+               //console.log("flooorree--"+floors);
+    //           res.render('employee_management',{title:"Employee Management",data:rows});
+                //console.log(employee);
+                socket.emit('tracking_outdoor',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),language:language});
+                //socket.emit('tracking',employee);
+   
+           }
+       });
+   }
+       }, 10000);
 
 
  });
