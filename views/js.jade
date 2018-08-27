@@ -516,32 +516,6 @@ script.
                                   '<br><a href="/tracking_indoor/'+comp_p[pp].building_id+'" class="btn btn-success btn-sm">显示详细资料</a>'+
                                 '</div>'+
                               '</li></ul>',comp_p[pp].building_name];
-
-                    /*var myLatLng = {lat: parseFloat(splitstr[0] - 0.00575), lng: parseFloat(splitstr[1] - 0.00668)};
-                    marker_b[pp] = new google.maps.Marker({
-                        position: myLatLng,
-                        icon: '/images/skyline.png',
-                        map: map_g,
-                        label: comp_p[pp].building_name
-                        });
-
-                        google.maps.event.addListener(marker_b[pp], 'click', (function(marker, pp) {
-                        return function() {
-                            infoWindow.setContent(contentString2[pp]);
-                            infoWindow.open(map_g, marker_b[pp]);
-                        }
-                    })(marker_b[pp], pp));*/
-
-                    //marker_b[pp].setMap(map_g); 
-                   
-                //baidu
-                /*var pt = new BMap.Point(parseFloat(splitstr[1]), parseFloat(splitstr[0]));
-                var myIcon = new BMap.Icon("/images/skyline.png", new BMap.Size(50,50));
-                marker_b[pp] = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
-                map_baidu.addOverlay(marker_b[pp]); 
-                var label = new BMap.Label(comp_p[pp].building_name,{offset:new BMap.Size(20,10)});
-                label.setStyle({ borderColor: "#999", border:"0" });
-                marker_b[pp].setLabel(label);  */ 
             }
             
             
@@ -603,7 +577,7 @@ script.
                 newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
                 var partsOfStr = data_p[i].employee_gps.split(',');
                 //alert(partsOfStr);
-                contentString[i] =[ '<ul class="list-unstyled">'+
+                contentString[i] =[parseFloat(partsOfStr[0] - 0.00668),parseFloat(partsOfStr[1] - 0.00575),'<ul class="list-unstyled">'+
                         '<li class="media event">'+
                             '<a class="pull-left">'+
                               '<img src="/'+data_p[i].employee_image+'" height="40" width="40">'+
@@ -613,7 +587,7 @@ script.
                               '<p>最后的位置: '+newdate+'</p>'+
                               '</p>'+
                             '</div>'+
-                          '</li></ul>'];
+                          '</li></ul>',data_p[i].employee_name];
                 
                 var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
                 //alert(myLatLng);
@@ -632,95 +606,31 @@ script.
                 })(marker_g[i], i));
                 
                 marker_g[i].setMap(map_g); */
-                
-                var pt = new BMap.Point(parseFloat(partsOfStr[0] - 0.00668), parseFloat(partsOfStr[1] - 0.00575));
-                //alert(parseFloat(partsOfStr[1] + 0.00575)+","+ parseFloat(partsOfStr[0] + 0.00668));
+            }
+            
+            for(var i=0;i<contentString.length;i++){
                 var myIcon = new BMap.Icon("/images/man2_1.png", new BMap.Size(50,50));
-                var marker3 = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
-                map_baidu.addOverlay(marker3); 
-                var label = new BMap.Label(data_p[i].employee_name,{offset:new BMap.Size(20,10)});
+                var marker = new BMap.Marker(new BMap.Point(contentString[i][0],contentString[i][1]),{icon:myIcon});  // 创建标注
+                var content = contentString[i][2];
+                var label = new BMap.Label(contentString[i][3],{offset:new BMap.Size(20,10)});
                 label.setStyle({ borderColor: "#999", border:"0" });
-                marker3.setLabel(label);
-                
-            }
-            //map_g.data.setControls(['Polygon']);
-            
-            bindDataLayerListeners(map_g.data);
-            
-            loadPolygons();  //load saved data
-            
-            function bindDataLayerListeners(dataLayer) {
-                dataLayer.addListener('addfeature', savePolygon);
-                dataLayer.addListener('removefeature', savePolygon);
-                //dataLayer.addListener('setgeometry', savePolygon);
-            }
-
-            
-
-        //});
-        function loadPolygons() {
-                //var data = JSON.parse(localStorage.getItem('geoData'));
-                var data = JSON.parse(document.getElementById("map_string_load").value) ;
-                //alert(data);
-                map_g.data.forEach(function (f) {
-                    map_g.data.remove(f);
-                });
-                  
-                map_g.data.addGeoJson(data);
-                //alert("load polygon");
-            }
-
-            function savePolygon() {
-                //console.log("mapp11-- "+map.data);
-                //alert("save polygon1");
-                //var polyname = prompt("Enter polygon name:", "");
-                 var coord;
-                 var features = [];
-                 //map.bindPopup("<div>This is a polygon</div>" + polygonPopUpButtons);
-                map_g.data.toGeoJson(function (json) {
-                    //alert("save name here");
-                    //json.features[0].geometry.polyname = "testname";
-                    //localStorage.setItem('geoData', JSON.stringify(json));
-                    for (var i = 0; i < json.features.length; i++) {
-                        console.log(json.features[i].geometry.coordinates);
-                        coord = json.features[i].geometry.coordinates;
-                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":"Area "+(i+1)},"properties":{}});
-                    }
-                    
-                    var jsonstring = {"type":"FeatureCollection","features":features};
-                    console.log("jsonstring-- "+JSON.stringify(jsonstring));
-                    localStorage.setItem('geoData', JSON.stringify(jsonstring));
-                    
-                    initControls(jsonstring);
-                });
+                map_baidu.addOverlay(marker);           // 将标注添加到地图中
+                marker.setLabel(label);
+                addClickHandler2(content,marker);
             }
             
-            function initControls(data)
-            {
-                var sel = document.getElementById('polyList');
-                sel.options.length = 0;
-                console.log("savepolygon22-- "+JSON.stringify(data));
-
-                for (var i = 0; i < data.features.length; i++) {
-                    var opt = document.createElement('option');
-                    opt.innerHTML = data.features[i].geometry.polyname;
-                    opt.value = i;
-                    sel.appendChild(opt);
-                }
-
-                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
-                document.getElementById("btnDelete").onclick = function(){
-                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
-                    data.features.splice(parseInt(selIdx), 1);   
-
-                    //reload 
-                    localStorage.setItem('geoData', JSON.stringify(data));
-                    initControls(data);  
-                    loadPolygons(map_g);   
-                };
+            function addClickHandler2(content,marker){
+                    marker.addEventListener("click",function(e){
+                            
+                            openInfo2(content,e);}
+                    );
             }
-
-        //}
+            function openInfo2(content,e){
+                    var p = e.target;
+                    var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                    var infoWindow = new BMap.InfoWindow(content);  // 创建信息窗口对象 
+                    map_baidu.openInfoWindow(infoWindow,point); //开启信息窗口
+            }
         };
     
 script.
@@ -827,82 +737,8 @@ script.
                 label.setStyle({ borderColor: "#999", border:"0" });
                 marker2.setLabel(label);
             }
-            
-            
-            bindDataLayerListeners(map_g.data);
-            
-            loadPolygons();  //load saved data
-            
-            function bindDataLayerListeners(dataLayer) {
-                dataLayer.addListener('addfeature', savePolygon);
-                dataLayer.addListener('removefeature', savePolygon);
-                //dataLayer.addListener('setgeometry', savePolygon);
-            }
-
-            
 
         //});
-        function loadPolygons() {
-                //var data = JSON.parse(localStorage.getItem('geoData'));
-                var data = JSON.parse(document.getElementById("map_string_load").value) ;
-                //alert(data);
-                map_g.data.forEach(function (f) {
-                    map_g.data.remove(f);
-                });
-                  
-                map_g.data.addGeoJson(data);
-                //alert("load polygon");
-            }
-
-            function savePolygon() {
-                //console.log("mapp11-- "+map.data);
-                //alert("save polygon1");
-                //var polyname = prompt("Enter polygon name:", "");
-                 var coord;
-                 var features = [];
-                 //map.bindPopup("<div>This is a polygon</div>" + polygonPopUpButtons);
-                map_g.data.toGeoJson(function (json) {
-                    //alert("save name here");
-                    //json.features[0].geometry.polyname = "testname";
-                    //localStorage.setItem('geoData', JSON.stringify(json));
-                    for (var i = 0; i < json.features.length; i++) {
-                        console.log(json.features[i].geometry.coordinates);
-                        coord = json.features[i].geometry.coordinates;
-                        features.push({"type":"Feature","geometry":{"type":"Polygon","coordinates":coord,"polyname":"Area "+(i+1)},"properties":{}});
-                    }
-                    
-                    var jsonstring = {"type":"FeatureCollection","features":features};
-                    console.log("jsonstring-- "+JSON.stringify(jsonstring));
-                    localStorage.setItem('geoData', JSON.stringify(jsonstring));
-                    
-                    initControls(jsonstring);
-                });
-            }
-            
-            function initControls(data)
-            {
-                var sel = document.getElementById('polyList');
-                sel.options.length = 0;
-                console.log("savepolygon22-- "+JSON.stringify(data));
-
-                for (var i = 0; i < data.features.length; i++) {
-                    var opt = document.createElement('option');
-                    opt.innerHTML = data.features[i].geometry.polyname;
-                    opt.value = i;
-                    sel.appendChild(opt);
-                }
-
-                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
-                document.getElementById("btnDelete").onclick = function(){
-                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
-                    data.features.splice(parseInt(selIdx), 1);   
-
-                    //reload 
-                    localStorage.setItem('geoData', JSON.stringify(data));
-                    initControls(data);  
-                    loadPolygons(map_g);   
-                };
-            }
 
     //}
     };
@@ -2313,20 +2149,73 @@ script.
     
     socket.on('tracking_outdoor', function(rows) {
         
+        map_baidu.clearOverlays();
         var language = rows.language;
         
         //clearMap();
         var employees = rows.employee;
-
-
-        for (var i = 0; i < marker_g.length; i++ ) {
-          marker_g[i].setMap(null);
-        }
-        marker_g.length = 0;
+        var building = rows.building;
 
         //alert("in 4");
-    var infoWindow = new google.maps.InfoWindow({maxWidth: 250});
     var contentString = [];
+    var contentString2 = [];
+    //alert("in6")
+    for(var i=0;i<building.length;i++){
+        
+                var mystring = building[i].building_location.replace('(','');
+                mystring = mystring.replace(')','');
+                var partsOfStr = mystring.split(',');
+        
+                contentString[i] = [parseFloat(partsOfStr[1]),parseFloat(partsOfStr[0]),'<ul class="list-unstyled">'+
+                        '<li class="media event">'+
+                            '<a class="pull-left border-aero profile_thumb">'+
+                              '<i class="fa fa-building aero"></i>'+
+                            '</a>'+
+                            '<div class="media-body">'+
+                              '<a class="title" href="#">'+building[i].building_name+'</a>'+
+                              '<p><b>地址:</b> '+building[i].building_add+'</p>'+
+                            '</div>'+
+                          '</li></ul>',building[i].building_name];
+                
+                
+                 
+                
+                var pt = new BMap.Point(parseFloat(partsOfStr[1]), parseFloat(partsOfStr[0]));
+                //alert(parseFloat(partsOfStr[1] + 0.00575)+","+ parseFloat(partsOfStr[0] + 0.00668));
+                var myIcon = new BMap.Icon("/images/skyline.png", new BMap.Size(50,50));
+                var marker3 = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
+                map_baidu.addOverlay(marker3); 
+                var label = new BMap.Label(building[i].building_name,{offset:new BMap.Size(20,10)});
+                label.setStyle({ borderColor: "#999", border:"0" });
+                marker3.setLabel(label);
+                //alert("afyer nuilding");
+            }
+            
+            for(var i=0;i<contentString.length;i++){
+                var myIcon = new BMap.Icon("/images/skyline.png", new BMap.Size(50,50));
+                var marker = new BMap.Marker(new BMap.Point(contentString[i][0],contentString[i][1]),{icon:myIcon});  // 创建标注
+                var content = contentString[i][2];
+                var label = new BMap.Label(contentString[i][3],{offset:new BMap.Size(20,10)});
+                label.setStyle({ borderColor: "#999", border:"0" });
+                map_baidu.addOverlay(marker);           // 将标注添加到地图中
+                marker.setLabel(label);
+                addClickHandler(content,marker);
+            }
+            
+            function addClickHandler(content,marker){
+                    marker.addEventListener("click",function(e){
+                            
+                            openInfo(content,e);}
+                    );
+            }
+            function openInfo(content,e){
+                    var p = e.target;
+                    var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                    var infoWindow = new BMap.InfoWindow(content);  // 创建信息窗口对象 
+                    map_baidu.openInfoWindow(infoWindow,point); //开启信息窗口
+            }
+            
+            
     for(var i=0;i<employees.length;i++){
         var d = new Date(employees[i].employee_time);
     //    d.setMinutes(d.getMinutes()+480);
@@ -2358,8 +2247,10 @@ script.
 
         var newdate;
         newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
+        
+        var partsOfStr = employees[i].employee_gps.split(',');
                 
-                contentString[i] = '<ul class="list-unstyled">'+ 
+                contentString2[i] = [parseFloat(partsOfStr[0] - 0.00668),parseFloat(partsOfStr[1] - 0.00575)'<ul class="list-unstyled">'+ 
                         '<li class="media event">'+
                             '<a class="pull-left">'+
                               '<img src="/'+employees[i].employee_image+'" height="40" width="40">'+
@@ -2369,9 +2260,9 @@ script.
                               '<p>最后的位置: '+newdate+'</p>'+
                               '</p>'+
                             '</div>'+
-                          '</li></ul>';
+                          '</li></ul>',employees[i].employee_name];
                 
-                var partsOfStr = employees[i].employee_gps.split(',');
+                
                 /*var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
                 //alert(myLatLng);
                 marker_g[i] = new google.maps.Marker({
@@ -2390,15 +2281,31 @@ script.
                 
                 marker_g[i].setMap(map_g);*/
                 
-                var pt = new BMap.Point(parseFloat(partsOfStr[0] - 0.00668), parseFloat(partsOfStr[1] - 0.00575));
-                //alert(parseFloat(partsOfStr[1] + 0.00575)+","+ parseFloat(partsOfStr[0] + 0.00668));
-                var myIcon = new BMap.Icon("/images/man2_1.png", new BMap.Size(50,50));
-                var marker3 = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
-                map_baidu.addOverlay(marker3); 
-                var label = new BMap.Label(data_p[i].employee_name,{offset:new BMap.Size(20,10)});
-                label.setStyle({ borderColor: "#999", border:"0" });
-                marker3.setLabel(label);
                 
+            }
+            
+            for(var i=0;i<contentString2.length;i++){
+                var myIcon = new BMap.Icon("/images/man2_1.png", new BMap.Size(50,50));
+                var marker = new BMap.Marker(new BMap.Point(contentString2[i][0],contentString2[i][1]),{icon:myIcon});  // 创建标注
+                var content = contentString2[i][2];
+                var label = new BMap.Label(contentString2[i][3],{offset:new BMap.Size(20,10)});
+                label.setStyle({ borderColor: "#999", border:"0" });
+                map_baidu.addOverlay(marker);           // 将标注添加到地图中
+                marker.setLabel(label);
+                addClickHandler2(content,marker);
+            }
+            
+            function addClickHandler2(content,marker){
+                    marker.addEventListener("click",function(e){
+                            
+                            openInfo2(content,e);}
+                    );
+            }
+            function openInfo2(content,e){
+                    var p = e.target;
+                    var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                    var infoWindow = new BMap.InfoWindow(content);  // 创建信息窗口对象 
+                    map_baidu.openInfoWindow(infoWindow,point); //开启信息窗口
             }
     
 

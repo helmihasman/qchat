@@ -185,13 +185,28 @@ app.use(methodOverride(function(req, res){
 //    database: "ibmx_7b9b06ebe049e12"
 //});
 
-//Qchat compose production pool
+
+//var con = mysql.createPool({
+//    host: "sl-us-south-1-portal.19.dblayer.com",
+//    user: "admin",
+//    password: "XPONHULHEZMIPZZH",
+//    database: "compose",
+//    port:37139,
+//    connectionLimit : 100,
+//    waitForConnections : true,
+//    queueLimit :0,
+//    debug    :  false,
+//    wait_timeout : 28800,
+//    connect_timeout :1
+//});
+
+//Qchat compose production pool new
 var con = mysql.createPool({
-    host: "sl-us-south-1-portal.19.dblayer.com",
+    host: "sl-us-south-1-portal.21.dblayer.com",
     user: "admin",
-    password: "XPONHULHEZMIPZZH",
+    password: "YORBMDHNZZWORNGG",
     database: "compose",
-    port:37139,
+    port:54418,
     connectionLimit : 100,
     waitForConnections : true,
     queueLimit :0,
@@ -5611,7 +5626,7 @@ io.on('connection', function (socket) {
         var newdate;
         newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
 
-        var employee="",floor_plan="",company="";
+        var employee="",floor_plan="",company="",building="";
         var floors_id = [];
         var floors = "";
 
@@ -5636,6 +5651,17 @@ io.on('connection', function (socket) {
                company = rows;
            }
        });
+       
+       con.query("SELECT * from building where company_id = '"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query '+error);
+           }
+           else{
+    //           console.log('Successful query\n');
+    //           console.log(rows);
+                building = rows;
+           }
+       });
 
        //"SELECT * from path where day(path_datetime) = '"+ddate+"' and month(path_datetime) = '"+dmonth+"' and year(path_datetime)='"+dyear+"'"
 
@@ -5652,7 +5678,7 @@ io.on('connection', function (socket) {
                //console.log("flooorree--"+floors);
     //           res.render('employee_management',{title:"Employee Management",data:rows});
                 //console.log(employee);
-                socket.emit('tracking_outdoor',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),language:language});
+                socket.emit('tracking_outdoor',{title:"Tracking",data:JSON.stringify(employee),company:JSON.stringify(company),employee:employee,floor_plan:floor_plan,floors:JSON.stringify(floors),language:language,building:building});
                 //socket.emit('tracking',employee);
    
            }
