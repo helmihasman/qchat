@@ -201,18 +201,28 @@ app.use(methodOverride(function(req, res){
 //});
 
 //Qchat compose production pool new
-var con = mysql.createPool({
+//var con = mysql.createPool({
+//    host: "sl-us-south-1-portal.21.dblayer.com",
+//    user: "admin",
+//    password: "YORBMDHNZZWORNGG",
+//    database: "compose",
+//    port:54418,
+//    connectionLimit : 1000,
+//    waitForConnections : true,
+//    queueLimit :0,
+//    debug    :  false,
+//    connect_timeout :60 * 60 * 1000,
+//    aquireTimeout   : 60 * 60 * 1000,
+//    timeout         : 60 * 60 * 1000
+//});
+
+//Qchat compose connection new
+var con = mysql.createConnection({
     host: "sl-us-south-1-portal.21.dblayer.com",
     user: "admin",
     password: "YORBMDHNZZWORNGG",
     database: "compose",
-    port:54418,
-    connectionLimit : 100,
-    waitForConnections : true,
-    queueLimit :0,
-    debug    :  false,
-    wait_timeout : 28800,
-    connect_timeout :1
+    port:54418
 });
 
 //Qchat compose production
@@ -4168,6 +4178,54 @@ app.get(deployPath +'/get_history/:time1/:time2/:emp_id',isAuthenticated,functio
 //               console.log('Successful query\n');
 //               console.log(rows);
                res.status(200).send(rows);
+               
+           }
+       });
+
+});
+
+app.get(deployPath +'/savePolygon/:polygon',isAuthenticated,function(req,res,next){
+    
+    var company_id = req.session.passport.user.company_id;
+    var polygon = req.params.polygon;
+    
+    //console.log("polyyyy---"+polygon);
+
+       
+        con.query("SELECT * FROM map where company_id = '"+company_id+"'",function(error,rows,fields){
+           if(!!error){
+               console.log('Error in the query '+error);
+           }
+           else{
+//               console.log('Successful query 01\n');
+//               console.log(rows);
+                 if(rows.length !== 0 ){
+                     con.query("UPDATE map set map_string = '"+polygon+"' where company_id = '"+company_id+"'",function(error,rows,fields){
+                            if(!!error){
+                                console.log('Error in the query '+error);
+                            }
+                            else{
+//                                console.log('Successful query 11\n');
+//                                console.log(rows);
+                                  res.status(200).send(rows);
+
+                            }
+                        });
+                 }
+                 else{
+                     con.query("INSERT into map(map_string,company_id) values ('"+polygon+"','"+company_id+"')",function(error,rows,fields){
+                            if(!!error){
+                                console.log('Error in the query '+error);
+                            }
+                            else{
+//                                console.log('Successful query 22\n');
+//                                console.log(rows);
+                                  res.status(200).send(rows);
+
+                            }
+                        });
+                 }
+               
                
            }
        });

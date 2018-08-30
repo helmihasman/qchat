@@ -1171,11 +1171,27 @@ script.
             var map_geo = new BMap.Map('baidu_geo');
             var poi = new BMap.Point(112.9469622,23.1253491);
             map_geo.centerAndZoom(poi, 10);
-            map_geo.enableScrollWheelZoom();  
-            var overlays = [];
+            map_geo.enableScrollWheelZoom();
+            
+            //var overlays = [];
+            var overlays = document.getElementById("map_string_load").value;
+            //alert(JSON.parse(overlays));
+            //alert(overlays.length);
+            var polygons = JSON.parse(overlays);
+            //alert(polygons.length);
+            for(var k=0;k<polygons.length;k++){
+                var polygon = new BMap.Polygon(polygons[k]);
+                map_geo.addOverlay(polygon);    
+            }
+            
                 var overlaycomplete = function(e){
-                overlays.push(e.overlay);
+                alert(JSON.stringify(e.overlay.getPath()));
+                var ov = e.overlay.getPath();
+                polygons.push(ov);
+                
+                savePolygon(JSON.stringify(polygons));
             };
+            
             var styleOptions = {
                 strokeColor:"blue",    //边线颜色。
                 fillColor:"blue",      //填充颜色。当参数为空时，圆形将没有填充效果。
@@ -1202,12 +1218,7 @@ script.
             drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
                  //添加鼠标绘制工具监听事件，用于获取绘制结果
             drawingManager.addEventListener('overlaycomplete', overlaycomplete);
-            function clearAll() {
-                        for(var i = 0; i < overlays.length; i++){
-                    map_geo.removeOverlay(overlays[i]);
-                }
-                overlays.length = 0   
-            }
+            
 
 
             };
@@ -2350,6 +2361,14 @@ script.
     {
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open( "GET", "/get_playback/"+time1+"/"+time2+"/"+emp_id, false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+    
+    function savePolygon(polygon)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", "/savePolygon/"+polygon, false ); // false for synchronous request
         xmlHttp.send( null );
         return xmlHttp.responseText;
     }

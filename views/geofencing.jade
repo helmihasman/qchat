@@ -15,7 +15,6 @@ block content
                           ul.nav.nav-tabs.bar_tabs
                             li
                               a(href='/tracking') 户外追踪
-                            
                             li
                               a(href='/path_playback_outdoor') 户外播放
                             li
@@ -24,10 +23,10 @@ block content
                               a(href='/geofencing') 地理围栏
                           .clearfix
                         .x_content
-                            form.form-horizontal.form-label-left(role='form',method='post' action='/api/v1/save_map')
+                            form.form-horizontal.form-label-left(role='form',method='post')
                                 input(type='text', name='map_string_load',id='map_string_load',hidden,value='#{data[0].map_string}')
                                 input(type='text', name='map_string',id='map_string',hidden,value='#{data[0].map_string}')
-                                button.btn(type='submit',id="confirm_btn",hidden)
+                                
                             #panel-content(hidden)
                                 #controls
                                   | 点选 
