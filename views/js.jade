@@ -330,99 +330,6 @@ script.
             $("#location").val(location);
             //alert(e.point.lat + "," + e.point.lng);
         });  
-    //if (navigator.geolocation) {
-        //navigator.geolocation.getCurrentPosition(function(position) {
-
-            /*map_g = new google.maps.Map(document.getElementById('googleMapCompany'), {
-                center: {
-                    //lat: position.coords.latitude,
-                    //lng: position.coords.longitude
-                    lat: 23.1253491,
-                    lng: 112.9469622
-                },
-                zoom: 10,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                mapTypeControl: false
-            });
-            
-            var marker;
-            function placeMarker(location) {
-              if ( marker ) {
-                marker.setPosition(location);
-              } else {
-                marker = new google.maps.Marker({
-                  position: location,
-                  map: map_g
-                });
-              }
-
-              $("#location").val(location);
-
-            }
-            google.maps.event.addListener(map_g, 'click', function(event) {
-              placeMarker(event.latLng);
-            });
-            
-            // Create the search box and link it to the UI element.
-        var input = document.getElementById('pac-input');
-        var searchBox = new google.maps.places.SearchBox(input);
-        map_g.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-        // Bias the SearchBox results towards current map's viewport.
-        map_g.addListener('bounds_changed', function() {
-          searchBox.setBounds(map_g.getBounds());
-        });
-
-        var markers = [];
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-        searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
-
-          if (places.length == 0) {
-            return;
-          }
-
-          // Clear out the old markers.
-          markers.forEach(function(marker) {
-            marker.setMap(null);
-          });
-          markers = [];
-
-          // For each place, get the icon, name and location.
-          var bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
-            }
-            var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };
-
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
-              map: map_g,
-              icon: icon,
-              title: place.name,
-              position: place.geometry.location
-            }));
-
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
-            } else {
-              bounds.extend(place.geometry.location);
-            }
-          });
-          map_g.fitBounds(bounds);
-        }); */
-
-    //}
     };
     
 
@@ -968,38 +875,7 @@ script.
                     
                 });
             }
-            
-            function initControls(data)
-            {
-                
-                var sel = document.getElementById('polyList');
-                sel.options.length = 0;
-                console.log("savepolygon22-- "+JSON.stringify(data));
 
-                for (var i = 0; i < data.features.length; i++) {
-                    var opt = document.createElement('option');
-                    opt.innerHTML = data.features[i].geometry.polyname;
-                    opt.value = i;
-                    sel.appendChild(opt);
-                }
-                
-                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
-                document.getElementById("btnDelete").onclick = function(){
-                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
-                    data.features.splice(parseInt(selIdx), 1);   
-
-                    //reload 
-                    //localStorage.setItem('geoData', JSON.stringify(data));
-                    document.getElementById("map_string").value = JSON.stringify(data);
-                    $("#confirm_btn").click();
-                    initControls(data);  
-                    loadPolygons();
-                    //window.location.reload();
-                };
-                
-            }
-           
-    
     //}
     };
     
@@ -1131,47 +1007,22 @@ script.
                     
                 });
             }
-            
-            function initControls(data)
-            {
-                var sel = document.getElementById('polyList');
-                sel.options.length = 0;
-                console.log("savepolygon22-- "+JSON.stringify(data));
 
-                for (var i = 0; i < data.features.length; i++) {
-                    var opt = document.createElement('option');
-                    opt.innerHTML = data.features[i].geometry.polyname;
-                    opt.value = i;
-                    sel.appendChild(opt);
-                }
-                
-                document.getElementById("btnDelete").disabled = (data.features.length === 0); 
-                document.getElementById("btnDelete").onclick = function(){
-                    var selIdx = sel.options[sel.selectedIndex].value; //get poly index 
-                    data.features.splice(parseInt(selIdx), 1);   
-
-                    //reload 
-                    //localStorage.setItem('geoData', JSON.stringify(data));
-                    document.getElementById("map_string").value = JSON.stringify(data);
-                    $("#confirm_btn").click();
-                    initControls(data);  
-                    loadPolygons();
-                    //window.location.reload();
-                };
-                
-            }
-           
     
     //}
     };
     
     var runMaps = function() {
-       
+        
+            //var polygon = [ [ 113.483933, 23.757691], [ 113.414943, 23.600952 ], [ 113.578219, 23.643333 ] ];
+            //alert(inside([ 113.594317, 23.71323 ], polygon)); // tr
+            
             // 百度地图API功能
             var map_geo = new BMap.Map('baidu_geo');
             var poi = new BMap.Point(112.9469622,23.1253491);
             map_geo.centerAndZoom(poi, 10);
             map_geo.enableScrollWheelZoom();
+            var polipoly = [];
             
             //var overlays = [];
             var overlays = document.getElementById("map_string_load").value;
@@ -1898,118 +1749,6 @@ script.
             
             
       }
-//    function playbackOutdoor() {
-//       var html='';
-//       var pointlist = [];
-//       var polylines;
-//       var checks = $('#tree_outdoor').treeview('getSelected', '1');
-//       //alert(JSON.stringify(checks));
-//       //alert(checks[0].emp_id);
-//       
-//       var time1 = document.getElementById('time1').value;
-//       var time2 = document.getElementById("time2").value;
-//       //var emp_id = getCheckboxValue();
-//       var emp_id = checks[0].emp_id;
-//      
-//        var data_p = JSON.parse(loadHistoryGps(time1,time2,emp_id));
-//        
-//        if(data_p.length === 0){
-//            alert("没有找到记录!");
-//        }
-//         
-//            var contentString = [];
-//            var flightPlanCoordinates = [];
-//            for(var i=0;i<data_p.length;i++){
-//                var d = new Date(data_p[i].employee_time);
-//            //    d.setMinutes(d.getMinutes()+480);
-//                //d.setMinutes(d.getMinutes()-480);
-//                var ddate = d.getDate();
-//                var dmonth = d.getMonth()+1;
-//                var dyear = d.getFullYear();
-//                var dhour = d.getHours();
-//                var dminutes = d.getMinutes();
-//                var dseconds = d.getSeconds();
-//
-//
-//                if(ddate < 10){
-//                    ddate = "0"+ddate;
-//                }
-//                if(dmonth < 10){
-//                    dmonth = "0"+dmonth;
-//                }
-//
-//                if(dhour < 10){
-//                    dhour = "0"+dhour;
-//                }
-//                if(dminutes < 10){
-//                    dminutes = "0"+dminutes;
-//                }
-//                if(dseconds < 10){
-//                    dseconds = "0"+dseconds;
-//                }
-//
-//                var newdate;
-//                newdate = dyear+"-"+dmonth+"-"+ddate+" "+dhour+":"+dminutes+":"+dseconds;
-//                var partsOfStr = data_p[i].gps_loc.split(',');
-//                //alert(partsOfStr);
-//                contentString[i] = '<ul class="list-unstyled">'+
-//                        '<li class="media event">'+
-//                            '<a class="pull-left">'+
-//                              '<img src="/'+data_p[i].employee_image+'" height="40" width="40">'+
-//                            '</a>'+
-//                            '<div class="media-body">'+
-//                              '<a class="title" href="#">'+data_p[i].employee_name+'</a>'+
-//                              '<p>最后的位置: '+newdate+'</p>'+
-//                              '</p>'+
-//                            '</div>'+
-//                          '</li></ul>';
-//                
-//                var myLatLng = {lat: parseFloat(partsOfStr[1] - 0.00575), lng: parseFloat(partsOfStr[0] - 0.00668)};
-//                flightPlanCoordinates.push(new google.maps.LatLng(parseFloat(partsOfStr[1] - 0.00575), parseFloat(partsOfStr[0] - 0.00668)))
-//                //alert(myLatLng);
-//                /*marker_g[i] = new google.maps.Marker({
-//                    position: myLatLng,
-//                    icon: '/images/man2_1.png',
-//                    map: map_g,
-//                    label: data_p[i].employee_name
-//                    });
-//
-//                   google.maps.event.addListener(marker_g[i], 'click', (function(marker, i) {
-//                    return function() {
-//                        infoWindow.setContent(contentString[i]);
-//                        infoWindow.open(map_g, marker_g[i]);
-//                    }
-//                })(marker_g[i], i));
-//                
-//                marker_g[i].setMap(map_g); */
-//                
-//            }
-//            //map_g.data.setControls(['Polygon']);
-//            map_g.setZoom(10);
-//            map_g.setCenter(flightPlanCoordinates[0]);
-//            var lineSymbol = {
-//                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-//                scale: 5,
-//                strokeColor: '#393'
-//              };
-//        
-//            var flightPath = new google.maps.Polyline({
-//                path: flightPlanCoordinates,
-//                icons: [{
-//                    icon: lineSymbol,
-//                    offset: '0%'
-//                  }],
-//                map: map_g
-//              });
-//              
-//            //flightPath.setMap(map_g);
-//            
-//            document.getElementById("playButton").onclick = function(){
-//                animateCircle(flightPath);
-//                };
-//            
-//            
-//      }
         
 script.
     function animateCircle(line) {
@@ -2372,6 +2111,26 @@ script.
         xmlHttp.send( null );
         return xmlHttp.responseText;
     }
+    
+    
+    function inside(point, vs) {
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+    var x = point[0], y = point[1];
+
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
+
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+
+    return inside;
+    };
 
     
     

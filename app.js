@@ -5346,6 +5346,10 @@ app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
     
     var employee_id = req.body.send_gps_loc_data.emp_id;
     var location = req.body.send_gps_loc_data.gps_loc;
+    var company_id = '';
+    var polipoly = [];
+    var poli_loc = [location];
+    var outside = 0;
     
     var good = {send_gps_loc_data: { data:"good" }};
     var bad = {send_gps_loc_data: { data:"bad" }};
@@ -5377,7 +5381,51 @@ app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
                                     else{
                                         //console.log('Successful query\n');
                                         //console.log(rows);
-                                        res.status(200).send(good);
+                                        company_id = rows[0].company_id;
+                                                
+                                                con.query("SELECT * FROM map where company_id = '"+company_id+"'",function(error,rows,fields){
+                                                        if(!!error){
+                                                            console.log('Error in the query '+error);
+                                                            res.send(error);
+                                                        }
+                                                        else{
+                                                            //console.log('Successful query\n');
+                                                            //console.log(rows);
+                                                            var polygons = rows[0].map_string;
+                                                            
+                                                            
+                                                            for(var k=0;k<polygons.length;k++){
+                                                            var polygons_data = polygons[k];
+                                                                for(var j=0;j<polygons_data.length;j++){
+                                                                    var poli1 = [];
+                                                                    poli1.push(polygons_data[j].lng);
+                                                                    poli1.push(polygons_data[j].lat);
+                                                                    polipoly.push(poli1);
+                                                                    //alert(polygons_data[j].lat);
+                                                                }
+                                                                //alert(polipoly);
+                                                                
+                                                                var is_inside = inside(poli_loc, polipoly);
+                                                                if(is_inside === false){
+                                                                    outside = 1;
+                                                                } 
+                                                            }
+                                                            
+                                                            if(outside === 1){
+                                                                 con.query("INSERT INTO gps_alert(emp_id,gps_location,alert_datetime) values ('"+employee_id+"','"+location+"','"+newdate+"') ",function(error,rows,fields){
+                                                                    if(!!error){
+                                                                        console.log('Error in the query '+error);
+                                                                        res.send(error);
+                                                                    }
+                                                                    else{
+                                                                        
+                                                                    }
+                                                                    }); 
+                                                                }
+                                                                
+                                                                res.status(200).send(good); 
+                                                        }
+                                                    }); 
                                     }
                                 }); 
                             }
@@ -5401,7 +5449,64 @@ app.post(deployPath +'/api/v1/send_gps_loc', function(req, res) {
                                     else{
                                         //console.log('Successful query\n');
                                         //console.log(rows);
-                                        res.status(200).send(good);
+                                        con.query("SELECT * FROM employee where employee_id = '"+employee_id+"'",function(error,rows,fields){
+                                            if(!!error){
+                                                console.log('Error in the query '+error);
+                                                res.send(error);
+                                            }
+                                            else{
+                                                //console.log('Successful query\n');
+                                                //console.log(rows);
+                                                company_id = rows[0].company_id;
+                                                
+                                                con.query("SELECT * FROM map where company_id = '"+company_id+"'",function(error,rows,fields){
+                                                        if(!!error){
+                                                            console.log('Error in the query '+error);
+                                                            res.send(error);
+                                                        }
+                                                        else{
+                                                            //console.log('Successful query\n');
+                                                            //console.log(rows);
+                                                            var polygons = rows[0].map_string;
+                                                            
+                                                            
+                                                            for(var k=0;k<polygons.length;k++){
+                                                            var polygons_data = polygons[k];
+                                                                for(var j=0;j<polygons_data.length;j++){
+                                                                    var poli1 = [];
+                                                                    poli1.push(polygons_data[j].lng);
+                                                                    poli1.push(polygons_data[j].lat);
+                                                                    polipoly.push(poli1);
+                                                                    //alert(polygons_data[j].lat);
+                                                                }
+                                                                //alert(polipoly);
+                                                                
+                                                                var is_inside = inside(poli_loc, polipoly);
+                                                                if(is_inside === false){
+                                                                    outside = 1;
+                                                                } 
+                                                            }
+                                                            
+                                                            if(outside === 1){
+                                                                 con.query("INSERT INTO gps_alert(emp_id,gps_location,alert_datetime) values ('"+employee_id+"','"+location+"','"+newdate+"') ",function(error,rows,fields){
+                                                                    if(!!error){
+                                                                        console.log('Error in the query '+error);
+                                                                        res.send(error);
+                                                                    }
+                                                                    else{
+                                                                        
+                                                                    }
+                                                                    }); 
+                                                                }
+                                                                
+                                                                res.status(200).send(good); 
+                                                        }
+                                                    }); 
+
+                                                
+                                            }
+                                        }); 
+
                                     }
                                 }); 
                             }
@@ -5814,6 +5919,24 @@ passport.deserializeUser(function(user, done){
     
 });
 
+function inside(point, vs) {
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+    var x = point[0], y = point[1];
+
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
+
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+
+    return inside;
+    };
 
 
 function isAuthenticated(req, res, next) {
